@@ -29,6 +29,11 @@ const router = createRouter({
           name: "home",
           component: HomeView,
         },
+        {
+          path: "/freeboard",
+          name: "freeboard",
+          component: () => import("@/pages/FreeBoard.vue"),
+        },
       ],
     },
     {
