@@ -9,7 +9,7 @@ import foodBoardIcon from "@/assets/icons/food_board.svg";
     class="fixed left-0 border border-red-500 top-[100px] flex h-full w-[190px] bg-white02 flex-col items-center pt-[30px] px-[10px] gap-[50px]"
   >
     <!-- 구단 이름 -->
-    <span class="text-3xl">TWINS</span>
+    <span class="text-3xl font-sigmar">TWINS</span>
     <!-- 네비게이트 -->
     <nav
       class="flex flex-col items-center w-full border border-red-500 gap-[22px]"

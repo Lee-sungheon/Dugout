@@ -12,6 +12,9 @@ export default {
         gray03: "#515151",
         gray02: "#919191",
       },
+      fontFamily: {
+        sigmar: ["Sigmar", "cursive"], // Sigmar 폰트 추가 -> tailwind에서 font-sigmar로 사용
+      },
     },
   },
   plugins: [],
