@@ -12,18 +12,27 @@ import headsetIcon from "@/assets/icons/audio_headset.svg";
     <!-- 왼쪽 영역(로고 / 네비게이션) -->
     <div class="flex items-center border border-green-500 gap-[50px]">
       <!-- 로고 -->
-      <RouterLink to="">
+      <RouterLink to="/">
         <img :src="logoImg" alt="로고 이미지" />
       </RouterLink>
       <!-- 네비게이션 -->
       <nav class="text-2xl font-bold text-gray01 gap-[30px] flex">
-        <RouterLink to="" class="hover:underline hover:text-black01"
+        <RouterLink
+          to="/news"
+          class="hover:underline hover:text-black01"
+          :class="{ 'underline text-black01': $route.path === '/news' }"
           >News</RouterLink
         >
-        <RouterLink to="" class="hover:underline hover:text-black01"
+        <RouterLink
+          to="/highlight"
+          class="hover:underline hover:text-black01"
+          :class="{ 'underline text-black01': $route.path === '/highlight' }"
           >HIGHLIGHT</RouterLink
         >
-        <RouterLink to="" class="hover:underline hover:text-black01"
+        <RouterLink
+          to="/game"
+          class="hover:underline hover:text-black01"
+          :class="{ 'underline text-black01': $route.path === '/game' }"
           >GAME</RouterLink
         >
       </nav>
