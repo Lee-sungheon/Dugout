@@ -12,23 +12,29 @@ import hanhwaLogo from "../assets/images/logo_hanhwa.svg";
 import ncLogo from "../assets/images/logo_nc.svg";
 import kiwoomLogo from "../assets/images/logo_kiwoom.svg";
 import { ref } from "vue";
+import { useRouter } from "vue-router";
 
+const router = useRouter();
 const isOpen = ref(false);
 const toggleTeam = () => {
   isOpen.value = !isOpen.value;
 };
-const logos = [
-  kiaLogo,
-  samsungLogo,
-  lgLogo,
-  doosanLogo,
-  ktLogo,
-  ssgLogo,
-  lotteLogo,
-  hanhwaLogo,
-  ncLogo,
-  kiwoomLogo,
+const teams = [
+  { name: "kia", path: "/kia", logo: kiaLogo },
+  { name: "samsung", path: "/samsung", logo: samsungLogo },
+  { name: "lg", path: "/lg", logo: lgLogo },
+  { name: "doosan", path: "/doosan", logo: doosanLogo },
+  { name: "kt", path: "/kt", logo: ktLogo },
+  { name: "ssg", path: "/ssg", logo: ssgLogo },
+  { name: "lotte", path: "/lotte", logo: lotteLogo },
+  { name: "hanhwa", path: "/hanhwa", logo: hanhwaLogo },
+  { name: "nc", path: "/nc", logo: ncLogo },
+  { name: "kiwoom", path: "/kiwoom", logo: kiwoomLogo },
 ];
+
+const navigateTo = (path) => {
+  router.push(path);
+};
 </script>
 
 <template>
@@ -36,8 +42,13 @@ const logos = [
     v-if="isOpen"
     class="w-[770px] h-[60px] fixed bottom-[50px] left-1/2 -translate-x-1/2 flex items-center justify-center px-[25px] gap-[35px] bg-white drop-shadow-md rounded-[20px]"
   >
-    <button v-for="(logo, index) in logos" :key="index" class="flex-shrink-0">
-      <img :src="logo" class="w-[40px] h-auto" />
+    <button
+      v-for="(team, index) in teams"
+      :key="index"
+      class="flex-shrink-0"
+      @click="navigateTo(team.path)"
+    >
+      <img :src="team.logo" class="w-[40px] h-auto" />
     </button>
   </div>
   <button
