@@ -7,7 +7,7 @@ import headsetIcon from "@/assets/icons/audio_headset.svg";
 </script>
 <template>
   <header
-    class="w-full border-2 border-red-500 h-[100px] px-[30px] py-[22px] flex items-center justify-between"
+    class="w-full border-2 border-red-500 h-[100px] px-[30px] py-[22px] flex items-center justify-between fixed"
   >
     <!-- 왼쪽 영역(로고 / 네비게이션) -->
     <div class="flex items-center border border-green-500 gap-[50px]">
@@ -52,7 +52,7 @@ import headsetIcon from "@/assets/icons/audio_headset.svg";
       </div>
       <!-- 테마 -->
       <div
-        class="border border-gray01 rounded-[10px] flex px-[10px] py-2 h-[35px] w-[135px] items-center"
+        class="border border-gray01 rounded-[10px] flex px-[10px] py-2 h-[35px] w-[135px] items-center justify-between"
       >
         <span class="text-gray02">히어로즈 테마</span>
         <img
