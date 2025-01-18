@@ -10,8 +10,8 @@ import Hanwha from "../pages/Hanhwa.vue";
 import NC from "../pages/Nc.vue";
 import Kiwoom from "../pages/Kiwoom.vue";
 import News from "@/pages/News.vue";
-import Game from "@/pages/Game.vue";
-import Highlight from "@/pages/Highlight.vue";
+import Game from "@/pages/game.vue";
+import Highlight from "@/pages/highlight.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -31,9 +31,11 @@ const router = createRouter({
       name: "BoardLayout",
       component: () => import("@/layouts/BoardLayout.vue"),
       children: [
-        { path: "news", component: News },
-        { path: "highlight", component: Highlight },
-        { path: "game", component: Game },
+        {
+          path: "freeboard",
+          name: "freeboard",
+          component: () => import("@/pages/FreeBoard.vue"),
+        },
       ],
     },
 
