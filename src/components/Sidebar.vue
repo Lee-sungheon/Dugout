@@ -6,7 +6,7 @@ import foodBoardIcon from "@/assets/icons/food_board.svg";
 </script>
 <template>
   <div
-    class="fixed left-0 border border-red-500 top-[100px] flex h-full w-[190px] bg-white02 flex-col items-center pt-[30px] px-[10px] gap-[50px]"
+    class="fixed left-0 top-[100px] flex h-full w-[190px] bg-white02 flex-col items-center pt-[30px] px-[10px] gap-[50px]"
   >
     <!-- 구단 이름 -->
     <span class="text-3xl font-sigmar">TWINS</span>
