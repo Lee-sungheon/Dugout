@@ -99,7 +99,7 @@ const removeTeam = (team) => {
     </div>
   </div>
   <div
-    class="mt-[30px] mb-[30px] max-w-[calc(100%-60px)] flex flex-col gap-y-[30px]"
+    class="mt-[30px] pb-[30px] max-w-[calc(100%-60px)] flex flex-col gap-y-[30px]"
   >
     <div v-for="article of articles" :key="article.id">
       <h2 class="text-[20px] text-black01 font-bold mb-[10px]">

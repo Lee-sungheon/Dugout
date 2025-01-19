@@ -12,6 +12,8 @@ import Kiwoom from "../pages/Kiwoom.vue";
 import News from "@/pages/News.vue";
 import Game from "@/pages/Game.vue";
 import Highlight from "@/pages/Highlight.vue";
+import SignIn from "@/pages/SignIn.vue";
+import SignUp from "@/pages/SignUp.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -38,6 +40,9 @@ const router = createRouter({
         },
       ],
     },
+
+    { path: "/signin", name: "SignIn", component: SignIn },
+    { path: "/signup", name: "SignUp", component: SignUp },
 
     { path: "/kia", component: Kia },
     { path: "/samsung", component: Samsung },
