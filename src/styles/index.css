@@ -7,3 +7,8 @@
   box-sizing: border-box;
   font-family: "Pretendard", sans-serif;
 }
+
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  display: none;
+}

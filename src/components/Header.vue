@@ -7,7 +7,7 @@ import headsetIcon from "@/assets/icons/audio_headset.svg";
 </script>
 <template>
   <header
-    class="w-full border-2 border-red-500 h-[100px] px-[30px] py-[22px] flex items-center justify-between fixed"
+    class="w-full border-2 border-red-500 h-[100px] px-[30px] py-[22px] flex items-center justify-between fixed bg-white01 z-10"
   >
     <!-- 왼쪽 영역(로고 / 네비게이션) -->
     <div class="flex items-center border border-green-500 gap-[50px]">
@@ -21,7 +21,7 @@ import headsetIcon from "@/assets/icons/audio_headset.svg";
           to="/news"
           class="hover:underline hover:text-black01"
           :class="{ 'underline text-black01': $route.path === '/news' }"
-          >News</RouterLink
+          >NEWS</RouterLink
         >
         <RouterLink
           to="/highlight"
