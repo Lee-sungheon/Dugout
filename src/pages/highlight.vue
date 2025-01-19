@@ -103,14 +103,16 @@ const sampleVideos = ref([
 </script>
 <template>
   <div
-    class="relative overflow-x-auto scrollbar-hide w-full px-[30px] mt-[150px]"
+    class="mx-[30px] mt-[50px] min-h-[39px] w-full overflow-x-auto scrollbar-hide"
   >
-    <div class="flex items-center gap-[10px] w-max">
+    <div
+      class="flex items-center gap-x-[10px] w-max flex-nowrap ml-[30px] mr-[30px]"
+    >
       <button
         v-for="(team, index) of teams"
         :key="index"
         @click="selectTeam(team)"
-        class="inline-flex items-center h-[39px] px-[15px] bg-white02 rounded-[10px] whitespace-nowrap"
+        class="inline-flex items-center h-[39px] px-[15px] rounded-[10px] whitespace-nowrap"
         :class="{
           'bg-gray02 text-white01 gap-[10px]': selectedTeam.includes(team),
           'bg-white02 text-black01': !selectedTeam.includes(team),
