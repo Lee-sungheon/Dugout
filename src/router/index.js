@@ -10,8 +10,8 @@ import Hanwha from "../pages/Hanhwa.vue";
 import NC from "../pages/Nc.vue";
 import Kiwoom from "../pages/Kiwoom.vue";
 import News from "@/pages/News.vue";
-import Game from "@/pages/game.vue";
-import Highlight from "@/pages/highlight.vue";
+import Game from "@/pages/Game.vue";
+import Highlight from "@/pages/Highlight.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),

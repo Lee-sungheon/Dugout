@@ -5,7 +5,7 @@ import { RouterView } from "vue-router";
 </script>
 <template>
   <div
-    class="flex flex-col items-center justify-start w-full h-screen min-h-screen"
+    class="flex flex-col items-center justify-start w-full h-screen min-h-screen bg-white01"
   >
     <Header />
     <RouterView />
