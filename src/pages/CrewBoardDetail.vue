@@ -14,19 +14,18 @@ import PostHeader from "@/components/PostHeader.vue";
     <!-- 상세페이지 -->
     <div class="flex flex-col gap-[50px]">
       <!-- 상세 페이지 정보 -->
-      <PostHeader />
+      <PostHeader crewBoard />
       <!-- 게시물 내용 -->
       <div
-        class="border-x border-blue-500 py-[50px] flex border-b border-b-gray01 flex-col items-center"
+        class="border-x border-blue-500 pb-[50px] flex border-b border-b-gray01 flex-col items-center"
       >
         <span>
-          프로젝트를 진행하면서 야구 얘기를 너무 많이 했더니 야구가 너무
-          보고싶다... vue-quill을 사용할 예정입니다 vue-quill을 사용하면 아래와
-          같은 기능들을 사용 가능합니다 bold, italic, underline, linethrough
-          인용, 코드블럭 heading 지정 리스트 윗첨자, 아랫첨자 글씨 크기 폰트
-          색상 및 배경 색상 지정 글씨체 좌/우/중앙 정렬 및 양쪽 맞춤이 가능
-          링크/영상/사진 삽입 가능</span
-        >
+          안녕하세요!<br />
+          지방 사는 20대 엘팬입니다.<br />
+          오랜만에 서울에 올라와서 야구를 보고싶은데 같이 볼 사람이 없네요 🥺<br />
+          그래서 용기를 내어 글을 써봅니다!<br />
+          같이 재밌게 야구 보고 와요!
+        </span>
 
         <img
           src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQDr6SB_fokX3TJBAFcrIisQ_YGwVVO0F8PCw&s"
