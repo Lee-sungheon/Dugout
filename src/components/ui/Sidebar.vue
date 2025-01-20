@@ -15,18 +15,21 @@ import foodBoardIcon from "@/assets/icons/food_board.svg";
       class="flex flex-col items-center w-full border border-red-500 gap-[22px]"
     >
       <RouterLink
+        to="/team/freeboard"
         class="flex px-[10px] py-2 items-center text-lg font-semibold gap-[10px] hover:bg-[#d9d9d9] w-full rounded-[10px]"
       >
         <img :src="freeBoardIcon" alt="자유게시판 아이콘" />
         <span>자유 게시판</span>
       </RouterLink>
       <RouterLink
+        to="/team/crewboard"
         class="flex px-[10px] py-2 items-center text-lg font-semibold gap-[10px] hover:bg-[#d9d9d9] w-full rounded-[10px]"
       >
         <img :src="crewBoardIcon" alt="직관 크루 모집 아이콘" />
         <span>직권 크루 모집</span>
       </RouterLink>
       <RouterLink
+        to="/team/photoboard"
         class="flex px-[10px] py-2 items-center text-lg font-semibold gap-[10px] hover:bg-[#d9d9d9] w-full rounded-[10px]"
       >
         <img :src="photoBoardIcon" alt="직관 인증 포토 아이콘" />
