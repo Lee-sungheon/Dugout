@@ -6,7 +6,7 @@ import commentBtnIcon from "@/assets/icons/comment_btn.svg";
 import Commentbox from "@/components/Commentbox.vue";
 </script>
 <template>
-  <div class="px-[50px] py-[35px]">
+  <div class="">
     <!-- 뒤로가기 -->
     <div class="border-2 border-green-500 mb-[50px]">
       <button>

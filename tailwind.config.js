@@ -21,6 +21,8 @@ export default {
         Lions: "#007AC1",
         Eagles: "#FF6600",
         Wiz: "#C30452",
+        progressing: "#34C300",
+        Done: "#F50000",
       },
       fontFamily: {
         sigmar: ["Sigmar", "cursive"], // Sigmar 폰트 추가 -> tailwind에서 font-sigmar로 사용
