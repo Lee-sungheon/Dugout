@@ -17,7 +17,7 @@ import PostHeader from "@/components/PostHeader.vue";
       <PostHeader crewBoard />
       <!-- 게시물 내용 -->
       <div
-        class="border-x border-blue-500 py-[50px] flex border-b border-b-gray01 flex-col items-center"
+        class="border-x border-blue-500 pb-[50px] flex border-b border-b-gray01 flex-col items-center"
       >
         <span>
           안녕하세요!<br />
