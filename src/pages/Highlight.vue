@@ -99,6 +99,30 @@ const sampleVideos = ref([
       "https://yt3.googleusercontent.com/o-lu5v2BlCbPxbHLpbnO_PGedFB3RjU63t02B7eHlU6AgRqoZssrnVhKIbnCQEsSkrC1yCIg2kc=s900-c-k-c0x00ffffff-no-rj",
     viewCount: 123,
   },
+  {
+    id: "abc12345678",
+    title:
+      "[삼성 vs KIA] 10/28 한국시리즈 5차전 I 2024 신한 SOL뱅크 KBO 포스트시즌 I 하이라이트 I TVING",
+    thumbnail:
+      "https://cdn.pixabay.com/photo/2017/05/22/07/24/baseball-2333353_1280.jpg",
+    publishedAt: "2025-01-17",
+    channelTitle: "TVING SPORTS",
+    profileImg:
+      "https://yt3.googleusercontent.com/o-lu5v2BlCbPxbHLpbnO_PGedFB3RjU63t02B7eHlU6AgRqoZssrnVhKIbnCQEsSkrC1yCIg2kc=s900-c-k-c0x00ffffff-no-rj",
+    viewCount: 123,
+  },
+  {
+    id: "abc12345678",
+    title:
+      "[삼성 vs KIA] 10/28 한국시리즈 5차전 I 2024 신한 SOL뱅크 KBO 포스트시즌 I 하이라이트 I TVING",
+    thumbnail:
+      "https://cdn.pixabay.com/photo/2017/05/22/07/24/baseball-2333353_1280.jpg",
+    publishedAt: "2025-01-17",
+    channelTitle: "TVING SPORTS",
+    profileImg:
+      "https://yt3.googleusercontent.com/o-lu5v2BlCbPxbHLpbnO_PGedFB3RjU63t02B7eHlU6AgRqoZssrnVhKIbnCQEsSkrC1yCIg2kc=s900-c-k-c0x00ffffff-no-rj",
+    viewCount: 123,
+  },
 ]);
 </script>
 <template>
@@ -143,10 +167,10 @@ const sampleVideos = ref([
         <div class="flex items-start mt-[10px] gap-[10px]">
           <img :src="video.profileImg" class="w-[35px] h-[35px] object-cover" />
           <div class="gap-y-[5px]">
-            <h3 class="text-4 font-bold text-black01 line-clamp-2">
+            <h3 class="font-bold text-4 text-black01 line-clamp-2">
               {{ video.title }}
             </h3>
-            <h4 class="text-3 font-bold text-gray03">
+            <h4 class="font-bold text-3 text-gray03">
               {{ video.channelTitle }}
             </h4>
             <p class="text-3 text-gray03">
