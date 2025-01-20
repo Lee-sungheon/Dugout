@@ -50,6 +50,11 @@ const router = createRouter({
           name: "crewboard",
           component: () => import("@/pages/CrewBoard.vue"),
         },
+        {
+          path: "crewboard/:id",
+          name: "crewboardDetail",
+          component: () => import("@/pages/CrewBoardDetail.vue"),
+        },
       ],
     },
 

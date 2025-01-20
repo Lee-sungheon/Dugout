@@ -1,12 +1,23 @@
-<script setup></script>
+<script setup>
+import RecruitmentStatus from "./RecruitmentStatus.vue";
+const props = defineProps({
+  crewBoard: {
+    type: Boolean,
+    required: false,
+    default: false, // 기본값은 false로 설정
+  },
+});
+</script>
 <template>
   <!-- 상세 페이지 정보 -->
   <div class="flex flex-col gap-[10px] pb-5 border-b border-white02">
     <!-- 제목 -->
-    <div class="w-full border border-red-500">
+    <div class="flex items-center border border-red-500 gap-[15px]">
       <span class="text-2xl font-bold"
         >작년 첫 직관! 난 개막만을 기다려...</span
       >
+      <!-- crew모집 페이지에서만 다음 컴포넌트 출력 -->
+      <RecruitmentStatus v-if="props.crewBoard" status="done" />
     </div>
     <!-- 유저 정보 / 수정 삭제 -->
     <div class="flex items-center justify-between border border-red-500">
