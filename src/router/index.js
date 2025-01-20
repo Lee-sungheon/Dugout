@@ -40,6 +40,11 @@ const router = createRouter({
           name: "freeboard",
           component: () => import("@/pages/FreeBoard.vue"),
         },
+        {
+          path: "freeboard/:id",
+          name: "freeboardDetail",
+          component: () => import("@/pages/FreeBoardDetail.vue"),
+        },
       ],
     },
 
