@@ -2,11 +2,9 @@
 import FreeBoardPost from "@/components/freeboard/FreeBoardPost.vue";
 </script>
 <template>
-  <div
-    class="flex h-full border border-red-500 px-[50px] py-[30px] gap-[30px] flex-col"
-  >
+  <div class="flex border border-red-500 gap-[30px] flex-col">
     <!-- 글쓰기 버튼 -->
-    <div class="w-full h-fit">
+    <div>
       <button class="w-full font-medium bg-white02 py-[10px] rounded-[10px]">
         자유 게시판에 글 쓰러 가기 >
       </button>

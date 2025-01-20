@@ -10,7 +10,7 @@ import { RouterView } from "vue-router";
     <Sidebar />
     <!-- 남은 부분 들어갈 컨텐츠 -->
     <div
-      class="mt-[100px] ml-[190px] flex-grow w-[calc(100%-190px)] bg-white01"
+      class="mt-[100px] ml-[190px] flex-grow w-[calc(100%-190px)] bg-white01 px-[50px] py-[30px]"
     >
       <RouterView />
     </div>
