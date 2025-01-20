@@ -55,12 +55,11 @@ const router = createRouter({
           name: "crewboardDetail",
           component: () => import("@/pages/CrewBoardDetail.vue"),
         },
-          {
-            design/직관인증포토
+        {
           path: "photoboard",
           name: "photoboard",
           component: () => import("@/pages/PhotoBoard.vue"),
-          }
+        },
       ],
     },
 
