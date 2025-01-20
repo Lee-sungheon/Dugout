@@ -71,7 +71,7 @@ const posts = [
             </span>
           </div>
           <div className="flex flex-col items-center gap-[24px] ">
-            <span className="text-black01 text-[26px] font-bold"> 9 </span>
+            <span className="text-black01 text-[26px] font-bold"> 10 </span>
             <span className="text-black02 text-[18px] whitespace-nowrap">
               팔로워
             </span>
