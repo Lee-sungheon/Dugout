@@ -72,34 +72,34 @@ const removeTeam = (team) => {
 };
 </script>
 <template>
-  <div
-    class="mx-[30px] mt-[50px] min-h-[39px] w-full overflow-x-auto scrollbar-hide"
-  >
-    <div
-      class="flex items-center gap-x-[10px] w-max flex-nowrap ml-[30px] mr-[30px]"
-    >
-      <button
-        v-for="(team, index) of teams"
-        :key="index"
-        @click="selectTeam(team)"
-        class="inline-flex items-center h-[39px] px-[15px] rounded-[10px] whitespace-nowrap"
-        :class="{
-          'bg-gray02 text-white01 gap-[10px]': selectedTeam.includes(team),
-          'bg-white02 text-black01': !selectedTeam.includes(team),
-        }"
+  <div class="w-full mx-[29px] pb-[30px] fixed bg-white01">
+    <div class="mt-[150px] min-h-[39px] overflow-x-auto scrollbar-hide">
+      <div
+        class="flex items-center gap-x-[10px] w-max flex-nowrap ml-[30px] mr-[30px]"
       >
-        <p>{{ team }}</p>
-        <img
-          v-if="selectedTeam.includes(team)"
-          @click.stop="removeTeam(team)"
-          :src="deleteBtn"
-          class="cursor-pointer"
-        />
-      </button>
+        <button
+          v-for="(team, index) of teams"
+          :key="index"
+          @click="selectTeam(team)"
+          class="inline-flex items-center h-[39px] px-[15px] rounded-[10px] whitespace-nowrap"
+          :class="{
+            'bg-gray02 text-white01 gap-[10px]': selectedTeam.includes(team),
+            'bg-white02 text-black01': !selectedTeam.includes(team),
+          }"
+        >
+          <p>{{ team }}</p>
+          <img
+            v-if="selectedTeam.includes(team)"
+            @click.stop="removeTeam(team)"
+            :src="deleteBtn"
+            class="cursor-pointer"
+          />
+        </button>
+      </div>
     </div>
   </div>
   <div
-    class="mt-[30px] pb-[30px] max-w-[calc(100%-60px)] flex flex-col gap-y-[30px]"
+    class="mt-[219px] pb-[30px] max-w-[calc(100%-60px)] flex flex-col gap-y-[30px]"
   >
     <div v-for="article of articles" :key="article.id">
       <h2 class="text-[20px] text-black01 font-bold mb-[10px]">

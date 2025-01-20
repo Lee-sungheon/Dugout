@@ -102,33 +102,33 @@ const sampleVideos = ref([
 ]);
 </script>
 <template>
-  <div
-    class="mx-[30px] mt-[50px] min-h-[39px] w-full overflow-x-auto scrollbar-hide"
-  >
-    <div
-      class="flex items-center gap-x-[10px] w-max flex-nowrap ml-[30px] mr-[30px]"
-    >
-      <button
-        v-for="(team, index) of teams"
-        :key="index"
-        @click="selectTeam(team)"
-        class="inline-flex items-center h-[39px] px-[15px] rounded-[10px] whitespace-nowrap"
-        :class="{
-          'bg-gray02 text-white01 gap-[10px]': selectedTeam.includes(team),
-          'bg-white02 text-black01': !selectedTeam.includes(team),
-        }"
+  <div class="w-full mx-[29px] pb-[30px] fixed bg-white01">
+    <div class="mt-[150px] min-h-[39px] overflow-x-auto scrollbar-hide">
+      <div
+        class="flex items-center gap-x-[10px] w-max flex-nowrap ml-[30px] mr-[30px]"
       >
-        <p>{{ team }}</p>
-        <img
-          v-if="selectedTeam.includes(team)"
-          @click.stop="removeTeam(team)"
-          :src="deleteBtn"
-          class="cursor-pointer"
-        />
-      </button>
+        <button
+          v-for="(team, index) of teams"
+          :key="index"
+          @click="selectTeam(team)"
+          class="inline-flex items-center h-[39px] px-[15px] rounded-[10px] whitespace-nowrap"
+          :class="{
+            'bg-gray02 text-white01 gap-[10px]': selectedTeam.includes(team),
+            'bg-white02 text-black01': !selectedTeam.includes(team),
+          }"
+        >
+          <p>{{ team }}</p>
+          <img
+            v-if="selectedTeam.includes(team)"
+            @click.stop="removeTeam(team)"
+            :src="deleteBtn"
+            class="cursor-pointer"
+          />
+        </button>
+      </div>
     </div>
   </div>
-  <div class="mx-[29px] mt-[30px] mb-[99.97px] overflow-y-auto scrollbar-hide">
+  <div class="flex-1 mx-[29px] mt-[219px] mb-[99.97px]">
     <div class="grid grid-cols-3 gap-x-[21px] gap-y-[50px] w-full">
       <div v-for="video in sampleVideos" :key="video.id" class="bg-white">
         <a
