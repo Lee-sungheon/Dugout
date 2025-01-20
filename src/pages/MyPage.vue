@@ -59,7 +59,7 @@ const posts = [
               <img :src="Setting" class="w-[16.97px] h-[18px]" />
             </div>
             <p className="text-[18px] text-gray03 ">
-              엘지를 너무나 사랑하는 야린이!
+              엘지를 너무나 사랑하는 야린이!!
             </p>
           </div>
         </div>
@@ -71,7 +71,7 @@ const posts = [
             </span>
           </div>
           <div className="flex flex-col items-center gap-[24px] ">
-            <span className="text-black01 text-[26px] font-bold"> 10 </span>
+            <span className="text-black01 text-[26px] font-bold"> 9 </span>
             <span className="text-black02 text-[18px] whitespace-nowrap">
               팔로워
             </span>
