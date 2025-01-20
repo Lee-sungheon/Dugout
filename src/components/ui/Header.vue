@@ -7,7 +7,7 @@ import headsetIcon from "@/assets/icons/audio_headset.svg";
 </script>
 <template>
   <header
-    class="w-full h-[100px] px-[30px] py-[22px] flex items-center justify-between bg-white01 border-b border-white02"
+    class="w-full h-[100px] px-[30px] py-[22px] flex items-center justify-between border-b border-white02 fixed bg-white"
   >
     <!-- 왼쪽 영역(로고 / 네비게이션) -->
     <div class="flex items-center border border-green-500 gap-[50px]">
