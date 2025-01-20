@@ -7,8 +7,9 @@ defineProps({
 });
 </script>
 <template>
-  <div
-    class="flex flex-col justify-between bg-white02 rounded-[10px] pt-[10px] px-[10px] pb-[15px] h-[335px]"
+  <RouterLink
+    class="flex flex-col justify-between bg-white02 rounded-[10px] pt-[10px] px-[10px] pb-[15px] h-[335px] cursor-pointer"
+    to="/team/photoboard/:id"
   >
     <div class="w-full flex-grow overflow-hidden mb-[15px] rounded-[10px]">
       <img :src="post.photo" class="w-full h-full object-cover" />
@@ -32,6 +33,6 @@ defineProps({
         </div>
       </div>
     </div>
-  </div>
+  </RouterLink>
 </template>
 <style scoped></style>

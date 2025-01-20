@@ -75,12 +75,13 @@ const props = defineProps({
   <div class="flex border border-red-500 gap-[30px] flex-col">
     <!-- 글쓰기 버튼 -->
     <div>
-      <button
+      <RouterLink
+        to="/team/photoboard/create/:id"
         class="flex items-center justify-center w-full font-medium bg-white02 py-[10px] rounded-[10px] gap-[10px]"
       >
         직관 인증 포토 올리러 가기
         <img :src="PostArrow" class="w-[14px] h-[8px]" />
-      </button>
+      </RouterLink>
     </div>
     <!-- 목록 -->
     <div class="w-full h-auto border border-red-500 mb-[100px]">
