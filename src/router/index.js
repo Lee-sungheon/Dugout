@@ -15,6 +15,7 @@ import Highlight from "@/pages/Highlight.vue";
 import SignIn from "@/pages/SignIn.vue";
 import SignUp from "@/pages/SignUp.vue";
 import MyPage from "@/pages/MyPage.vue";
+import Main from "@/pages/Main.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -24,10 +25,11 @@ const router = createRouter({
       name: "RootLayout",
       component: () => import("@/layouts/RootLayout.vue"),
       children: [
+        { path: "", name: "main", component: Main },
         { path: "news", name: "news", component: News },
         { path: "highlight", name: "highlight", component: Highlight },
         { path: "game", name: "game", component: Game },
-        { path: "/myPage", name: "myPage", component: MyPage },
+        { path: "myPage", name: "myPage", component: MyPage },
       ],
     },
     {
