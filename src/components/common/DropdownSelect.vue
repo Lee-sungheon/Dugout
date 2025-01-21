@@ -1,0 +1,71 @@
+<script setup>
+import ToggleDropdown from "@/assets/icons/theme_toggle.svg";
+import Calendar from "@/assets/icons/calendar.svg";
+import { computed, ref } from "vue";
+import { twMerge } from "tailwind-merge";
+
+const props = defineProps({
+  part: String,
+  selectedOption: String,
+  options: Array,
+  widthType: {
+    type: String,
+    default: "md",
+  },
+});
+
+const emit = defineEmits(["update:selectedOption"]);
+
+const isOpen = ref(false);
+
+const toggleDropdown = () => {
+  isOpen.value = !isOpen.value;
+};
+
+const selectOption = (option) => {
+  emit("update:selectedOption", option);
+  isOpen.value = false;
+};
+
+const toggleIconSrc = computed(() => {
+  return props.part === "경기일" ? Calendar : ToggleDropdown;
+});
+</script>
+<template>
+  <div class="relative w-full">
+    <button
+      @click="toggleDropdown"
+      :class="
+        twMerge(
+          'flex items-center justify-between w-full h-[40px] px-[15px] bg-white02 text-black01 text-[18px] rounded-[8px]',
+
+          isOpen && 'rounded-b-[0px]'
+        )
+      "
+    >
+      {{ props.selectedOption }}
+      <img :src="toggleIconSrc" class="w-[18px] h-[10.28px]" />
+    </button>
+    <div
+      v-if="isOpen"
+      :class="
+        twMerge(
+          'absolute left-0 top-full w-full bg-white02 text-black01 text-[18px] rounded-[8px] z-10',
+          isOpen && 'rounded-t-[0px]'
+        )
+      "
+    >
+      <ul>
+        <li
+          v-for="option in options"
+          :key="option"
+          @click="selectOption(option)"
+          class="flex items-center w-full h-[40px] px-[15px] cursor-pointer"
+        >
+          {{ option }}
+        </li>
+      </ul>
+    </div>
+  </div>
+</template>
+<style scoped></style>

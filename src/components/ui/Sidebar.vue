@@ -3,6 +3,10 @@ import freeBoardIcon from "@/assets/icons/free_board.svg";
 import crewBoardIcon from "@/assets/icons/crew_board.svg";
 import photoBoardIcon from "@/assets/icons/photo_board.svg";
 import foodBoardIcon from "@/assets/icons/food_board.svg";
+import { twMerge } from "tailwind-merge";
+import { useRoute } from "vue-router";
+
+const route = useRoute();
 </script>
 <template>
   <div
@@ -16,27 +20,48 @@ import foodBoardIcon from "@/assets/icons/food_board.svg";
     >
       <RouterLink
         to="/team/freeboard"
-        class="flex px-[10px] py-2 items-center text-lg font-semibold gap-[10px] hover:bg-[#d9d9d9] w-full rounded-[10px]"
+        :class="
+          twMerge(
+            'flex px-[10px] py-2 items-center text-lg font-semibold gap-[10px] hover:bg-[#d9d9d9] w-full rounded-[10px]',
+            route.path.includes('/team/freeboard') && 'bg-[#d9d9d9]'
+          )
+        "
       >
         <img :src="freeBoardIcon" alt="자유게시판 아이콘" />
         <span>자유 게시판</span>
       </RouterLink>
       <RouterLink
         to="/team/crewboard"
-        class="flex px-[10px] py-2 items-center text-lg font-semibold gap-[10px] hover:bg-[#d9d9d9] w-full rounded-[10px]"
+        :class="
+          twMerge(
+            'flex px-[10px] py-2 items-center text-lg font-semibold gap-[10px] hover:bg-[#d9d9d9] w-full rounded-[10px]',
+            route.path.includes('/team/crewboard') && 'bg-[#d9d9d9]'
+          )
+        "
       >
         <img :src="crewBoardIcon" alt="직관 크루 모집 아이콘" />
-        <span>직권 크루 모집</span>
+        <span>직관 크루 모집</span>
       </RouterLink>
       <RouterLink
         to="/team/photoboard"
-        class="flex px-[10px] py-2 items-center text-lg font-semibold gap-[10px] hover:bg-[#d9d9d9] w-full rounded-[10px]"
+        :class="
+          twMerge(
+            'flex px-[10px] py-2 items-center text-lg font-semibold gap-[10px] hover:bg-[#d9d9d9] w-full rounded-[10px]',
+            route.path.includes('/team/photoboard') && 'bg-[#d9d9d9]'
+          )
+        "
       >
         <img :src="photoBoardIcon" alt="직관 인증 포토 아이콘" />
         <span>직관 인증 포토</span>
       </RouterLink>
       <RouterLink
-        class="flex px-[10px] py-2 items-center text-lg font-semibold gap-[10px] hover:bg-[#d9d9d9] w-full rounded-[10px]"
+        to="/team/foodboard"
+        :class="
+          twMerge(
+            'flex px-[10px] py-2 items-center text-lg font-semibold gap-[10px] hover:bg-[#d9d9d9] w-full rounded-[10px]',
+            route.path.includes('/team/foodboard') && 'bg-[#d9d9d9]'
+          )
+        "
       >
         <img :src="foodBoardIcon" alt="직관 맛집 찾기 아이콘" />
         <span>직관 맛집 찾기</span>

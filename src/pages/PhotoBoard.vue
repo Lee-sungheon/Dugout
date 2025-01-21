@@ -1,7 +1,6 @@
 <script setup>
 import PostArrow from "@/assets/icons/post_arrow.svg";
-import Like from "@/assets/icons/like.svg";
-import Comment from "@/assets/icons/comment.svg";
+import PhotoboardCard from "@/components/photoboard/PhotoboardCard.vue";
 
 const posts = [
   {
@@ -65,51 +64,29 @@ const posts = [
     comments: "4",
   },
 ];
+
+const props = defineProps({
+  posts: Array,
+});
 </script>
 <template>
-  <div class="flex border border-red-500 gap-[30px] flex-col">
+  <div
+    class="flex border border-red-500 gap-[30px] flex-col px-[50px] py-[30px]"
+  >
     <!-- 글쓰기 버튼 -->
-    <div>
-      <button
+    <div class="cursor-pointer">
+      <RouterLink
+        to="/team/photoboard/create/:id"
         class="flex items-center justify-center w-full font-medium bg-white02 py-[10px] rounded-[10px] gap-[10px]"
       >
         직관 인증 포토 올리러 가기
         <img :src="PostArrow" class="w-[14px] h-[8px]" />
-      </button>
+      </RouterLink>
     </div>
     <!-- 목록 -->
     <div class="w-full h-auto border border-red-500 mb-[100px]">
       <div class="grid grid-cols-3 gap-[30px] w-full">
-        <div
-          v-for="post in posts"
-          :key="post.id"
-          class="flex flex-col justify-between bg-white02 rounded-[10px] pt-[10px] px-[10px] pb-[15px] h-[335px]"
-        >
-          <div
-            class="w-full flex-grow overflow-hidden mb-[15px] rounded-[10px]"
-          >
-            <img :src="post.photo" class="w-full h-full object-cover" />
-          </div>
-          <div class="flex items-center justify-between">
-            <div class="flex items-center gap-[10px]">
-              <img
-                :src="post.profile"
-                class="w-[25px] h-[25px] object-cover rounded-full flex-nowrap"
-              />
-              <p>{{ post.name }}</p>
-            </div>
-            <div class="flex items-center gap-[20px]">
-              <div class="flex items-center gap-[10px]">
-                <img :src="Like" class="w-16.39px h-14px" />
-                <p class="text-gray02 text-3">{{ post.likes }}</p>
-              </div>
-              <div class="flex items-center gap-[10px]">
-                <img :src="Comment" class="w-16.39px h-14px" />
-                <p class="text-gray02 text-3">{{ post.comments }}</p>
-              </div>
-            </div>
-          </div>
-        </div>
+        <PhotoboardCard v-for="post in posts" :key="post.id" :post="post" />
       </div>
     </div>
   </div>

@@ -6,6 +6,18 @@ const props = defineProps({
     required: false,
     default: false, // 기본값은 false로 설정
   },
+  title: {
+    type: String,
+    required: true,
+  },
+  nickname: {
+    type: String,
+    required: true,
+  },
+  time: {
+    type: String,
+    required: true,
+  },
 });
 </script>
 <template>
@@ -13,9 +25,7 @@ const props = defineProps({
   <div class="flex flex-col gap-[10px] pb-5 border-b border-white02">
     <!-- 제목 -->
     <div class="flex items-center border border-red-500 gap-[15px]">
-      <span class="text-2xl font-bold"
-        >작년 첫 직관! 난 개막만을 기다려...</span
-      >
+      <span class="text-2xl font-bold">{{ props.title }}</span>
       <!-- crew모집 페이지에서만 다음 컴포넌트 출력 -->
       <RecruitmentStatus v-if="props.crewBoard" status="done" />
     </div>
@@ -28,8 +38,8 @@ const props = defineProps({
           alt="유저 프로필"
           class="w-[25px] h-[25px] rounded-full"
         />
-        <span class="text-xs text-gray03">닉네임</span>
-        <span class="text-xs text-gray02">4시간 전</span>
+        <span class="text-xs text-gray03">{{ props.nickname }}</span>
+        <span class="text-xs text-gray02">{{ props.time }}</span>
       </div>
       <!-- 수정 삭제 버튼 -->
       <div class="flex text-xs text-gray02 gap-[4px] border border-blue-500">

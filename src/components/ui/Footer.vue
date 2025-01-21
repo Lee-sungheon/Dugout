@@ -40,7 +40,7 @@ const navigateTo = (path) => {
 <template>
   <div
     v-if="isOpen"
-    class="w-[770px] h-[60px] fixed bottom-[50px] left-1/2 -translate-x-1/2 flex items-center justify-center px-[25px] gap-[35px] bg-white drop-shadow-md rounded-[20px]"
+    class="w-[770px] h-[60px] fixed bottom-[40px] left-1/2 -translate-x-1/2 flex items-center justify-center px-[25px] gap-[35px] bg-white drop-shadow-md rounded-[20px]"
   >
     <button
       v-for="(team, index) in teams"
@@ -53,7 +53,7 @@ const navigateTo = (path) => {
   </div>
   <button
     @click="toggleTeam"
-    class="fixed bottom-[10px] left-1/2 -translate-x-1/2"
+    class="fixed bottom-0 left-1/2 -translate-x-1/2"
   >
     <img
       :src="teamToggleIcon"
