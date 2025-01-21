@@ -1,0 +1,16 @@
+/* 툴바 디자인 바꾸기 */
+.ql-toolbar {
+  border: none !important;
+  border-bottom: 1px solid #919191 !important;
+}
+
+/* 내용 디자인 바꾸기 */
+.ql-container {
+  border: none !important;
+}
+/* placeholder 수정하기 */
+.ql-editor::before {
+  color: #b1b1b1 !important; /* 텍스트 색상 (파란색) */
+  font-size: 16px; /* 글자 크기 */
+  font-style: normal !important;
+}
