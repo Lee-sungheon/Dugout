@@ -40,7 +40,7 @@ const route = useRoute();
         "
       >
         <img :src="crewBoardIcon" alt="직관 크루 모집 아이콘" />
-        <span>직권 크루 모집</span>
+        <span>직관 크루 모집</span>
       </RouterLink>
       <RouterLink
         to="/team/photoboard"

@@ -1,13 +1,18 @@
 <script setup>
 import CrewCard from "@/components/crewboard/CrewCard.vue";
+import PostArrow from "@/assets/icons/post_arrow.svg";
 </script>
 <template>
   <div class="flex border border-red-500 gap-[30px] flex-col">
     <!-- 글쓰기 버튼 -->
-    <div class="border border-blue-500">
-      <button class="w-full font-medium bg-white02 py-[10px] rounded-[10px]">
-        직관 크루 모집에 글 쓰러 가기 >
-      </button>
+    <div class="cursor-pointer">
+      <RouterLink
+        to="/team/crewboard/create"
+        class="flex items-center justify-center w-full font-medium bg-white02 py-[10px] rounded-[10px] gap-[10px]"
+      >
+        직관 크루 모집에 글 쓰러 가기
+        <img :src="PostArrow" class="w-[14px] h-[8px]" />
+      </RouterLink>
     </div>
 
     <!-- 크루 모집 게시물 리스트 -->
