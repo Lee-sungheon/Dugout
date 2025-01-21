@@ -8,7 +8,7 @@ const router = useRouter();
 </script>
 
 <template>
-  <div>
+  <div class="px-[50px] py-[30px]">
     <!-- 뒤로가기 -->
     <div class="border-2 border-green-500 mb-[50px] flex">
       <button @click="router.go(-1)">
@@ -29,7 +29,7 @@ const router = useRouter();
           <img
             src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQDr6SB_fokX3TJBAFcrIisQ_YGwVVO0F8PCw&s"
             alt=""
-            class="w-full h-full object-cover"
+            class="object-cover w-full h-full"
           />
         </div>
         <div class="flex-1">

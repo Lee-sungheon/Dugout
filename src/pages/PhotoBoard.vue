@@ -70,7 +70,9 @@ const props = defineProps({
 });
 </script>
 <template>
-  <div class="flex border border-red-500 gap-[30px] flex-col">
+  <div
+    class="flex border border-red-500 gap-[30px] flex-col px-[50px] py-[30px]"
+  >
     <!-- 글쓰기 버튼 -->
     <div class="cursor-pointer">
       <RouterLink
