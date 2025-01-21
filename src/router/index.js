@@ -71,6 +71,11 @@ const router = createRouter({
           component: () => import("@/pages/PhotoBoardDetail.vue"),
         },
         {
+          path: "photoboard/create",
+          name: "photoboardCreate",
+          component: () => import("@/pages/PhotoBoardCreate.vue"),
+        },
+        {
           path: "foodboard",
           name: "foodboard",
           component: () => import("@/pages/FoodBoard.vue"),

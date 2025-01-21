@@ -74,7 +74,7 @@ const props = defineProps({
     <!-- 글쓰기 버튼 -->
     <div class="cursor-pointer">
       <RouterLink
-        to="/team/photoboard/create/:id"
+        to="/team/photoboard/create"
         class="flex items-center justify-center w-full font-medium bg-white02 py-[10px] rounded-[10px] gap-[10px]"
       >
         직관 인증 포토 올리러 가기
