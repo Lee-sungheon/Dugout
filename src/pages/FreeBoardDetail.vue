@@ -4,7 +4,7 @@ import CommentSection from "@/components/CommentSection.vue";
 import PostHeader from "@/components/PostHeader.vue";
 </script>
 <template>
-  <div>
+  <div class="px-[50px] py-[30px]">
     <!-- 뒤로가기 -->
     <div class="border-2 border-green-500 mb-[50px] flex">
       <button>
