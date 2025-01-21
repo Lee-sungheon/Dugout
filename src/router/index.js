@@ -46,6 +46,11 @@ const router = createRouter({
           component: () => import("@/pages/FreeBoardDetail.vue"),
         },
         {
+          path: "freeboard/create",
+          name: "freeboardCreate",
+          component: () => import("@/pages/FreeBoardCreate.vue"),
+        },
+        {
           path: "crewboard",
           name: "crewboard",
           component: () => import("@/pages/CrewBoard.vue"),
