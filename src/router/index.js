@@ -72,9 +72,13 @@ const router = createRouter({
         },
       ],
     },
-
     { path: "/signin", name: "SignIn", component: SignIn },
     { path: "/signup", name: "SignUp", component: SignUp },
+    {
+      path: "/:pathMatch(.*)*",
+      name: "NotFound",
+      component: () => import("@/pages/NotFound.vue"),
+    },
 
     { path: "/kia", name: "kia", component: Kia },
     { path: "/samsung", name: "samsung", component: Samsung },
