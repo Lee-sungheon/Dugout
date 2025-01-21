@@ -81,9 +81,10 @@ const changeProfile = () => {
               @click="isChangeProfile ? toggleDropdown() : null"
               :class="
                 twMerge(
-                  'inline-flex flex-nowrap whitespace-nowrap items-center w-[173px] h-[39px] px-[15px] gap-[10px] rounded-[10px] bg-white02 text-4 text-black01 transition-all',
+                  'inline-flex flex-nowrap whitespace-nowrap items-center w-[173px] h-[39px] px-[15px] gap-[10px] rounded-[10px] bg-white02 text-4 text-black01 transition-all cursor-default',
                   isDropdownOpen &&
-                    'rounded-b-[0px] bg-white01 text-gray02 border border-gray02 border-[1px] border-b-transparent'
+                    'rounded-b-[0px] bg-white01 text-gray02 border border-gray02 border-[1px] border-b-transparent',
+                  isChangeProfile && 'cursor-pointer'
                 )
               "
             >
@@ -91,7 +92,7 @@ const changeProfile = () => {
               <img
                 v-if="isChangeProfile"
                 :src="myTeamToggle"
-                class="cursor-pointer w-[18px] h-[10.28px]"
+                class="w-[18px] h-[10.28px]"
               />
             </button>
             <div

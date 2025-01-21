@@ -14,7 +14,11 @@ import PostHeader from "@/components/PostHeader.vue";
     <!-- 상세페이지 -->
     <div class="flex flex-col gap-[50px]">
       <!-- 상세 페이지 정보 -->
-      <PostHeader />
+      <PostHeader
+        title="작년 첫 직관! 난 개막만을 기다려..."
+        nickname="닉네임"
+        time="4시간 전"
+      />
       <!-- 게시물 내용 -->
       <div
         class="flex flex-col items-center border border-b border-blue-500 border-gray01 pb-[50px]"
