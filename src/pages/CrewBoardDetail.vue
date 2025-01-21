@@ -16,9 +16,7 @@ import PostHeader from "@/components/PostHeader.vue";
       <!-- 상세 페이지 정보 -->
       <PostHeader crewBoard />
       <!-- 게시물 내용 -->
-      <div
-        class="border-x border-blue-500 pb-[50px] flex border-b border-b-gray01 flex-col items-center"
-      >
+      <div class="pb-[50px] border-b border-gray01">
         <span>
           안녕하세요!<br />
           지방 사는 20대 엘팬입니다.<br />

@@ -17,7 +17,7 @@ import PostHeader from "@/components/PostHeader.vue";
       <PostHeader />
       <!-- 게시물 내용 -->
       <div
-        class="border-x border-blue-500 py-[50px] flex border-b border-b-gray01 flex-col items-center"
+        class="flex flex-col items-center border border-b border-blue-500 border-gray01 pb-[50px]"
       >
         <span>
           프로젝트를 진행하면서 야구 얘기를 너무 많이 했더니 야구가 너무
