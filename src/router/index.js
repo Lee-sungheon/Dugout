@@ -70,6 +70,11 @@ const router = createRouter({
           name: "foodboard",
           component: () => import("@/pages/FoodBoard.vue"),
         },
+        {
+          path: "foodboard/:id",
+          name: "foodboardDetail",
+          component: () => import("@/pages/FoodBoardDetail.vue"),
+        },
       ],
     },
 

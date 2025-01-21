@@ -18,7 +18,11 @@ const router = useRouter();
     <!-- 상세페이지 -->
     <div class="flex flex-col gap-[50px]">
       <!-- 상세 페이지 정보 -->
-      <PostHeader />
+      <PostHeader
+        title="[240719] 위팍 워페 직관 인증!"
+        nickname="닉네임"
+        time="4시간 전"
+      />
       <!-- 게시물 내용 -->
       <div class="pt-[50px] pb-[50px] gap-[30px] flex border-b border-b-gray01">
         <div class="aspect-square rounded-[10px] overflow-hidden">

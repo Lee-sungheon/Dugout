@@ -14,7 +14,12 @@ import PostHeader from "@/components/PostHeader.vue";
     <!-- 상세페이지 -->
     <div class="flex flex-col gap-[50px]">
       <!-- 상세 페이지 정보 -->
-      <PostHeader crewBoard />
+      <PostHeader
+        crewBoard
+        title="20250322 | LG 트윈스 | 잠실 야구장 | 여자 | 20대 | 1명 이상"
+        nickname="닉네임"
+        time="4시간 전"
+      />
       <!-- 게시물 내용 -->
       <div
         class="border-x border-blue-500 pb-[50px] flex border-b border-b-gray01 flex-col items-center"

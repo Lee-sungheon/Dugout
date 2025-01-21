@@ -1,7 +1,5 @@
 <script setup>
 import PostArrow from "@/assets/icons/post_arrow.svg";
-import Like from "@/assets/icons/like.svg";
-import Comment from "@/assets/icons/comment.svg";
 import PhotoboardCard from "@/components/photoboard/PhotoboardCard.vue";
 
 const posts = [
@@ -74,7 +72,7 @@ const props = defineProps({
 <template>
   <div class="flex border border-red-500 gap-[30px] flex-col">
     <!-- 글쓰기 버튼 -->
-    <div>
+    <div class="cursor-pointer">
       <RouterLink
         to="/team/photoboard/create/:id"
         class="flex items-center justify-center w-full font-medium bg-white02 py-[10px] rounded-[10px] gap-[10px]"
