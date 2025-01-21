@@ -52,165 +52,175 @@ const crewGender = ref("여자");
 const crewGenderOptions = ["여자", "남자"];
 </script>
 <template>
-  <CreateHeader />
-  <div class="gap-[50px]">
-    <div class="mt-[40px] mb-[85px] gap-[30px]">
-      <div>
-        <div class="w-full pb-[30px] border-b-gray01 border-b-[1px]">
-          <input
-            type="text"
-            v-model="title"
-            class="w-full text-[30px] placeholder-gray01 placeholder-[30px] text-center outline-none"
-            placeholder="직관 크루 조건을 설정해주세요"
-          />
+  <div class="px-[50px]">
+    <CreateHeader />
+    <div class="gap-[50px]">
+      <div class="mt-[40px] mb-[85px] gap-[30px]">
+        <div>
+          <div class="w-full pb-[30px] border-b-gray01 border-b-[1px]">
+            <input
+              type="text"
+              v-model="title"
+              class="w-full text-[30px] placeholder-gray01 placeholder-[30px] text-center outline-none"
+              placeholder="직관 크루 조건을 설정해주세요"
+            />
+          </div>
+          <div class="pt-[30px]">
+            <textarea
+              type="text"
+              v-model="content"
+              class="w-full p-0 outline-none resize-none text-4 placeholder-gray01 placeholder-4"
+              placeholder="직관 크루 모집글을 작성해보세요"
+            />
+          </div>
         </div>
-        <div class="pt-[30px]">
-          <textarea
-            type="text"
-            v-model="content"
-            class="w-full p-0 text-4 placeholder-gray01 placeholder-4 outline-none resize-none"
-            placeholder="직관 크루 모집글을 작성해보세요"
-          />
-        </div>
-      </div>
-      <div class="flex flex-col gap-[30px]">
-        <div class="flex justify-between items-center h-[40px] gap-2">
-          <div class="w-[100px]">
-            <span class="text-black01 text-bold text-[18px] whitespace-nowrap"
-              >모집 상태</span
+        <div class="flex flex-col gap-[30px]">
+          <div class="flex justify-between items-center h-[40px] gap-2">
+            <div class="w-[100px]">
+              <span class="text-black01 text-bold text-[18px] whitespace-nowrap"
+                >모집 상태</span
+              >
+            </div>
+            <DropdownSelect
+              v-model:selectedOption="recruitStatus"
+              :options="recruitOptions"
+              part="모집 상태"
+            />
+          </div>
+          <div class="flex justify-between">
+            <div
+              class="flex justify-between items-center h-[40px] w-[425px] gap-2"
             >
-          </div>
-          <DropdownSelect
-            v-model:selectedOption="recruitStatus"
-            :options="recruitOptions"
-            part="모집 상태"
-          />
-        </div>
-        <div class="flex justify-between">
-          <div
-            class="flex justify-between items-center h-[40px] w-[425px] gap-2"
-          >
-            <div class="w-[100px]">
-              <span class="text-black01 text-bold text-[18px] whitespace-nowrap"
-                >경기일</span
-              >
-            </div>
-            <DropdownSelect
-              v-model:selectedOption="recruitStatus"
-              :options="recruitOptions"
-              part="경기일"
-            />
-          </div>
-          <div
-            class="flex justify-between items-center h-[40px] gap-2 w-[425px]"
-          >
-            <div class="w-[100px]">
-              <span class="text-black01 text-bold text-[18px] whitespace-nowrap"
-                >인원</span
-              >
-            </div>
-            <div class="flex gap-[10px] w-full">
+              <div class="w-[100px]">
+                <span
+                  class="text-black01 text-bold text-[18px] whitespace-nowrap"
+                  >경기일</span
+                >
+              </div>
               <DropdownSelect
-                v-model:selectedOption="peopleNum"
-                :options="peopleNumOptions"
-                part="인원"
-              />
-              <DropdownSelect
-                v-model:selectedOption="peopleNum2"
-                :options="peopleNum2Options"
-                part="인원"
+                v-model:selectedOption="recruitStatus"
+                :options="recruitOptions"
+                part="경기일"
               />
             </div>
-          </div>
-        </div>
-        <div class="flex justify-between">
-          <div
-            class="flex justify-between items-center h-[40px] w-[425px] gap-2"
-          >
-            <div class="w-[100px]">
-              <span class="text-black01 text-bold text-[18px] whitespace-nowrap"
-                >응원팀</span
-              >
+            <div
+              class="flex justify-between items-center h-[40px] gap-2 w-[425px]"
+            >
+              <div class="w-[100px]">
+                <span
+                  class="text-black01 text-bold text-[18px] whitespace-nowrap"
+                  >인원</span
+                >
+              </div>
+              <div class="flex gap-[10px] w-full">
+                <DropdownSelect
+                  v-model:selectedOption="peopleNum"
+                  :options="peopleNumOptions"
+                  part="인원"
+                />
+                <DropdownSelect
+                  v-model:selectedOption="peopleNum2"
+                  :options="peopleNum2Options"
+                  part="인원"
+                />
+              </div>
             </div>
-            <DropdownSelect
-              v-model:selectedOption="myTeam"
-              :options="myTeamOptions"
-              part="응원팀"
-            />
           </div>
-          <div
-            class="flex justify-between items-center h-[40px] w-[425px] gap-2"
-          >
-            <div class="w-[100px]">
-              <span class="text-black01 text-bold text-[18px] whitespace-nowrap"
-                >경기 장소</span
-              >
+          <div class="flex justify-between">
+            <div
+              class="flex justify-between items-center h-[40px] w-[425px] gap-2"
+            >
+              <div class="w-[100px]">
+                <span
+                  class="text-black01 text-bold text-[18px] whitespace-nowrap"
+                  >응원팀</span
+                >
+              </div>
+              <DropdownSelect
+                v-model:selectedOption="myTeam"
+                :options="myTeamOptions"
+                part="응원팀"
+              />
             </div>
-            <DropdownSelect
-              v-model:selectedOption="stadium"
-              :options="stadiumOptions"
-              part="경기 장소"
-            />
+            <div
+              class="flex justify-between items-center h-[40px] w-[425px] gap-2"
+            >
+              <div class="w-[100px]">
+                <span
+                  class="text-black01 text-bold text-[18px] whitespace-nowrap"
+                  >경기 장소</span
+                >
+              </div>
+              <DropdownSelect
+                v-model:selectedOption="stadium"
+                :options="stadiumOptions"
+                part="경기 장소"
+              />
+            </div>
           </div>
-        </div>
-        <div class="flex justify-between">
-          <div
-            class="flex justify-between items-center h-[40px] w-[425px] gap-2"
-          >
-            <div class="w-[100px]">
-              <span class="text-black01 text-bold text-[18px] whitespace-nowrap"
-                >작성자 성별</span
-              >
+          <div class="flex justify-between">
+            <div
+              class="flex justify-between items-center h-[40px] w-[425px] gap-2"
+            >
+              <div class="w-[100px]">
+                <span
+                  class="text-black01 text-bold text-[18px] whitespace-nowrap"
+                  >작성자 성별</span
+                >
+              </div>
+              <DropdownSelect
+                v-model:selectedOption="myGender"
+                :options="myGenderOptions"
+                part="작성자 성별"
+              />
             </div>
-            <DropdownSelect
-              v-model:selectedOption="myGender"
-              :options="myGenderOptions"
-              part="작성자 성별"
-            />
+            <div
+              class="flex justify-between items-center h-[40px] w-[425px] gap-2"
+            >
+              <div class="w-[100px]">
+                <span
+                  class="text-black01 text-bold text-[18px] whitespace-nowrap"
+                  >작성자 연령</span
+                >
+              </div>
+              <DropdownSelect
+                v-model:selectedOption="myAge"
+                :options="myAgeOptions"
+                part="작성자 연령"
+              />
+            </div>
           </div>
-          <div
-            class="flex justify-between items-center h-[40px] w-[425px] gap-2"
-          >
-            <div class="w-[100px]">
-              <span class="text-black01 text-bold text-[18px] whitespace-nowrap"
-                >작성자 연령</span
-              >
+          <div class="flex justify-between">
+            <div
+              class="flex justify-between items-center h-[40px] w-[425px] gap-2"
+            >
+              <div class="w-[100px]">
+                <span
+                  class="text-black01 text-bold text-[18px] whitespace-nowrap"
+                  >크루 성별</span
+                >
+              </div>
+              <DropdownSelect
+                v-model:selectedOption="crewGender"
+                :options="crewGenderOptions"
+                part="크루 성별"
+              />
             </div>
-            <DropdownSelect
-              v-model:selectedOption="myAge"
-              :options="myAgeOptions"
-              part="작성자 연령"
-            />
-          </div>
-        </div>
-        <div class="flex justify-between">
-          <div
-            class="flex justify-between items-center h-[40px] w-[425px] gap-2"
-          >
-            <div class="w-[100px]">
-              <span class="text-black01 text-bold text-[18px] whitespace-nowrap"
-                >크루 성별</span
-              >
+            <div
+              class="flex justify-between items-center h-[40px] w-[425px] gap-2"
+            >
+              <div class="w-[100px]">
+                <span
+                  class="text-black01 text-bold text-[18px] whitespace-nowrap"
+                  >크루 연령</span
+                >
+              </div>
+              <DropdownSelect
+                v-model:selectedOption="recruitStatus"
+                :options="recruitOptions"
+                part="크루 연령"
+              />
             </div>
-            <DropdownSelect
-              v-model:selectedOption="crewGender"
-              :options="crewGenderOptions"
-              part="크루 성별"
-            />
-          </div>
-          <div
-            class="flex justify-between items-center h-[40px] w-[425px] gap-2"
-          >
-            <div class="w-[100px]">
-              <span class="text-black01 text-bold text-[18px] whitespace-nowrap"
-                >크루 연령</span
-              >
-            </div>
-            <DropdownSelect
-              v-model:selectedOption="recruitStatus"
-              :options="recruitOptions"
-              part="크루 연령"
-            />
           </div>
         </div>
       </div>

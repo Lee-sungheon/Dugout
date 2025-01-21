@@ -8,7 +8,7 @@ const router = useRouter();
 </script>
 
 <template>
-  <div>
+  <div class="px-[50px] py-[30px]">
     <!-- 뒤로가기 -->
     <div class="border-2 border-green-500 mb-[50px] flex">
       <button @click="router.go(-1)">
@@ -42,19 +42,19 @@ const router = useRouter();
             <div class="flex-1 aspect-square rounded-[10px] overflow-hidden">
               <img
                 src="https://cdn.pixabay.com/photo/2023/05/11/03/34/baseball-7985433_1280.jpg"
-                class="w-full h-full object-cover"
+                class="object-cover w-full h-full"
               />
             </div>
             <div class="flex-1 aspect-square rounded-[10px] overflow-hidden">
               <img
                 src="https://cdn.pixabay.com/photo/2023/05/11/03/34/baseball-7985433_1280.jpg"
-                class="w-full h-full object-cover"
+                class="object-cover w-full h-full"
               />
             </div>
             <div class="flex-1 aspect-square rounded-[10px] overflow-hidden">
               <img
                 src="https://cdn.pixabay.com/photo/2023/05/11/03/34/baseball-7985433_1280.jpg"
-                class="w-full h-full object-cover"
+                class="object-cover w-full h-full"
               />
             </div>
           </div>
