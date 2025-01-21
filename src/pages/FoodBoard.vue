@@ -25,7 +25,7 @@ const removeTag = (tag) => {
     <!-- 글쓰기 버튼 -->
     <div class="cursor-pointer">
       <RouterLink
-        to="/team/foodboard/create/:id"
+        to="/team/foodboard/create"
         class="flex items-center justify-center w-full font-medium bg-white02 py-[10px] rounded-[10px] gap-[10px]"
       >
         직관 맛집 공유하기
