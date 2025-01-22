@@ -1,7 +1,7 @@
 import { supabase } from "@/supabase";
 
 // 이미지 추가 ✅
-const createRestaurantPostImage = async (postId, imageUrl, imageIndex) => {
+export const createRestaurantPostImage = async (postId, imageUrl, imageIndex) => {
   const { data, error } = await supabase
     .from("restaurant_post_image")
     .insert([{ post_id: postId, url: imageUrl, order_index: imageIndex }]);
@@ -15,7 +15,7 @@ const createRestaurantPostImage = async (postId, imageUrl, imageIndex) => {
 };
 
 // 특정 게시물의 이미지 조회 ✅
-const getRestaurantPostImages = async (postId) => {
+export const getRestaurantPostImages = async (postId) => {
   const { data, error } = await supabase
     .from("restaurant_post_image")
     .select("*")
@@ -29,7 +29,7 @@ const getRestaurantPostImages = async (postId) => {
 };
 
 // 특정 게시물의 특정 번호 이미지 수정 ✅
-const updateRestaurantPostImage = async (postId, orderIndex, imageUrl) => {
+export const updateRestaurantPostImage = async (postId, orderIndex, imageUrl) => {
   const { data, error } = await supabase
     .from("restaurant_post_image")
     .update({ url: imageUrl })
@@ -44,7 +44,7 @@ const updateRestaurantPostImage = async (postId, orderIndex, imageUrl) => {
 };
 
 // 게시물 이미지 삭제 ✅
-const deleteRestaurantPostImage = async (postId, orderIndex) => {
+export const deleteRestaurantPostImage = async (postId, orderIndex) => {
   const { data, error } = await supabase
     .from("restaurant_post_image")
     .delete()
@@ -56,11 +56,4 @@ const deleteRestaurantPostImage = async (postId, orderIndex) => {
     return null;
   }
   return data;
-};
-
-export default {
-  createRestaurantPostImage,
-  getRestaurantPostImages,
-  updateRestaurantPostImage,
-  deleteRestaurantPostImage,
 };

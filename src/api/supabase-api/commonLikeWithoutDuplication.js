@@ -7,7 +7,7 @@ import { supabase } from "@/supabase";
  * @param {number} memberId - 좋아요를 누르는 사용자 ID
  * @returns {Promise<string>} - 'Like added' 또는 'Already liked'
  */
-const addcommonLike = async (tableName, postId, memberId) => {
+export const addcommonLike = async (tableName, postId, memberId) => {
   const { data, error } = await supabase.rpc("add_like_to_table", {
     table_name: tableName,
     input_post_id: postId,
@@ -28,7 +28,7 @@ const addcommonLike = async (tableName, postId, memberId) => {
  * @param {number} memberId - 좋아요를 취소하는 사용자 ID
  * @returns {Promise<string>} - 'Like removed' 또는 'Like not found'
  */
-const removecommonLike = async (tableName, postId, memberId) => {
+export const removecommonLike = async (tableName, postId, memberId) => {
   const { data, error } = await supabase.rpc("remove_like_from_table", {
     table_name: tableName,
     input_post_id: postId,
@@ -41,5 +41,3 @@ const removecommonLike = async (tableName, postId, memberId) => {
 
   return data; // 'Like removed' 또는 'Like not found' 반환
 };
-
-export default { addcommonLike, removecommonLike };

@@ -1,7 +1,11 @@
 import { supabase } from "@/supabase";
 
 // 댓글 추가
-const createRestaurantPostComment = async (memberId, postId, content) => {
+export const createRestaurantPostComment = async (
+  memberId,
+  postId,
+  content
+) => {
   const { data, error } = await supabase
     .from("restaurant_post_comment")
     .insert([{ member_id: memberId, post_id: postId, content }]);
@@ -14,7 +18,7 @@ const createRestaurantPostComment = async (memberId, postId, content) => {
 };
 
 // 댓글 조회
-const getRestaurantPostComments = async (postId) => {
+export const getRestaurantPostComments = async (postId) => {
   const { data, error } = await supabase
     .from("restaurant_post_comment")
     .select("*")
@@ -28,7 +32,7 @@ const getRestaurantPostComments = async (postId) => {
 };
 
 // 댓글 수정
-const updateRestaurantPostComment = async (commentId, content) => {
+export const updateRestaurantPostComment = async (commentId, content) => {
   const { data, error } = await supabase
     .from("restaurant_post_comment")
     .update({ content })
@@ -42,7 +46,7 @@ const updateRestaurantPostComment = async (commentId, content) => {
 };
 
 // 댓글 삭제
-const deleteRestaurantPostComment = async (commentId) => {
+export const deleteRestaurantPostComment = async (commentId) => {
   const { data, error } = await supabase
     .from("restaurant_post_comment")
     .delete()
@@ -53,11 +57,4 @@ const deleteRestaurantPostComment = async (commentId) => {
     return null;
   }
   return data;
-};
-
-export {
-  createRestaurantPostComment,
-  getRestaurantPostComments,
-  updateRestaurantPostComment,
-  deleteRestaurantPostComment,
 };
