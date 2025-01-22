@@ -35,27 +35,6 @@ const handleSignOut = async () => {
 onMounted(() => {
   fetchCurrenthUser();
 });
-
-//
-const allQuestions = ref([]);
-
-const fetchQuestions = async () => {
-  try {
-    const response = await fetch("/api/games/playerQuiz.json"); // JSON 파일 경로
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    const data = await response.json();
-    allQuestions.value = data.questions;
-  } catch (error) {
-    console.error("데이터를 불러오는 중 오류 발생:", error);
-  }
-};
-
-onMounted(() => {
-  fetchQuestions();
-});
-//
 </script>
 <template>
   <div class="mt-[150px]">
@@ -63,13 +42,6 @@ onMounted(() => {
     <p v-else class="text-lg text-gray-500">로그인을 해주세요.</p>
     <RouterLink to="/signin">로그인</RouterLink>
     <button @click="handleSignOut">로그아웃</button>
-    <hr />
-    <ul>
-      <li v-for="question in allQuestions" :key="question.id">
-        <img :src="question.question" width="100px" />
-        <p>정답 : {{ question.answer }}</p>
-      </li>
-    </ul>
   </div>
 </template>
 <style scoped></style>
