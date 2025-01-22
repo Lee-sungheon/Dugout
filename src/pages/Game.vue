@@ -1,4 +1,5 @@
 <script setup>
+import Header from "@/components/ui/Header.vue";
 import { useRouter } from "vue-router";
 
 const router = useRouter();
@@ -16,6 +17,7 @@ const goToBaseBallTMT = () => {
 </script>
 
 <template>
+  <Header />
   <!-- 전체 배경 -->
   <div class="relative w-screen h-screen">
     <!-- 100% 검정색 배경 -->
