@@ -1,23 +1,38 @@
 <script setup>
 import Header from "@/components/ui/Header.vue";
-import { ref } from "vue";
-import { RouterView } from "vue-router";
-import gameIcon from "@/assets/images/baseballgame_logo.svg";
-import quizIcon from "@/assets/images/quiz_logo.svg";
-import tournamentIcon from "@/assets/images/tournament-logo.svg";
-import gameIconBlack from "@/assets/images/baseballgame_logo_black.svg";
-import quizIconBlack from "@/assets/images/quiz_logo_black.svg";
-import tournamentIconBlack from "@/assets/images/tournament_logo_black.svg";
+import { ref, computed, watch } from "vue";
+import { RouterView, useRoute, useRouter } from "vue-router";
+import { gameList } from "@/constants/index.js";
 
-const games = ["야구 게임", "야구 퀴즈", "야구 토너먼트"];
+const router = useRouter();
+const route = useRoute();
+
+const games = computed(() =>
+  gameList.map((game) => ({
+    ...game,
+    url: `/game/${game.path}`,
+  }))
+);
 
 const selectedGame = ref("");
+
+watch(
+  () => route.path,
+  (newGameSort) => {
+    const matchedGame = games.value.find((game) => game.path === newGameSort);
+    selectedGame.value = matchedGame ? matchedGame.name : "";
+  },
+  { immediate: true }
+);
+
 const selectGame = (game) => {
-  if (selectedGame.value !== game) {
-    selectedGame.value = game;
+  if (selectedGame.value !== game.name) {
+    selectedGame.value = game.name;
+    router.push(game.url);
   }
 };
 </script>
+
 <template>
   <div class="flex flex-col items-center justify-start w-full min-h-screen">
     <Header />
@@ -26,50 +41,25 @@ const selectGame = (game) => {
         class="flex items-center gap-x-[10px] w-max flex-nowrap ml-[30px] mr-[30px] mt-[117.5px]"
       >
         <button
-          v-for="(game, index) of games"
-          :key="index"
+          v-for="game of games"
+          :key="game.name"
           @click="selectGame(game)"
           class="inline-flex items-center h-[34px] px-[10px] rounded-[10px] whitespace-nowrap gap-[10px] text-[18px] font-semibold"
           :class="{
-            'bg-white01 text-black01': selectedGame.includes(game),
-            'bg-transparent text-white01': !selectedGame.includes(game),
+            'bg-white01 text-black01': selectedGame === game.name,
+            'bg-transparent text-white01': selectedGame !== game.name,
           }"
         >
           <img
-            v-if="game === '야구 게임' && !selectedGame.includes(game)"
-            :src="gameIcon"
-            class="w-[20.84px] h-[18px]"
+            :src="selectedGame === game.name ? game.iconBlack : game.icon"
+            class="w-[20px] h-[18px]"
           />
-          <img
-            v-if="game === '야구 게임' && selectedGame.includes(game)"
-            :src="gameIconBlack"
-            class="w-[20.84px] h-[18px]"
-          />
-          <img
-            v-if="game === '야구 퀴즈' && !selectedGame.includes(game)"
-            :src="quizIcon"
-            class="w-[18.26px] h-[18px]"
-          />
-          <img
-            v-if="game === '야구 퀴즈' && selectedGame.includes(game)"
-            :src="quizIconBlack"
-            class="w-[18.26px] h-[18px]"
-          />
-          <img
-            v-if="game === '야구 토너먼트' && !selectedGame.includes(game)"
-            :src="tournamentIcon"
-            class="w-[18px] h-[18px]"
-          />
-          <img
-            v-if="game === '야구 토너먼트' && selectedGame.includes(game)"
-            :src="tournamentIconBlack"
-            class="w-[18px] h-[18px]"
-          />
-          <p>{{ game }}</p>
+          <p>{{ game.name }}</p>
         </button>
       </div>
       <RouterView />
     </div>
   </div>
 </template>
+
 <style scoped></style>

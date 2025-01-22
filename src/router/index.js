@@ -16,7 +16,7 @@ import SignIn from "@/pages/SignIn.vue";
 import SignUp from "@/pages/SignUp.vue";
 import MyPage from "@/pages/MyPage.vue";
 import Main from "@/pages/Main.vue";
-import { teamList } from "@/constants";
+import { teamList, gameList } from "@/constants";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -34,12 +34,23 @@ const router = createRouter({
     },
     {
       path: "/game",
+      name: "Game",
+      component: () => import("@/pages/Game.vue"),
+    },
+    {
+      path: "/game",
       name: "GameLayout",
       component: () => import("@/layouts/GameLayout.vue"),
+      children: [
+        {
+          path: "quizselect",
+          name: "quizselect",
+          component: () => import("@/pages/QuizSelect.vue"),
+        },
+      ],
     },
     {
       path: "/:team",
-
       name: "BoardLayout",
       component: () => import("@/layouts/BoardLayout.vue"),
       beforeEnter: (to, from, next) => {
