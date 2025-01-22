@@ -31,4 +31,4 @@ const content = ref(new Delta()); // Delta 형식 기본값
   </div>
 </template>
 
-<style coped></style>
+<style scoped></style>
