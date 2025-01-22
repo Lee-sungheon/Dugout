@@ -1,3 +1,7 @@
-<script setup></script>
-<template></template>
+<script setup>
+import BaseballInfo from "@/components/game/BaseballInfo.vue";
+</script>
+<template>
+  <BaseballInfo />
+</template>
 <style scoped></style>
