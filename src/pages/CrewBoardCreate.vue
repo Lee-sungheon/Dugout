@@ -2,6 +2,7 @@
 import DropdownSelect from "@/components/common/DropdownSelect.vue";
 import CreateHeader from "@/components/CreateHeader.vue";
 import { ref } from "vue";
+import Baseball from "@/assets/icons/baseball.svg";
 
 const title = ref("");
 const content = ref("");
@@ -130,68 +131,86 @@ const crewGenderOptions = ["여자", "남자"];
               </div>
             </div>
           </div>
-          <div class="flex justify-between">
-            <div
-              class="flex justify-between items-center h-[40px] w-[425px] gap-2"
-            >
-              <div class="w-[100px]">
-                <span
-                  class="text-black01 text-bold text-[18px] whitespace-nowrap"
-                  >응원팀</span
-                >
-              </div>
-              <DropdownSelect
-                v-model:selectedOption="myTeam"
-                :options="myTeamOptions"
-                part="응원팀"
-              />
+          <div class="flex flex-col gap-[15.5px]">
+            <div class="flex gap-[10px] items-center">
+              <img :src="Baseball" class="w-[18px] h-[18px]" />
+              <p class="text-[14px] text-gray03">
+                응원팀과 경기 장소는 홈 | 원정 여부에 따라 다르니 꼼꼼히
+                확인해주세요!
+              </p>
             </div>
-            <div
-              class="flex justify-between items-center h-[40px] w-[425px] gap-2"
-            >
-              <div class="w-[100px]">
-                <span
-                  class="text-black01 text-bold text-[18px] whitespace-nowrap"
-                  >경기 장소</span
-                >
+            <div class="flex justify-between">
+              <div
+                class="flex justify-between items-center h-[40px] w-[425px] gap-2"
+              >
+                <div class="w-[100px]">
+                  <span
+                    class="text-black01 text-bold text-[18px] whitespace-nowrap"
+                    >응원팀</span
+                  >
+                </div>
+                <DropdownSelect
+                  v-model:selectedOption="myTeam"
+                  :options="myTeamOptions"
+                  part="응원팀"
+                />
               </div>
-              <DropdownSelect
-                v-model:selectedOption="stadium"
-                :options="stadiumOptions"
-                part="경기 장소"
-              />
+              <div
+                class="flex justify-between items-center h-[40px] w-[425px] gap-2"
+              >
+                <div class="w-[100px]">
+                  <span
+                    class="text-black01 text-bold text-[18px] whitespace-nowrap"
+                    >경기 장소</span
+                  >
+                </div>
+                <DropdownSelect
+                  v-model:selectedOption="stadium"
+                  :options="stadiumOptions"
+                  part="경기 장소"
+                />
+              </div>
             </div>
           </div>
-          <div class="flex justify-between">
-            <div
-              class="flex justify-between items-center h-[40px] w-[425px] gap-2"
-            >
-              <div class="w-[100px]">
-                <span
-                  class="text-black01 text-bold text-[18px] whitespace-nowrap"
-                  >작성자 성별</span
-                >
-              </div>
-              <DropdownSelect
-                v-model:selectedOption="myGender"
-                :options="myGenderOptions"
-                part="작성자 성별"
-              />
+          <div class="flex flex-col gap-[15.5px]">
+            <div class="flex gap-[10px] items-center">
+              <img :src="Baseball" class="w-[18px] h-[18px]" />
+              <p class="text-[14px] text-gray03">
+                응원팀과 경기 장소는 홈 | 원정 여부에 따라 다르니 꼼꼼히
+                확인해주세요!
+              </p>
             </div>
-            <div
-              class="flex justify-between items-center h-[40px] w-[425px] gap-2"
-            >
-              <div class="w-[100px]">
-                <span
-                  class="text-black01 text-bold text-[18px] whitespace-nowrap"
-                  >작성자 연령</span
-                >
+            <div class="flex justify-between">
+              <div
+                class="flex justify-between items-center h-[40px] w-[425px] gap-2"
+              >
+                <div class="w-[100px]">
+                  <span
+                    class="text-black01 text-bold text-[18px] whitespace-nowrap"
+                    >작성자 성별</span
+                  >
+                </div>
+                <DropdownSelect
+                  v-model:selectedOption="myGender"
+                  :options="myGenderOptions"
+                  part="작성자 성별"
+                />
               </div>
-              <DropdownSelect
-                v-model:selectedOption="myAge"
-                :options="myAgeOptions"
-                part="작성자 연령"
-              />
+              <div
+                class="flex justify-between items-center h-[40px] w-[425px] gap-2"
+              >
+                <div class="w-[100px]">
+                  <span
+                    class="text-black01 text-bold text-[18px] whitespace-nowrap"
+                    >작성자 연령</span
+                  >
+                </div>
+                <DropdownSelect
+                  v-model:selectedOption="myAge"
+                  :options="myAgeOptions"
+                  part="작성자 연령"
+                />
+              </div>
             </div>
           </div>
           <div class="flex justify-between">
