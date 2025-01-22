@@ -129,7 +129,7 @@ const changeProfile = () => {
             </div>
           </div>
         </div>
-        <div className="flex ml-[148px] gap-[30px] mr-[98px] mt-[50px]">
+        <div className="flex ml-[148px] gap-[50px] mr-[98px] mt-[50px]">
           <div className="flex flex-col items-center gap-[24px]">
             <span className="text-black01 text-[26px] font-bold"> 6 </span>
             <span className="text-black02 text-[18px] whitespace-nowrap">
