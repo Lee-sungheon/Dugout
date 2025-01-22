@@ -9,6 +9,10 @@ const content = ref("");
 const recruitStatus = ref("모집 중");
 const recruitOptions = ["모집 중", "모집 완료"];
 
+//개발할 때 달력 라이브러리로
+const gameDateStatus = ref("2025.03.22. 토요일");
+const gameDateOptions = ["2025.03.22. 토요일", "2025.03.23. 일요일"];
+
 const peopleNum = ref("1");
 const peopleNumOptions = ["1", "2", "3", "4"];
 const peopleNum2 = ref("이상");
@@ -98,8 +102,8 @@ const crewGenderOptions = ["여자", "남자"];
                 >
               </div>
               <DropdownSelect
-                v-model:selectedOption="recruitStatus"
-                :options="recruitOptions"
+                v-model:selectedOption="gameDateStatus"
+                :options="gameDateOptions"
                 part="경기일"
               />
             </div>
