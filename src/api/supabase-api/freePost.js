@@ -1,7 +1,6 @@
 import { supabase } from "./../../../src/supabase.js";
 
-// Create
-// 자유 게시물 작성 (free_post)
+// 자유 게시물 작성 
 async function createFreePost(memberId, content, title, thumbnailUrl, clubId) {
   const { data, error } = await supabase
     .from("free_post")
@@ -14,17 +13,17 @@ async function createFreePost(memberId, content, title, thumbnailUrl, clubId) {
         club_id: clubId,
       },
     ])
-    .select(); // 삽입된 데이터 반환
+    .select(); 
 
   if (error) {
     console.error("Error creating free post:", error);
     return null;
   }
 
-  return data; // 생성된 자유 게시물 반환
+  return data; 
 }
 
-// 자유 게시물에 좋아요 추가 (free_post_like)
+// 자유 게시물에 좋아요 추가 
 async function createFreePostLike(memberId, postId) {
   const { data, error } = await supabase
     .from("free_post_like")
@@ -37,7 +36,7 @@ async function createFreePostLike(memberId, postId) {
   return data;
 }
 
-// 자유 게시물에 댓글 추가 (free_post_comment)
+// 자유 게시물에 댓글 추가 
 async function createFreePostComment(memberId, postId, content) {
   const { data, error } = await supabase
     .from("free_post_comment")
@@ -47,17 +46,15 @@ async function createFreePostComment(memberId, postId, content) {
     console.error("Error creating free post comment:", error);
     return null;
   }
-  return data; // 생성된 댓글 데이터를 반환
+  return data; 
 }
 
-// Read
-
-// 특정 구단의 전체 게시물 조회 (free_post)
+// 특정 구단의 전체 게시물 조회 
 async function getAllFreePostsByClub(clubId) {
   const { data, error } = await supabase
     .from("free_post")
     .select("*")
-    .eq("club_id", clubId); // club_id로 필터링
+    .eq("club_id", clubId); 
 
   if (error) {
     console.error("Error fetching free posts for the club:", error);
@@ -66,13 +63,13 @@ async function getAllFreePostsByClub(clubId) {
   return data;
 }
 
-// 특정 자유 게시물 조회 (free_post)
+// 특정 자유 게시물 조회 
 async function getFreePostById(postId) {
   const { data, error } = await supabase
     .from("free_post")
     .select("*")
-    .eq("id", postId) // 'id'가 postId와 일치하는 게시물을 조회
-    .single(); // 하나의 게시물만 반환
+    .eq("id", postId) 
+    .single(); 
 
   if (error) {
     console.error("Error fetching free post:", error);
@@ -81,7 +78,7 @@ async function getFreePostById(postId) {
   return data;
 }
 
-// 자유 게시물 좋아요 조회 (free_post_like)
+// 자유 게시물 좋아요 조회 
 async function getFreePostLikes(postId) {
   const { data, error } = await supabase
     .from("free_post_like")
@@ -95,7 +92,7 @@ async function getFreePostLikes(postId) {
   return data;
 }
 
-// 자유 게시물 댓글 조회 (free_post_comment)
+// 자유 게시물 댓글 조회
 async function getFreePostComments(postId) {
   const { data, error } = await supabase
     .from("free_post_comment")
@@ -109,9 +106,8 @@ async function getFreePostComments(postId) {
   return data;
 }
 
-// Update
 
-// 자유 게시물 수정 (free_post)
+// 자유 게시물 수정
 async function updateFreePost(postId, content, title, thumbnailUrl) {
   const { data, error } = await supabase
     .from("free_post")
@@ -125,7 +121,7 @@ async function updateFreePost(postId, content, title, thumbnailUrl) {
   return data;
 }
 
-// 자유 게시물 좋아요 취소 (free_post_like)
+// 자유 게시물 좋아요 취소 
 async function updateFreePostLike(postId, memberId) {
   const { data, error } = await supabase
     .from("free_post_like")
@@ -140,7 +136,7 @@ async function updateFreePostLike(postId, memberId) {
   return data;
 }
 
-// 자유 게시물 댓글 수정 (free_post_comment)
+// 자유 게시물 댓글 수정
 async function updateFreePostComment(commentId, content) {
   const { data, error } = await supabase
     .from("free_post_comment")
@@ -154,9 +150,7 @@ async function updateFreePostComment(commentId, content) {
   return data;
 }
 
-// Delete
-
-// 자유 게시물 삭제 (free_post)
+// 자유 게시물 삭제
 async function deleteFreePost(postId) {
   const { data, error } = await supabase
     .from("free_post")
@@ -170,7 +164,7 @@ async function deleteFreePost(postId) {
   return data;
 }
 
-// 자유 게시물 댓글 삭제 (free_post_comment)
+// 자유 게시물 댓글 삭제
 async function deleteFreePostComment(commentId) {
   const { data, error } = await supabase
     .from("free_post_comment")

@@ -1,4 +1,4 @@
-import { supabase } from "./../../../src/supabase.js";
+import { supabase } from "@/supabase";
 
 // 댓글 추가
 const createRestaurantPostComment = async (memberId, postId, content) => {
