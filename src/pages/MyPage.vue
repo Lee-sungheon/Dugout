@@ -3,6 +3,7 @@ import Setting from "@/assets/icons/setting.svg";
 import myTeamToggle from "@/assets/icons/my_team_toggle.svg";
 import { ref } from "vue";
 import { twMerge } from "tailwind-merge";
+import Signout from "@/assets/icons/signout.svg";
 
 const isChangeProfile = ref(false);
 const isDropdownOpen = ref(false);
@@ -117,9 +118,15 @@ const changeProfile = () => {
                 <img :src="Setting" class="w-[16.97px] h-[18px]" />
               </button>
             </div>
-            <p className="text-[18px] text-gray03 ">
-              엘지를 너무나 사랑하는 야린이!!
-            </p>
+            <div>
+              <p className="text-[18px] text-gray03 ">
+                엘지를 너무나 사랑하는 야린이!!
+              </p>
+              <div class="flex items-center gap-[2.5px]">
+                <img :src="Signout" class="w-[18.28px] h-[16px]" />
+                <p class="text-[18px] text-[#F50000]">로그아웃</p>
+              </div>
+            </div>
           </div>
         </div>
         <div className="flex ml-[148px] gap-[30px] mr-[98px] mt-[50px]">
