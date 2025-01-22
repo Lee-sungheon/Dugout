@@ -36,9 +36,9 @@ const selectGame = (game) => {
 <template>
   <div class="flex flex-col items-center justify-start w-full min-h-screen">
     <Header />
-    <div class="bg-[#070707] w-full flex-grow">
+    <div class="bg-[#070707] w-full flex-grow pt-[100px] flex flex-col">
       <div
-        class="flex items-center gap-x-[10px] w-max flex-nowrap ml-[30px] mr-[30px] mt-[117.5px]"
+        class="flex items-center gap-[10px] w-full flex-nowrap px-[30px] py-[17px]"
       >
         <button
           v-for="game of games"
