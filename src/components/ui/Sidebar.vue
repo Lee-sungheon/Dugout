@@ -25,9 +25,7 @@ watch(
     <!-- 구단 이름 -->
     <span class="text-3xl font-sigmar">TWINS</span>
     <!-- 네비게이트 -->
-    <nav
-      class="flex flex-col items-center w-full border border-red-500 gap-[22px]"
-    >
+    <nav class="flex flex-col items-center w-full gap-[22px]">
       <RouterLink
         :to="`/${teamName}/freeboard`"
         :class="

@@ -6,7 +6,7 @@ import CreateHeader from "@/components/CreateHeader.vue";
 const content = ref(new Delta()); // Delta 형식 기본값
 </script>
 <template>
-  <div class="px-[50px]">
+  <div class="px-[50px] border-2 border-red-500">
     <CreateHeader />
     <!-- 제목부분 -->
     <div>
