@@ -5,8 +5,18 @@ import photoBoardIcon from "@/assets/icons/photo_board.svg";
 import foodBoardIcon from "@/assets/icons/food_board.svg";
 import { twMerge } from "tailwind-merge";
 import { useRoute } from "vue-router";
+import { ref, watch } from "vue";
 
 const route = useRoute();
+const teamName = ref(route.params.team);
+
+// route.params.team이 변경될 때마다 반응
+watch(
+  () => route.params.team,
+  (newTeamName, _) => {
+    teamName.value = newTeamName; // teamName을 업데이트
+  }
+);
 </script>
 <template>
   <div
@@ -19,7 +29,7 @@ const route = useRoute();
       class="flex flex-col items-center w-full border border-red-500 gap-[22px]"
     >
       <RouterLink
-        to="/team/freeboard"
+        :to="`/${teamName}/freeboard`"
         :class="
           twMerge(
             'flex px-[10px] py-2 items-center text-lg font-semibold gap-[10px] hover:bg-[#d9d9d9] w-full rounded-[10px]',
@@ -31,7 +41,7 @@ const route = useRoute();
         <span>자유 게시판</span>
       </RouterLink>
       <RouterLink
-        to="/team/crewboard"
+        :to="`/${teamName}/crewboard`"
         :class="
           twMerge(
             'flex px-[10px] py-2 items-center text-lg font-semibold gap-[10px] hover:bg-[#d9d9d9] w-full rounded-[10px]',
@@ -43,7 +53,7 @@ const route = useRoute();
         <span>직관 크루 모집</span>
       </RouterLink>
       <RouterLink
-        to="/team/photoboard"
+        :to="`/${teamName}/photoboard`"
         :class="
           twMerge(
             'flex px-[10px] py-2 items-center text-lg font-semibold gap-[10px] hover:bg-[#d9d9d9] w-full rounded-[10px]',
@@ -55,7 +65,7 @@ const route = useRoute();
         <span>직관 인증 포토</span>
       </RouterLink>
       <RouterLink
-        to="/team/foodboard"
+        :to="`/${teamName}/foodboard`"
         :class="
           twMerge(
             'flex px-[10px] py-2 items-center text-lg font-semibold gap-[10px] hover:bg-[#d9d9d9] w-full rounded-[10px]',
