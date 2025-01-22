@@ -5,16 +5,14 @@ import ballWhite from "@/assets/images/ballwhite.svg";
 import ballColor from "@/assets/images/ballColor.svg";
 </script>
 <template>
-  <div>
-    <div class="mt-[100px] border-2 border-red-500 relative">
+  <div class="flex justify-center">
+    <div class="relative">
       <img :src="gameMonitor" alt="모니터 사진" class="h-[670px]" />
       <!-- 모니터 레이아웃 -->
       <div
-        class="border-2 border-blue-500 absolute w-[586px] h-[387px] left-[71px] top-[43px] flex justify-center items-center"
+        class="absolute w-[586px] h-[387px] left-[71px] top-[43px] flex justify-center items-center"
       >
-        <div
-          class="flex flex-col items-center justify-center border-2 border-red-500 gap-[25px]"
-        >
+        <div class="flex flex-col items-center justify-center gap-[25px]">
           <!-- 제목 -->
           <img
             :src="baseBallMiniGame"
@@ -35,10 +33,8 @@ import ballColor from "@/assets/images/ballColor.svg";
             >
           </div>
           <!-- 볼 / 스트라이크 설명 -->
-          <div class="flex w-full border-2 border-blue-500 text-white01">
-            <div
-              class="flex flex-col items-center justify-between w-1/2 border-2 border-green-500"
-            >
+          <div class="flex w-full text-white01">
+            <div class="flex flex-col items-center justify-between w-1/2">
               <div class="flex flex-col items-center font-bold">
                 <span class="font-Galmuri11"
                   ><span class="font-Galmuri11 text-gameGreen">숫자</span>만
