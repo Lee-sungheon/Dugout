@@ -43,9 +43,11 @@ export default {
         Wiz_opa30: "#EDB4CB",
         progressing: "#34C300",
         Done: "#F50000",
+        gameGreen: "#0BF89F",
       },
       fontFamily: {
         sigmar: ["Sigmar", "cursive"], // Sigmar 폰트 추가 -> tailwind에서 font-sigmar로 사용
+        Galmuri11: ["Galmuri11", "sans-serif"],
       },
     },
   },
