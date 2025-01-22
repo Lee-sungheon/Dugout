@@ -29,12 +29,17 @@ const router = createRouter({
         { path: "", name: "main", component: Main },
         { path: "news", name: "news", component: News },
         { path: "highlight", name: "highlight", component: Highlight },
-        { path: "game", name: "game", component: Game },
         { path: "myPage", name: "myPage", component: MyPage },
       ],
     },
     {
+      path: "/game",
+      name: "GameLayout",
+      component: () => import("@/layouts/GameLayout.vue"),
+    },
+    {
       path: "/:team",
+
       name: "BoardLayout",
       component: () => import("@/layouts/BoardLayout.vue"),
       children: [
