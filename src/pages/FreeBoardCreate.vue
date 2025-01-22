@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watch } from "vue";
+import { ref } from "vue";
 import { Delta } from "@vueup/vue-quill";
 import CreateHeader from "@/components/CreateHeader.vue";
 

@@ -193,6 +193,11 @@ const router = createRouter({
             }
           },
         },
+        {
+          path: "foodboard/create",
+          name: "foodboardCreate",
+          component: () => import("@/pages/FoodBoardCreate.vue"),
+        },
       ],
     },
     { path: "/signin", name: "SignIn", component: SignIn },
