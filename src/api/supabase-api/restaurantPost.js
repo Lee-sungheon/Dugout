@@ -1,7 +1,7 @@
 import { supabase } from "@/supabase";
 
-// 게시물 작성 ✅
-const createRestaurantPost = async (
+// 게시물 작성 
+export const createRestaurantPost = async (
   memberId,
   content,
   title,
@@ -31,10 +31,11 @@ const createRestaurantPost = async (
   return postData;
 };
 
-// 특정 태그의 맛집 게시물 조회 (SQL로 처리) ✅
+// 특정 클럽id/ 클럽id + 태그로  맛집 게시물 조회 (SQL로 처리) 
+// tagName 매개변수가 없으면 알아서 null로 처리되며 클럽으로만 필터링
 export const getRestaurantPostsByTagAndClub = async (clubId, tagName) => {
   try {
-    const { data, error } = await supabase.rpc("get_posts_by_tag_and_club", {
+    const { data, error } = await supabase.rpc("get_restaurant_posts_by_tag_and_club", {
       input_club_id: clubId,
       input_tag_name: tagName,
     });
@@ -50,23 +51,30 @@ export const getRestaurantPostsByTagAndClub = async (clubId, tagName) => {
   }
 };
 
-// 특정 맛집 게시물 조회 ✅
-const getRestaurantPostById = async (postId) => {
-  const { data, error } = await supabase
-    .from("restaurant_post")
-    .select("*")
-    .eq("id", postId)
-    .single();
+// 게시물의 세부 정보를 가져오는 함수  
+export const getRestaurantPostDetailsById = async (postId) => {
+  try {
+    // Supabase에서 RPC 함수 호출
+    const { data, error } = await supabase.rpc(
+      "get_restaurant_post_details_by_id",
+      {
+        input_post_id: postId,
+      }
+    );
 
-  if (error) {
-    console.error("Error fetching restaurant post:", error);
-    return null;
+    if (error) {
+      throw error;
+    }
+
+    return data; 
+  } catch (error) {
+    console.error("Error fetching post details:", error.message);
+    throw error; 
   }
-  return data;
 };
 
-// 맛집 게시물 수정 ✅
-const updateRestaurantPost = async (
+// 맛집 게시물 수정 
+export const updateRestaurantPost = async (
   postId,
   content,
   title,
@@ -87,9 +95,8 @@ const updateRestaurantPost = async (
   return postData;
 };
 
-// 특정 게시물의 tags 수정 ✅
-// newTags 매개변수가 없으면 알아서 null로 처리되며 클럽으로만 필터링
-const updateRestaurantPostTags = async (postId, newTags) => {
+// 특정 게시물의 tags 수정 
+export const updateRestaurantPostTags = async (postId, newTags) => {
   const { data, error } = await supabase
     .from("restaurant_post")
     .update({ tags: newTags })
@@ -103,8 +110,8 @@ const updateRestaurantPostTags = async (postId, newTags) => {
   return data;
 };
 
-// 맛집 게시물 삭제 ✅
-const deleteRestaurantPost = async (postId) => {
+// 맛집 게시물 삭제 
+export const deleteRestaurantPost = async (postId) => {
   const { error: tagRecordError } = await supabase
     .from("viewing_restaurant_tag_record")
     .delete()
@@ -126,13 +133,4 @@ const deleteRestaurantPost = async (postId) => {
   }
 
   return data;
-};
-
-export default {
-  createRestaurantPost,
-  getRestaurantPostsByTagAndClub,
-  getRestaurantPostById,
-  updateRestaurantPost,
-  deleteRestaurantPost,
-  updateRestaurantPostTags,
 };

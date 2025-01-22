@@ -1,4 +1,3 @@
-// import { supabase } from "./../../supabase.js";
 import { supabase } from "@/supabase";
 
 /**
@@ -6,7 +5,7 @@ import { supabase } from "@/supabase";
  * @param {string} memberId
  * @returns {Promise<Array>}
  */
-async function getPostsByMemberId(memberId) {
+export const getPostsByMemberId = async (memberId) => {
   try {
     const { data, error } = await supabase.rpc("get_posts_by_member_id", {
       p_member_id: memberId,
@@ -37,14 +36,14 @@ async function getPostsByMemberId(memberId) {
     console.error("예기치 못한 오류 발생:", err);
     return [];
   }
-}
+};
 
 /**
  * 특정 멤버 ID로 좋아요한 게시물을 가져오는 함수 ✅
  * @param {string} memberId - 멤버 ID
  * @returns {Promise<Array>} - 좋아요한 게시물 배열
  */
-async function getLikedPostsByMemberId(memberId) {
+export const getLikedPostsByMemberId = async (memberId) => {
   try {
     const { data, error } = await supabase.rpc("get_liked_posts_by_member_id", {
       p_member_id: memberId,
@@ -75,14 +74,14 @@ async function getLikedPostsByMemberId(memberId) {
     console.error("예기치 못한 오류 발생:", err);
     return [];
   }
-}
+};
 
 /**
  * 특정 멤버 ID로 댓글 단 게시물을 가져오는 함수 ✅
  * @param {string} memberId - 멤버 ID
  * @returns {Promise<Array>} - 댓글 단 게시물 배열
  */
-async function getCommentedPostsByMemberId(memberId) {
+export const getCommentedPostsByMemberId = async (memberId) => {
   try {
     const { data, error } = await supabase.rpc(
       "get_commented_posts_by_member_id",
@@ -116,10 +115,4 @@ async function getCommentedPostsByMemberId(memberId) {
     console.error("예기치 못한 오류 발생:", err);
     return [];
   }
-}
-
-export {
-  getPostsByMemberId,
-  getLikedPostsByMemberId,
-  getCommentedPostsByMemberId,
 };
