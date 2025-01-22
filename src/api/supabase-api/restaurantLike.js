@@ -1,4 +1,4 @@
-import { supabase } from "./../../../src/supabase.js";
+import { supabase } from "@/supabase";
 
 const createRestaurantPostLike = async (memberId, postId) => {
   const { data, error } = await supabase
