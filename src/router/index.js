@@ -47,6 +47,11 @@ const router = createRouter({
           name: "quizselect",
           component: () => import("@/pages/QuizSelect.vue"),
         },
+        {
+          path: "tournamentselect",
+          name: "tournamentselect",
+          component: () => import("@/pages/TournamentSelect.vue"),
+        },
       ],
     },
     {
