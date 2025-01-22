@@ -26,6 +26,7 @@ export default {
       },
       fontFamily: {
         sigmar: ["Sigmar", "cursive"], // Sigmar 폰트 추가 -> tailwind에서 font-sigmar로 사용
+        Galmuri11: ["Galmuri11", "sans-serif"],
       },
     },
   },
