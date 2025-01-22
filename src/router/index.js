@@ -52,6 +52,11 @@ const router = createRouter({
           name: "baseballgame",
           component: () => import("@/pages/BaseballGame.vue"),
         },
+          {
+          path: "tournamentselect",
+          name: "tournamentselect",
+          component: () => import("@/pages/TournamentSelect.vue"),
+        },
       ],
     },
     {
