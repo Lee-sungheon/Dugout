@@ -7,41 +7,80 @@ import PlayerQuizGreen from "@/assets/images/player_quiz_card_green.svg";
 import RecordQuiz from "@/assets/images/record_quiz_card.svg";
 import RecordQuizGreen from "@/assets/images/record_quiz_card_green.svg";
 import PlayBtn from "@/assets/images/play_btn.svg";
+import { useRouter } from "vue-router";
+import { ref } from "vue";
 
-//개발할 때 선택하면 green 컬러로 카드, 텍스트 바뀌는 로직 구현
+const router = useRouter();
+const selectedQuiz = ref(null);
+
+// 퀴즈 선택 핸들러
+const selectQuiz = (quiz) => {
+  selectedQuiz.value = quiz;
+};
+
+// Start 버튼 핸들러
+const startQuiz = () => {
+  if (selectedQuiz.value) {
+    router.push(`/game/quizselect/${selectedQuiz.value}`);
+  } else {
+    alert("퀴즈를 선택해주세요!");
+  }
+};
 </script>
 <template>
-  <div class="relative flex flex-grow mx-auto w-max">
+  <div class="relative mx-auto w-max">
     <img :src="Monitor" class="h-[670px]" />
     <div
-      class="absolute top-[109px] left-1/2 translate-x-[-49%] w-full px-[89px] flex justify-between"
-    >
+      class="absolute top-[109px] left-1/2 translate-x-[-49%] w-full px-[89px] flex justify-between">
       <button
-        class="flex flex-col justify-center items-center gap-[16px] cursor-pointer"
-      >
-        <img :src="InfoQuiz" class="h-[217px] flex-1 object-contain" />
-        <span class="font-bold font-Galmuri11 text-gameGreen"
+        @click="selectQuiz('triviaquiz')"
+        :class="selectedQuiz === 'triviaquiz' ? 'text-gameGreen' : ''"
+        class="flex flex-col justify-center items-center gap-[16px] cursor-pointer">
+        <img
+          :src="selectedQuiz === 'triviaquiz' ? InfoQuizGreen : InfoQuiz"
+          class="h-[217px] flex-1 object-contain" />
+        <span
+          :class="
+            selectedQuiz === 'triviaquiz' ? 'text-gameGreen' : 'text-white01'
+          "
+          class="font-bold font-Galmuri11"
           >야구 상식 퀴즈</span
         >
       </button>
       <button
-        class="flex flex-col justify-center items-center gap-[16px] cursor-pointer"
-      >
-        <img :src="PlayerQuiz" class="h-[217px] flex-1 object-contain" />
-        <span class="font-bold font-Galmuri11 text-gameGreen">선수 맞추기</span>
+        @click="selectQuiz('playerquiz')"
+        :class="selectedQuiz === 'playerquiz' ? 'text-gameGreen' : ''"
+        class="flex flex-col justify-center items-center gap-[16px] cursor-pointer">
+        <img
+          :src="selectedQuiz === 'playerquiz' ? PlayerQuizGreen : PlayerQuiz"
+          class="h-[217px] flex-1 object-contain" />
+        <span
+          :class="
+            selectedQuiz === 'playerquiz' ? 'text-gameGreen' : 'text-white01'
+          "
+          class="font-bold font-Galmuri11"
+          >선수 맞추기</span
+        >
       </button>
       <button
-        class="flex flex-col justify-center items-center gap-[16px] cursor-pointer"
-      >
-        <img :src="RecordQuiz" class="h-[217px] flex-1 object-contain" />
-        <span class="font-bold font-Galmuri11 text-gameGreen"
+        @click="selectQuiz('recordquiz')"
+        :class="selectedQuiz === 'recordquiz' ? 'text-gameGreen' : ''"
+        class="flex flex-col justify-center items-center gap-[16px] cursor-pointer">
+        <img
+          :src="selectedQuiz === 'recordquiz' ? RecordQuizGreen : RecordQuiz"
+          class="h-[217px] flex-1 object-contain" />
+        <span
+          :class="
+            selectedQuiz === 'recordquiz' ? 'text-gameGreen' : 'text-white01'
+          "
+          class="font-bold font-Galmuri11"
           >야구 기록 퀴즈</span
         >
       </button>
     </div>
     <button
-      class="absolute bottom-[140px] left-1/2 translate-x-[-45%] cursor-pointer"
-    >
+      @click="startQuiz"
+      class="absolute bottom-[140px] left-1/2 translate-x-[-45%] cursor-pointer">
       <img :src="PlayBtn" />
     </button>
   </div>
