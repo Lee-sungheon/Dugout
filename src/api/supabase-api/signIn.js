@@ -41,15 +41,19 @@ export const signInWithEmail = async (email, password) => {
       email,
       password,
     });
+
     if (error) {
-      console.error("이메일 로그인 실패: ", error.message);
+      console.error("이메일 로그인 중 오류 발생:", error.message);
       return { success: false, error: error.message };
-    } else {
-      console.log("로그인 성공: ", data.user);
     }
-    return { success: true, user };
+
+    if (data?.user) {
+      return { success: true, user: data.user };
+    }
+
+    return { success: false, error: "로그인 실패" };
   } catch (error) {
     console.error("이메일 로그인 중 알 수 없는 오류 발생:", error);
-    return { success: false, error: "Unexpected Error" };
+    return { success: false, error: error.message };
   }
 };
