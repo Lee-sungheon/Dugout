@@ -26,7 +26,6 @@ const fetchQuestions = async () => {
       throw new Error(`퀴즈를 불러오는 데 실패했습니다 ${error}`);
     const data = await response.json();
     allQuestions.value = data.questions;
-    console.log(allQuestions.value);
 
     // 문제 10개 추출
     shuffledQuestions.value = getRandomQuestions(allQuestions.value, 10);
