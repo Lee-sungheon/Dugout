@@ -36,20 +36,57 @@ const isSelected = (team) =>
 const selectTeam = (team) => {
   if (!selectedTeam.value.includes(team)) {
     selectedTeam.value.push(team);
-    console.log("✅ 팀 추가됨:", team);
+    console.log("팀 추가됨:", team);
     console.log("📌 현재 선택된 팀 목록:", selectedTeam.value);
   }
 };
 const removeTeam = (team) => {
   selectedTeam.value = selectedTeam.value.filter((t) => t.tag !== team.tag);
-  console.log("❌ 팀 제거됨:", team);
+  console.log("팀 제거됨:", team);
   console.log("📌 현재 선택된 팀 목록:", selectedTeam.value);
 };
+
+const getChannelProfile = async () => {
+  const channelUrl = `https://www.googleapis.com/youtube/v3/channels?part=snippet&id=${CHANNEL_ID}&key=${API_KEY}`;
+  try {
+    const response = await fetch(channelUrl);
+
+    if (!response.ok) {
+      console.error(`📌 CHANNEL API 요청 실패: HTTP ${response.status}`);
+      return "";
+    }
+
+    const data = await response.json();
+    return data.items[0]?.snippet?.thumbnails?.default?.url || "";
+  } catch (error) {
+    console.error("📌 프로필 이미지 가져오기 실패", error);
+    return "";
+  }
+};
+
+const getVideoStatistics = async (videoId) => {
+  const url = `https://www.googleapis.com/youtube/v3/videos?part=statistics&id=${videoId}&key=${API_KEY}`;
+
+  try {
+    const response = await fetch(url);
+    if (!response.ok) {
+      console.error(`📌 비디오 조회수 요청 실패: HTTP ${response.status}`);
+      return "0";
+    }
+
+    const data = await response.json();
+    return data.items[0]?.statistics?.viewCount || "0";
+  } catch (error) {
+    console.error("📌 비디오 조회수 가져오기 실패:", error);
+    return "0";
+  }
+};
+
 const searchVideos = async (searchQuery) => {
   const searchUrl = `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${encodeURIComponent(
     searchQuery
   )}&channelId=${CHANNEL_ID}&type=video&order=date&maxResults=10&key=${API_KEY}`;
-  //개발할 때만 할당량 때문에 maxResults 5로 둠 (최대 50까지 가능)
+  //개발할 때만 할당량 때문에 maxResults 10으로 둠 (최대 50까지 가능)
 
   try {
     const response = await fetch(searchUrl);
@@ -62,16 +99,32 @@ const searchVideos = async (searchQuery) => {
     const data = await response.json();
     console.log("검색 결과:", data);
 
-    return data.items.map((item) => ({
-      id: item.id.videoId,
-      title: item.snippet.title,
-      thumbnail:
-        item.snippet.thumbnails.high.url ||
-        item.snippet.thumbnails.medium.url ||
-        item.snippet.thumbnails.default.url,
-      channelTitle: item.snippet.channelTitle,
-      publishedAt: item.snippet.publishedAt,
-    }));
+    const videosData = await Promise.all(
+      data.items.map(async (item) => {
+        const videoId = item.id.videoId;
+        const channelId = item.snippet.channelId;
+
+        const [profileImage, viewCount] = await Promise.all([
+          getChannelProfile(channelId), // 채널 프로필 이미지 가져오기
+          getVideoStatistics(videoId), // 비디오 조회수 가져오기
+        ]);
+
+        return {
+          id: videoId,
+          title: item.snippet.title,
+          thumbnail:
+            item.snippet.thumbnails.high.url ||
+            item.snippet.thumbnails.medium.url ||
+            item.snippet.thumbnails.default.url,
+          channelTitle: item.snippet.channelTitle,
+          publishedAt: item.snippet.publishedAt,
+          profileImg: profileImage,
+          viewCount: viewCount,
+        };
+      })
+    );
+
+    return videosData;
   } catch (error) {
     console.error("📌 검색 API 실패:", error);
     return [];
