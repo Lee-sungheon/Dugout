@@ -1,8 +1,9 @@
 <script setup>
 import DropdownSelect from "@/components/common/DropdownSelect.vue";
 import CreateHeader from "@/components/CreateHeader.vue";
-import { ref } from "vue";
+import { ref, watch } from "vue";
 import Baseball from "@/assets/icons/baseball.svg";
+import Calendar from "@/assets/icons/calendar.svg";
 
 const title = ref("");
 const content = ref("");
@@ -10,9 +11,10 @@ const content = ref("");
 const recruitStatus = ref("모집 중");
 const recruitOptions = ["모집 중", "모집 완료"];
 
-//개발할 때 달력 라이브러리로
-const gameDateStatus = ref("2025.03.22. 토요일");
-const gameDateOptions = ["2025.03.22. 토요일", "2025.03.23. 일요일"];
+//개발할 때 달력 라이브러리로 VCalendar
+const gameDateStatus = ref(new Date());
+const formattedGameDate = ref("");
+const isDatePickerOpen = ref(false); // 달력 열림/닫힘 상태
 
 const peopleNum = ref("1");
 const peopleNumOptions = ["1", "2", "3", "4"];
@@ -37,14 +39,16 @@ const myTeamOptions = [
 const stadium = ref("서울종합운동장 야구장");
 const stadiumOptions = [
   "부산 사직 야구장",
-  "광주 기아 챔피언스필드",
+  "광주 KIA 챔피언스필드",
   "대구 삼성 라이온즈파크",
   "서울종합운동장 야구장",
   "고척스카이돔",
   "인천 SSG 랜더스 필드",
   "수원 KT위즈파크",
-  "대전 베이스볼드림파크",
+  "대전 한화생명이글스파크",
   "창원 NC파크",
+  "포항 야구장",
+  "마산 야구장",
 ];
 
 const myGender = ref("여자");
@@ -55,8 +59,43 @@ const myAgeOptions = ["20대", "30대", "50대", "60대"];
 
 const crewGender = ref("여자");
 const crewGenderOptions = ["여자", "남자"];
+
+const crewAge = ref("20대");
+const crewAgeOptions = ["20대", "30대", "50대", "60대"];
+
+// 날짜를 포맷팅하는 함수
+const formatDate = (date) => {
+  if (!date) return "";
+  const year = date.getFullYear();
+  const month = date.getMonth() + 1;
+  const day = date.getDate();
+  return `${year}-${month}-${day}`;
+};
+
+watch(gameDateStatus, (newDate) => {
+  formattedGameDate.value = formatDate(newDate); // 포맷팅된 값을 저장
+  isDatePickerOpen.value = false; // 달력 닫기
+});
+
+// 크루 모집 데이터 등록 함수
+
+// const handleSubmit = async() => {
+//   await createCrewRecruitmentPost({
+//   member_id:
+//   status: recruitStatus.value,
+//   game_date:
+//   members:
+//   author_sex: myGender.value,
+//   author_age: myAge.value,
+//   crew_sex: crewGender.value,
+//   crew_age: crewAge.value,
+//   content:
+//   club_id:
+//   });
+// }
 </script>
 <template>
+
   <div class="px-[50px]">
     <CreateHeader />
     <div class="gap-[50px]">
@@ -102,11 +141,21 @@ const crewGenderOptions = ["여자", "남자"];
                   >경기일</span
                 >
               </div>
-              <DropdownSelect
-                v-model:selectedOption="gameDateStatus"
-                :options="gameDateOptions"
-                part="경기일"
-              />
+              <div class="flex justify-between items-center h-[40px] w-[425px] gap-2 mt-[20px]">
+      <!-- 드롭다운 및 달력 -->
+      <div class="relative w-full">
+        <button
+          @click="isDatePickerOpen = !isDatePickerOpen"
+          class="flex items-center justify-between w-full h-[40px] px-[15px] bg-white02 text-black01 text-[18px] rounded-[8px] border"
+        >
+          <span>{{ formattedGameDate || "날짜를 선택하세요" }}</span>
+          <img :src="Calendar" class="w-[18px] h-[18px]" />
+        </button>
+        <div v-if="isDatePickerOpen" class="absolute z-10 mt-2">
+          <VDatePicker v-model="gameDateStatus" mode="single" />
+        </div>
+      </div>
+    </div>
             </div>
             <div
               class="flex justify-between items-center h-[40px] gap-2 w-[425px]"
@@ -239,8 +288,8 @@ const crewGenderOptions = ["여자", "남자"];
                 >
               </div>
               <DropdownSelect
-                v-model:selectedOption="recruitStatus"
-                :options="recruitOptions"
+                v-model:selectedOption="crewAge"
+                :options="crewAgeOptions"
                 part="크루 연령"
               />
             </div>
