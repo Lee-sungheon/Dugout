@@ -72,6 +72,21 @@ const router = createRouter({
           name: "tournamentselect",
           component: () => import("@/pages/TournamentSelect.vue"),
         },
+        {
+          path: "tournamentselect/traitor",
+          name: "traitor",
+          component: () => import("@/pages/TournamentTraitor.vue"),
+        },
+        {
+          path: "tournamentselect/hero",
+          name: "hero",
+          component: () => import("@/pages/TournamentHero.vue"),
+        },
+        {
+          path: "tournamentselect/handsome",
+          name: "handsome",
+          component: () => import("@/pages/TournamentHandsome.vue"),
+        },
       ],
     },
     {
