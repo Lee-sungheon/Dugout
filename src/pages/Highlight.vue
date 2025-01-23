@@ -1,129 +1,128 @@
 <script setup>
-import { ref } from "vue";
+import { computed, onMounted, ref, watch } from "vue";
 import deleteBtn from "../assets/icons/delete-btn.svg";
 
 const teams = [
-  "# LG 트윈스",
-  "# KT 위즈",
-  "# 삼성 라이온즈",
-  "# KIA 타이거즈",
-  "# 키움 히어로즈",
-  "# 한화 이글스",
-  "# NC 다이노스",
-  "# 롯데 자이언츠",
-  "# SSG 랜더스",
-  "# 두산 베어스",
+  { tag: "# LG 트윈스", searchTitle: ["LG", "트윈스", "앨지", "twins"] },
+  { tag: "# KT 위즈", searchTitle: ["KT", "위즈", "케이티", "wiz"] },
+  {
+    tag: "# 삼성 라이온즈",
+    searchTitle: ["삼성", "라이온즈", "samsung", "lions"],
+  },
+  { tag: "# KIA 타이거즈", searchTitle: ["KIA", "기아", "타이거즈", "tigers"] },
+  {
+    tag: "# 키움 히어로즈",
+    searchTitle: ["키움", "히어로즈", "kiwoom", "heroes"],
+  },
+  { tag: "# 한화 이글스", searchTitle: ["한화", "이글스", "hanwha", "eagles"] },
+  { tag: "# NC 다이노스", searchTitle: ["NC", "다이노스", "엔씨", "dinos"] },
+  {
+    tag: "# 롯데 자이언츠",
+    searchTitle: ["롯데", "자이언츠", "lotte", "giants"],
+  },
+  { tag: "# SSG 랜더스", searchTitle: ["SSG", "랜더스", "landers"] },
+  { tag: "# 두산 베어스", searchTitle: ["두산", "베어스", "doosan", "bears"] },
 ];
 
+const API_KEY = import.meta.env.VITE_YOUTUBE_API_KEY;
+const CHANNEL_ID = import.meta.env.VITE_TVINGSPORTS_CHANNEL_ID;
+
 const selectedTeam = ref([]);
+const videos = ref([]);
+
+const isSelected = (team) =>
+  computed(() => selectedTeam.value.some((t) => t.tag === team.tag));
+
 const selectTeam = (team) => {
   if (!selectedTeam.value.includes(team)) {
     selectedTeam.value.push(team);
+    console.log("✅ 팀 추가됨:", team);
+    console.log("📌 현재 선택된 팀 목록:", selectedTeam.value);
   }
 };
 const removeTeam = (team) => {
-  selectedTeam.value = selectedTeam.value.filter((t) => t !== team);
+  selectedTeam.value = selectedTeam.value.filter((t) => t.tag !== team.tag);
+  console.log("❌ 팀 제거됨:", team);
+  console.log("📌 현재 선택된 팀 목록:", selectedTeam.value);
+};
+const searchVideos = async (searchQuery) => {
+  const searchUrl = `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${encodeURIComponent(
+    searchQuery
+  )}&channelId=${CHANNEL_ID}&type=video&order=date&maxResults=10&key=${API_KEY}`;
+  //개발할 때만 할당량 때문에 maxResults 5로 둠 (최대 50까지 가능)
+
+  try {
+    const response = await fetch(searchUrl);
+
+    if (!response.ok) {
+      console.error(`📌 API 요청 실패: HTTP ${response.status}`);
+      return [];
+    }
+
+    const data = await response.json();
+    console.log("검색 결과:", data);
+
+    return data.items.map((item) => ({
+      id: item.id.videoId,
+      title: item.snippet.title,
+      thumbnail:
+        item.snippet.thumbnails.high.url ||
+        item.snippet.thumbnails.medium.url ||
+        item.snippet.thumbnails.default.url,
+      channelTitle: item.snippet.channelTitle,
+      publishedAt: item.snippet.publishedAt,
+    }));
+  } catch (error) {
+    console.error("📌 검색 API 실패:", error);
+    return [];
+  }
 };
 
-// 샘플 영상 데이터 (퍼블리싱용 - 추후 youtube API 가져와 구현)
-const sampleVideos = ref([
-  {
-    id: "abc123",
-    title:
-      "[삼성 vs KIA] 10/28 한국시리즈 5차전 I 2024 신한 SOL뱅크 KBO 포스트시즌 I 하이라이트 I TVING",
-    thumbnail:
-      "https://cdn.pixabay.com/photo/2017/05/22/07/24/baseball-2333353_1280.jpg",
-    publishedAt: "2025-01-17",
-    channelTitle: "TVING SPORTS",
-    profileImg:
-      "https://yt3.googleusercontent.com/o-lu5v2BlCbPxbHLpbnO_PGedFB3RjU63t02B7eHlU6AgRqoZssrnVhKIbnCQEsSkrC1yCIg2kc=s900-c-k-c0x00ffffff-no-rj",
-    viewCount: 123,
+const fetchFilteredVideos = async () => {
+  const requiredKeywords = ["kbo", "하이라이트"];
+  const excludeKeywords = ["프로농구", "kbl", "shorts"];
+  const excludeQuery = excludeKeywords.map((word) => `-${word}`).join(" ");
+
+  if (selectedTeam.value.length === 0) {
+    const searchQuery = `"${requiredKeywords.join('" "')} " ${excludeQuery}`;
+    let result = await searchVideos(searchQuery);
+
+    videos.value = result.filter(
+      (video) =>
+        requiredKeywords.some((keyword) => video.title.includes(keyword)) &&
+        !excludeKeywords.some((exclude) => video.title.includes(exclude))
+    );
+    return;
+  }
+
+  const filterKeywords = selectedTeam.value.flatMap((team) => team.searchTitle);
+  const searchQuery = `"${filterKeywords.join(" | ")} ${requiredKeywords.join(
+    " "
+  )}" ${excludeQuery}`;
+
+  let result = await searchVideos(searchQuery);
+  videos.value = result.filter(
+    (video) =>
+      filterKeywords.some((keyword) => video.title.includes(keyword)) &&
+      !excludeKeywords.some((exclude) => video.title.includes(exclude))
+  );
+};
+
+watch(
+  selectedTeam,
+  (newVal, oldVal) => {
+    console.log("📌 selectedTeam 변경됨");
+    console.log("이전 값:", oldVal);
+    console.log("현재 값:", newVal);
+    fetchFilteredVideos();
   },
-  {
-    id: "abc1234",
-    title:
-      "[삼성 vs KIA] 10/28 한국시리즈 5차전 I 2024 신한 SOL뱅크 KBO 포스트시즌 I 하이라이트 I TVING",
-    thumbnail:
-      "https://cdn.pixabay.com/photo/2017/05/22/07/24/baseball-2333353_1280.jpg",
-    publishedAt: "2025-01-17",
-    channelTitle: "TVING SPORTS",
-    profileImg:
-      "https://yt3.googleusercontent.com/o-lu5v2BlCbPxbHLpbnO_PGedFB3RjU63t02B7eHlU6AgRqoZssrnVhKIbnCQEsSkrC1yCIg2kc=s900-c-k-c0x00ffffff-no-rj",
-    viewCount: 123,
-  },
-  {
-    id: "abc12345",
-    title:
-      "[삼성 vs KIA] 10/28 한국시리즈 5차전 I 2024 신한 SOL뱅크 KBO 포스트시즌 I 하이라이트 I TVING",
-    thumbnail:
-      "https://cdn.pixabay.com/photo/2017/05/22/07/24/baseball-2333353_1280.jpg",
-    publishedAt: "2025-01-17",
-    channelTitle: "TVING SPORTS",
-    profileImg:
-      "https://yt3.googleusercontent.com/o-lu5v2BlCbPxbHLpbnO_PGedFB3RjU63t02B7eHlU6AgRqoZssrnVhKIbnCQEsSkrC1yCIg2kc=s900-c-k-c0x00ffffff-no-rj",
-    viewCount: 123,
-  },
-  {
-    id: "abc123456",
-    title:
-      "[삼성 vs KIA] 10/28 한국시리즈 5차전 I 2024 신한 SOL뱅크 KBO 포스트시즌 I 하이라이트 I TVING",
-    thumbnail:
-      "https://cdn.pixabay.com/photo/2017/05/22/07/24/baseball-2333353_1280.jpg",
-    publishedAt: "2025-01-17",
-    channelTitle: "TVING SPORTS",
-    profileImg:
-      "https://yt3.googleusercontent.com/o-lu5v2BlCbPxbHLpbnO_PGedFB3RjU63t02B7eHlU6AgRqoZssrnVhKIbnCQEsSkrC1yCIg2kc=s900-c-k-c0x00ffffff-no-rj",
-    viewCount: 123,
-  },
-  {
-    id: "abc1234567",
-    title:
-      "[삼성 vs KIA] 10/28 한국시리즈 5차전 I 2024 신한 SOL뱅크 KBO 포스트시즌 I 하이라이트 I TVING",
-    thumbnail:
-      "https://cdn.pixabay.com/photo/2017/05/22/07/24/baseball-2333353_1280.jpg",
-    publishedAt: "2025-01-17",
-    channelTitle: "TVING SPORTS",
-    profileImg:
-      "https://yt3.googleusercontent.com/o-lu5v2BlCbPxbHLpbnO_PGedFB3RjU63t02B7eHlU6AgRqoZssrnVhKIbnCQEsSkrC1yCIg2kc=s900-c-k-c0x00ffffff-no-rj",
-    viewCount: 123,
-  },
-  {
-    id: "abc12345678",
-    title:
-      "[삼성 vs KIA] 10/28 한국시리즈 5차전 I 2024 신한 SOL뱅크 KBO 포스트시즌 I 하이라이트 I TVING",
-    thumbnail:
-      "https://cdn.pixabay.com/photo/2017/05/22/07/24/baseball-2333353_1280.jpg",
-    publishedAt: "2025-01-17",
-    channelTitle: "TVING SPORTS",
-    profileImg:
-      "https://yt3.googleusercontent.com/o-lu5v2BlCbPxbHLpbnO_PGedFB3RjU63t02B7eHlU6AgRqoZssrnVhKIbnCQEsSkrC1yCIg2kc=s900-c-k-c0x00ffffff-no-rj",
-    viewCount: 123,
-  },
-  {
-    id: "abc12345678",
-    title:
-      "[삼성 vs KIA] 10/28 한국시리즈 5차전 I 2024 신한 SOL뱅크 KBO 포스트시즌 I 하이라이트 I TVING",
-    thumbnail:
-      "https://cdn.pixabay.com/photo/2017/05/22/07/24/baseball-2333353_1280.jpg",
-    publishedAt: "2025-01-17",
-    channelTitle: "TVING SPORTS",
-    profileImg:
-      "https://yt3.googleusercontent.com/o-lu5v2BlCbPxbHLpbnO_PGedFB3RjU63t02B7eHlU6AgRqoZssrnVhKIbnCQEsSkrC1yCIg2kc=s900-c-k-c0x00ffffff-no-rj",
-    viewCount: 123,
-  },
-  {
-    id: "abc12345678",
-    title:
-      "[삼성 vs KIA] 10/28 한국시리즈 5차전 I 2024 신한 SOL뱅크 KBO 포스트시즌 I 하이라이트 I TVING",
-    thumbnail:
-      "https://cdn.pixabay.com/photo/2017/05/22/07/24/baseball-2333353_1280.jpg",
-    publishedAt: "2025-01-17",
-    channelTitle: "TVING SPORTS",
-    profileImg:
-      "https://yt3.googleusercontent.com/o-lu5v2BlCbPxbHLpbnO_PGedFB3RjU63t02B7eHlU6AgRqoZssrnVhKIbnCQEsSkrC1yCIg2kc=s900-c-k-c0x00ffffff-no-rj",
-    viewCount: 123,
-  },
-]);
+  { deep: true }
+);
+
+onMounted(() => {
+  console.log("🚀 초기 selectedTeam 값:", selectedTeam.value);
+  fetchFilteredVideos();
+});
 </script>
 <template>
   <div class="w-full mx-[29px] pb-[30px] fixed bg-white01">
@@ -132,18 +131,18 @@ const sampleVideos = ref([
         class="flex items-center gap-x-[10px] w-max flex-nowrap ml-[30px] mr-[30px]"
       >
         <button
-          v-for="(team, index) of teams"
-          :key="index"
+          v-for="team in teams"
+          :key="team.tag"
           @click="selectTeam(team)"
           class="inline-flex items-center h-[39px] px-[15px] rounded-[10px] whitespace-nowrap"
           :class="{
-            'bg-gray02 text-white01 gap-[10px]': selectedTeam.includes(team),
-            'bg-white02 text-black01': !selectedTeam.includes(team),
+            'bg-gray02 text-white01 gap-[10px]': isSelected(team).value,
+            'bg-white02 text-black01': !isSelected(team).value,
           }"
         >
-          <p>{{ team }}</p>
+          <p>{{ team.tag }}</p>
           <img
-            v-if="selectedTeam.includes(team)"
+            v-if="isSelected(team).value"
             @click.stop="removeTeam(team)"
             :src="deleteBtn"
             class="cursor-pointer"
@@ -154,7 +153,7 @@ const sampleVideos = ref([
   </div>
   <div class="flex-1 mx-[29px] mt-[219px] mb-[99.97px]">
     <div class="grid grid-cols-3 gap-x-[21px] gap-y-[50px] w-full">
-      <div v-for="video in sampleVideos" :key="video.id" class="bg-white">
+      <div v-for="video in videos" :key="video.id" class="bg-white">
         <a
           :href="'https://www.youtube.com/watch?v=' + video.id"
           target="_blank"

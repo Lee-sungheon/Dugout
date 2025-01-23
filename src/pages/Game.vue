@@ -6,13 +6,13 @@ const router = useRouter();
 
 // 각 버튼 클릭 시 경로 이동 함수
 const goToBaseBallGame = () => {
-  router.push("/game/BaseBallGame");
+  router.push("/game/baseballgame");
 };
 const goToBaseBallQuiz = () => {
-  router.push("/game/BaseBallQuiz");
+  router.push("/game/quizselect");
 };
 const goToBaseBallTMT = () => {
-  router.push("/game/BaseBallTMT");
+  router.push("/game/tournamentselect");
 };
 </script>
 
