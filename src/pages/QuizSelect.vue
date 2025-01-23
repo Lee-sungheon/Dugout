@@ -11,7 +11,7 @@ import PlayBtn from "@/assets/images/play_btn.svg";
 //개발할 때 선택하면 green 컬러로 카드, 텍스트 바뀌는 로직 구현
 </script>
 <template>
-  <div class="relative flex flex-grow mx-auto w-max">
+  <div class="relative mx-auto w-max">
     <img :src="Monitor" class="h-[670px]" />
     <div
       class="absolute top-[109px] left-1/2 translate-x-[-49%] w-full px-[89px] flex justify-between"

@@ -10,6 +10,8 @@ const foodBoardTag = [
   "# 야구 볼 수 있는 식당",
 ];
 
+
+
 const selectedTag = ref([]);
 const selectTag = (tag) => {
   if (!selectedTag.value.includes(tag)) {
@@ -27,7 +29,7 @@ const removeTag = (tag) => {
     <!-- 글쓰기 버튼 -->
     <div class="cursor-pointer">
       <RouterLink
-        to="/team/foodboard/create"
+        :to="`/${$route.params.team}/foodboard/create`"
         class="flex items-center justify-center w-full font-medium bg-white02 py-[10px] rounded-[10px] gap-[10px]"
       >
         직관 맛집 공유하기
@@ -56,10 +58,9 @@ const removeTag = (tag) => {
         </button>
       </div>
     </div>
-    <!-- 목록 -->
-    <FoodBoardCard />
-    <FoodBoardCard />
-    <FoodBoardCard />
+    <section>
+      <FoodBoardCard />
+    </section>
   </div>
 </template>
 <style scoped></style>
