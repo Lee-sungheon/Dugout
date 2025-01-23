@@ -1,19 +1,48 @@
 import { supabase } from "@/supabase";
 import { getCurrentUser } from "./userInfo";
 
-// 직관 인증 게시물 불러오기
-export const getCertificationPost = async (table, clubId) => {
+
+// 특정 클럽의 모든 직관 인증 게시물을 가져오기
+export const getViewingCertificationPostsByClub = async (clubId) => {
   try {
-    const { data, error } = await supabase
-      .from(table)
-      .select("*")
-      .eq("club_id", clubId);
+    const { data, error } = await supabase.rpc(
+      "get_viewing_certification_posts_by_club",
+      {
+        input_club_id: clubId,
+      }
+    );
+
+    if (error) {
+      console.error("Error fetching data:", error);
+      return null;
+    }
+    return data;
+  } catch (err) {
+    console.error("Unexpected error:", err);
+    return null;
+  }
+};
+
+// 직관 인증 게시물의 상세 정보를 불러오기
+export const getCertificationPostDetailsById = async (postId) => {
+  try {
+    const { data, error } = await supabase.rpc(
+      "get_viewing_certification_post_details",
+      {
+        input_post_id: postId,
+      }
+    );
 
     if (error) throw new Error(error.message);
 
+    if (!data || data.length === 0) {
+      console.log("게시물을 찾을 수 없습니다.");
+      return null;
+    }
+
     return data;
   } catch (error) {
-    console.error("게시물 불러오기 실패: ", error);
+    console.error("게시물 상세 정보 불러오기 실패: ", error);
     return null;
   }
 };
@@ -119,3 +148,4 @@ export const deleteCertificationPost = async (postId) => {
     return null;
   }
 };
+

@@ -1,6 +1,6 @@
 import { supabase } from "@/supabase";
 
-const createRestaurantPostLike = async (memberId, postId) => {
+export const createRestaurantPostLike = async (memberId, postId) => {
   const { data, error } = await supabase
     .from("restaurant_post_like")
     .insert([{ member_id: memberId, post_id: postId }]);
@@ -12,7 +12,7 @@ const createRestaurantPostLike = async (memberId, postId) => {
   return data;
 };
 
-const getRestaurantPostLikes = async (postId) => {
+export const getRestaurantPostLikes = async (postId) => {
   const { data, error } = await supabase
     .from("restaurant_post_like")
     .select("*")
@@ -25,7 +25,7 @@ const getRestaurantPostLikes = async (postId) => {
   return data;
 };
 
-const updateRestaurantPostLike = async (postId, memberId) => {
+export const updateRestaurantPostLike = async (postId, memberId) => {
   const { data, error } = await supabase
     .from("restaurant_post_like")
     .delete()
@@ -39,8 +39,3 @@ const updateRestaurantPostLike = async (postId, memberId) => {
   return data;
 };
 
-export {
-  createRestaurantPostLike,
-  getRestaurantPostLikes,
-  updateRestaurantPostLike,
-};

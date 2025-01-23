@@ -7,8 +7,7 @@ import headsetIcon from "@/assets/icons/audio_headset.svg";
 </script>
 <template>
   <header
-    class="w-full h-[100px] flex items-center justify-center fixed z-10 border-b border-white02 bg-white01"
-  >
+    class="w-full h-[100px] flex items-center justify-center fixed z-50 border-b border-white02 bg-white01">
     <div class="flex px-[30px] py-[22px] w-full justify-between items-center">
       <!-- 왼쪽 영역(로고 / 네비게이션) -->
       <div class="flex items-center gap-[50px]">
@@ -41,13 +40,11 @@ import headsetIcon from "@/assets/icons/audio_headset.svg";
       <!-- 가운데 영역(음악) -->
       <div>
         <div
-          class="w-[44px] h-[35px] bg-white02 rounded-[10px] flex justify-center items-center"
-        >
+          class="w-[44px] h-[35px] bg-white02 rounded-[10px] flex justify-center items-center">
           <img
             :src="headsetIcon"
             alt="헤드셋 아이콘"
-            class="w-[20px] h-[20px]"
-          />
+            class="w-[20px] h-[20px]" />
         </div>
       </div>
 
@@ -58,25 +55,21 @@ import headsetIcon from "@/assets/icons/audio_headset.svg";
         <!-- 유저정보 -->
         <RouterLink
           to="/myPage"
-          class="flex items-center gap-[15px] cursor-pointer"
-        >
+          class="flex items-center gap-[15px] cursor-pointer">
           <img
             src="https://news.nateimg.co.kr/orgImg/aj/2024/01/21/20240121132054894779.jpg"
             alt="유저 프로필"
-            class="w-10 h-10 rounded-full"
-          />
+            class="w-10 h-10 rounded-full" />
           <span class="font-bold text-gray03">닉네임</span>
         </RouterLink>
         <!-- 테마 -->
         <div
-          class="border border-gray01 rounded-[10px] flex px-[10px] py-2 h-[35px] w-[135px] items-center justify-between"
-        >
+          class="border border-gray01 rounded-[10px] flex px-[10px] py-2 h-[35px] w-[135px] items-center justify-between">
           <span class="text-gray02">히어로즈 테마</span>
           <img
             :src="themeToggleIcon"
             alt="테마 토클 아이콘"
-            class="w-[18px] h-[10px]"
-          />
+            class="w-[18px] h-[10px]" />
         </div>
       </div>
     </div>
