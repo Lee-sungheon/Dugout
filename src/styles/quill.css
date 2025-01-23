@@ -2,15 +2,20 @@
 .ql-toolbar {
   border: none !important;
   border-bottom: 1px solid #919191 !important;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 /* 내용 디자인 바꾸기 */
 .ql-container {
   border: none !important;
+  padding-top: 30px;
+  padding-left: 70px;
+  padding-right: 70px;
 }
 /* placeholder 수정하기 */
 .ql-editor::before {
   color: #b1b1b1 !important; /* 텍스트 색상 (파란색) */
   font-size: 16px; /* 글자 크기 */
   font-style: normal !important;
+  padding-left: 70px;
 }
