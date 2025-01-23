@@ -12,6 +12,8 @@
     "@supabase/supabase-js": "^2.48.0",
     "@vueup/vue-quill": "^1.2.0",
     "axios": "^1.7.9",
+    "dayjs": "^1.11.13",
+    "dayjs-plugin-utc": "^0.1.2",
     "pinia": "^2.3.0",
     "quill": "^2.0.3",
     "tailwind-merge": "^2.6.0",
