@@ -1,5 +1,3 @@
-import { ref, onMounted } from "vue";
-
 // 랜덤 문제 추출 함수
 export function getRandomQuestions(questions, count) {
   // 모든 id 추출
