@@ -119,7 +119,7 @@ const retryQuiz = () => {
         <!-- 퀴즈 화면 -->
         <div
           v-else-if="currentQuestion"
-          class="text-white01 w-[80%] flex flex-col gap-[60px] items-center absolute left-1/2 -translate-x-1/2 top-0">
+          class="text-white01 w-[80%] flex flex-col gap-[50px] items-center absolute left-1/2 -translate-x-1/2 top-0">
           <div class="flex flex-col items-center gap-[10px]">
             <p class="font-Galmuri11">{{ currentIndex + 1 }}번째 문제</p>
             <p class="font-Galmuri11 text-[24px] break-keep text-center">
