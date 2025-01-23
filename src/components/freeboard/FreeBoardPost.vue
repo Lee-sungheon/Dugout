@@ -1,9 +1,24 @@
 <script setup>
 import likeIcon from "@/assets/icons/like.svg";
 import commentIcon from "@/assets/icons/comment.svg";
+
+// day.js
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
+import "dayjs/locale/ko"; // 한국어 로케일 가져오기
+dayjs.extend(relativeTime); // relativeTime 플러그인 활성화
+dayjs.locale("ko"); // 한국어 로케일 설정
+
+const props = defineProps({
+  post: {
+    type: Object,
+  },
+});
 </script>
 <template>
-  <div class="flex w-full gap-[30px] py-[20px] border-b border-white02">
+  <div
+    class="flex w-full gap-[30px] py-[20px] border-b border-white02 border-2 border-red-500"
+  >
     <!-- 왼쪽 이미지 -->
     <div>
       <img
@@ -16,21 +31,20 @@ import commentIcon from "@/assets/icons/comment.svg";
     <div class="flex py-[10px] flex-col justify-between">
       <!-- 제목 / 내용 -->
       <div class="flex flex-col gap-[10px] text-black01">
-        <span class="text-xl font-bold leading-[24px]"
-          >작년 첫 직관! 난 개막만을 기다려...🥺</span
-        >
-        <span class="text-gray03 leading-[19px]"
-          >글을 처음부터 주어진 영역을 채울 때까지의 텍스트를 가져와 화면에
-          출력합니다. 글을 처음부터 주어진 영역을 채울 때까지의 테스트를 가져와
-          화면에 출력합니다. 글을 처음부터 주어진 영역을 채울 때까지의 텍스트를
-          가져와</span
-        >
+        <span class="text-xl font-bold leading-[24px]">{{
+          props.post.title
+        }}</span>
+        <span class="text-gray03 leading-[19px]">{{ props.post.content }}</span>
       </div>
       <!-- 닉네임 / 작성일 -->
       <div class="flex text-xs gap-[10px] leading-[14px]">
-        <span class="font-bold text-gray03">닉네임</span>
-        <span class="text-gray02">2025.01.16</span>
-        <span class="text-gray02">13분전</span>
+        <span class="font-bold text-gray03">{{ props.post.author_name }}</span>
+        <span class="text-gray02">
+          {{ dayjs(props.post.created_at).format("YYYY.MM.DD") }}</span
+        >
+        <span class="text-gray02">{{
+          dayjs(props.post.created_at).fromNow()
+        }}</span>
       </div>
       <!-- 좋아요 / 댓글 -->
       <div
@@ -38,7 +52,7 @@ import commentIcon from "@/assets/icons/comment.svg";
       >
         <div class="flex gap-[10px]">
           <img :src="likeIcon" alt="하트 이미지" class="w-[16px] h-[14px]" />
-          <span>20</span>
+          <span>{{ props.post.like_count }}</span>
         </div>
         <div class="flex gap-[10px]">
           <img
@@ -47,7 +61,7 @@ import commentIcon from "@/assets/icons/comment.svg";
             class="w-[16px] h-[14px]"
             ß
           />
-          <span>20</span>
+          <span>{{ props.post.comment_count }}</span>
         </div>
       </div>
     </div>
