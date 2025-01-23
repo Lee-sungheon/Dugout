@@ -1,6 +1,5 @@
 <script setup>
 import { ref, onMounted } from "vue";
-import { supabase } from "@/supabase";
 import { useRouter, RouterLink } from "vue-router";
 import { getCurrentUser, signOutUser } from "../api/supabase-api/userInfo";
 
@@ -31,21 +30,6 @@ const handleSignOut = async () => {
     console.error("로그아웃 실패:", error);
   }
 };
-
-import { getCertificationPostComments } from "../api/supabase-api/viewingCertificationPostcomment";
-const test = async (postId) => {
-  try {
-    const data = await getCertificationPostComments(
-      "viewing_certification_post_comment",
-      postId
-    );
-    console.log(data);
-  } catch (error) {
-    console.error("Error fetching data:", error);
-  }
-};
-
-test(1);
 
 // 컴포넌트 로드 시 실행
 onMounted(() => {
