@@ -1,6 +1,8 @@
 <script setup>
-import { computed, onMounted, ref, watch } from "vue";
-import deleteBtn from "../assets/icons/delete-btn.svg";
+import { onMounted, ref, watch } from "vue";
+import HighlightList from "@/components/highlight/HighlightList.vue";
+import TeamSelector from "@/components/highlight/TeamSelector.vue";
+import VideoModal from "@/components/highlight/VideoModal.vue";
 
 const teams = [
   { tag: "# LG 트윈스", searchTitle: ["LG", "트윈스", "앨지", "twins"] },
@@ -29,23 +31,9 @@ const CHANNEL_ID = import.meta.env.VITE_TVINGSPORTS_CHANNEL_ID;
 
 const selectedTeam = ref([]);
 const videos = ref([]);
+const activeVideoId = ref(null);
 
-const isSelected = (team) =>
-  computed(() => selectedTeam.value.some((t) => t.tag === team.tag));
-
-const selectTeam = (team) => {
-  if (!selectedTeam.value.includes(team)) {
-    selectedTeam.value.push(team);
-    console.log("팀 추가됨:", team);
-    console.log("📌 현재 선택된 팀 목록:", selectedTeam.value);
-  }
-};
-const removeTeam = (team) => {
-  selectedTeam.value = selectedTeam.value.filter((t) => t.tag !== team.tag);
-  console.log("팀 제거됨:", team);
-  console.log("📌 현재 선택된 팀 목록:", selectedTeam.value);
-};
-
+//채널 프로필 이미지 가져오기
 const getChannelProfile = async () => {
   const channelUrl = `https://www.googleapis.com/youtube/v3/channels?part=snippet&id=${CHANNEL_ID}&key=${API_KEY}`;
   try {
@@ -64,6 +52,7 @@ const getChannelProfile = async () => {
   }
 };
 
+//비디오 조회수 가져오기
 const getVideoStatistics = async (videoId) => {
   const url = `https://www.googleapis.com/youtube/v3/videos?part=statistics&id=${videoId}&key=${API_KEY}`;
 
@@ -82,11 +71,12 @@ const getVideoStatistics = async (videoId) => {
   }
 };
 
+//나머지 비디오 정보(비디오id, 제목, 썸네일, 업로드 날짜, 채널 제목) 가져오기
 const searchVideos = async (searchQuery) => {
   const searchUrl = `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${encodeURIComponent(
     searchQuery
-  )}&channelId=${CHANNEL_ID}&type=video&order=date&maxResults=10&key=${API_KEY}`;
-  //개발할 때만 할당량 때문에 maxResults 10으로 둠 (최대 50까지 가능)
+  )}&channelId=${CHANNEL_ID}&type=video&order=date&maxResults=5&key=${API_KEY}`;
+  //개발할 때만 할당량 때문에 maxResults 5로 둠 (최대 50까지 가능)
 
   try {
     const response = await fetch(searchUrl);
@@ -131,6 +121,7 @@ const searchVideos = async (searchQuery) => {
   }
 };
 
+// 해시태그버튼 따라 필터링 - kbo, 하이라이트만 필수쿼리로 지정하면 농구, 쇼츠 등이 걸러지지 않음.
 const fetchFilteredVideos = async () => {
   const requiredKeywords = ["kbo", "하이라이트"];
   const excludeKeywords = ["프로농구", "kbl", "shorts"];
@@ -161,6 +152,10 @@ const fetchFilteredVideos = async () => {
   );
 };
 
+const openModal = (videoId) => {
+  activeVideoId.value = videoId;
+};
+
 watch(
   selectedTeam,
   (newVal, oldVal) => {
@@ -178,61 +173,12 @@ onMounted(() => {
 });
 </script>
 <template>
-  <div class="w-full mx-[29px] pb-[30px] fixed bg-white01">
-    <div class="mt-[150px] min-h-[39px] overflow-x-auto scrollbar-hide">
-      <div
-        class="flex items-center gap-x-[10px] w-max flex-nowrap ml-[30px] mr-[30px]"
-      >
-        <button
-          v-for="team in teams"
-          :key="team.tag"
-          @click="selectTeam(team)"
-          class="inline-flex items-center h-[39px] px-[15px] rounded-[10px] whitespace-nowrap"
-          :class="{
-            'bg-gray02 text-white01 gap-[10px]': isSelected(team).value,
-            'bg-white02 text-black01': !isSelected(team).value,
-          }"
-        >
-          <p>{{ team.tag }}</p>
-          <img
-            v-if="isSelected(team).value"
-            @click.stop="removeTeam(team)"
-            :src="deleteBtn"
-            class="cursor-pointer"
-          />
-        </button>
-      </div>
-    </div>
-  </div>
-  <div class="flex-1 mx-[29px] mt-[219px] mb-[99.97px]">
-    <div class="grid grid-cols-3 gap-x-[21px] gap-y-[50px] w-full">
-      <div v-for="video in videos" :key="video.id" class="bg-white">
-        <a
-          :href="'https://www.youtube.com/watch?v=' + video.id"
-          target="_blank"
-        >
-          <img
-            :src="video.thumbnail"
-            class="w-full h-[218.52px] object-cover rounded-[8px]"
-          />
-        </a>
-        <div class="flex items-start mt-[10px] gap-[10px]">
-          <img :src="video.profileImg" class="w-[35px] h-[35px] object-cover" />
-          <div class="gap-y-[5px]">
-            <h3 class="font-bold text-4 text-black01 line-clamp-2">
-              {{ video.title }}
-            </h3>
-            <h4 class="font-bold text-3 text-gray03">
-              {{ video.channelTitle }}
-            </h4>
-            <p class="text-3 text-gray03">
-              조회수: {{ Number(video.viewCount).toLocaleString() }}회 |
-              {{ new Date(video.publishedAt).toLocaleDateString() }}
-            </p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+  <TeamSelector :selectedTeam="selectedTeam" :teams="teams" />
+  <HighlightList :videos="videos" @playVideo="openModal" />
+  <VideoModal
+    v-if="activeVideoId"
+    :videoId="activeVideoId"
+    @close="activeVideoId = null"
+  />
 </template>
 <style scoped></style>
