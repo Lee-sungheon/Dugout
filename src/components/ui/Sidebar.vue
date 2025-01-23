@@ -53,7 +53,7 @@ watch(
         :class="
           twMerge(
             'flex px-[10px] py-2 items-center text-lg font-semibold gap-[10px] w-full rounded-[10px]',
-            route.path.includes('/team/freeboard')
+            route.path.includes('/freeboard')
               ? `bg-${teamPage.nickname}_opa10`
               : '',
             `hover:bg-${teamPage.nickname}_opa10`
@@ -68,7 +68,7 @@ watch(
         :class="
           twMerge(
             'flex px-[10px] py-2 items-center text-lg font-semibold gap-[10px] w-full rounded-[10px]',
-            route.path.includes('/team/crewboard')
+            route.path.includes('/crewboard')
               ? `bg-${teamPage.nickname}_opa10`
               : '',
             `hover:bg-${teamPage.nickname}_opa10`
@@ -83,7 +83,7 @@ watch(
         :class="
           twMerge(
             'flex px-[10px] py-2 items-center text-lg font-semibold gap-[10px] w-full rounded-[10px]',
-            route.path.includes('/team/photoboard')
+            route.path.includes('/photoboard')
               ? `bg-${teamPage.nickname}_opa10`
               : '',
             `hover:bg-${teamPage.nickname}_opa10`
@@ -98,7 +98,7 @@ watch(
         :class="
           twMerge(
             'flex px-[10px] py-2 items-center text-lg font-semibold gap-[10px] w-full rounded-[10px]',
-            route.path.includes('/team/foodboard')
+            route.path.includes('/foodboard')
               ? `bg-${teamPage.nickname}_opa10`
               : '',
             `hover:bg-${teamPage.nickname}_opa10`
