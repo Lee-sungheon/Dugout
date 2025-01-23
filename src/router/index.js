@@ -43,19 +43,49 @@ const router = createRouter({
       component: () => import("@/layouts/GameLayout.vue"),
       children: [
         {
+          path: "baseballgame",
+          name: "baseballgame",
+          component: () => import("@/pages/BaseballGame.vue"),
+        },
+        {
           path: "quizselect",
           name: "quizselect",
           component: () => import("@/pages/QuizSelect.vue"),
         },
         {
-          path: "baseballgame",
-          name: "baseballgame",
-          component: () => import("@/pages/BaseballGame.vue"),
+          path: "quizselect/triviaquiz",
+          name: "triviaquiz",
+          component: () => import("@/pages/QuizTrivia.vue"),
         },
-          {
+        {
+          path: "quizselect/playerquiz",
+          name: "playerquiz",
+          component: () => import("@/pages/QuizPlayer.vue"),
+        },
+        {
+          path: "quizselect/recordquiz",
+          name: "recordquiz",
+          component: () => import("@/pages/QuizRecord.vue"),
+        },
+        {
           path: "tournamentselect",
           name: "tournamentselect",
           component: () => import("@/pages/TournamentSelect.vue"),
+        },
+        {
+          path: "tournamentselect/traitor",
+          name: "traitor",
+          component: () => import("@/pages/TournamentTraitor.vue"),
+        },
+        {
+          path: "tournamentselect/hero",
+          name: "hero",
+          component: () => import("@/pages/TournamentHero.vue"),
+        },
+        {
+          path: "tournamentselect/handsome",
+          name: "handsome",
+          component: () => import("@/pages/TournamentHandsome.vue"),
         },
       ],
     },

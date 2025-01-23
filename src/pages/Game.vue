@@ -15,13 +15,13 @@ const hoveredButton = ref(null);
 
 // 각 버튼 클릭 시 경로 이동 함수
 const goToBaseBallGame = () => {
-  router.push("/game/BaseBallGame");
+  router.push("/game/baseballgame");
 };
 const goToBaseBallQuiz = () => {
-  router.push("/game/BaseBallQuiz");
+  router.push("/game/quizselect");
 };
 const goToBaseBallTMT = () => {
-  router.push("/game/BaseBallTMT");
+  router.push("/game/tournamentselect");
 };
 </script>
 
@@ -31,24 +31,23 @@ const goToBaseBallTMT = () => {
   <div class="relative w-screen h-screen">
     <div
       class="absolute top-0 left-0 w-full h-full z-0"
-      style="background-color: #070707"
-    ></div>
+      style="background-color: #070707"></div>
+
+    <!-- 모니터 레이어 -->
     <div
-      class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[688px] h-[670px] z-1"
-    >
+      class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[688px] h-[670px] z-10">
       <img
         :src="GameMonitorIcon"
         alt="Monitor Background"
-        class="w-full h-full object-contain"
-      />
+        class="w-full h-full object-contain" />
     </div>
     <div
       class="absolute top-0 left-0 w-full h-full z-20"
-      style="background-color: rgba(211, 211, 211, 0.2)"
-    ></div>
+      style="background-color: rgba(211, 211, 211, 0.2)"></div>
+
+    <!-- 버튼 레이어 -->
     <div
-      class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex justify-center gap-[200px] z-30"
-    >
+      class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex justify-center gap-[200px] z-30">
       <!-- 야구 게임 버튼 -->
       <div
         class="flex flex-col items-center button"
@@ -57,8 +56,7 @@ const goToBaseBallTMT = () => {
         @click="goToBaseBallGame"
       >
         <div
-          class="w-[80px] h-[80px] flex justify-center items-center cursor-pointer"
-        >
+          class="w-[80px] h-[80px] flex justify-center items-center cursor-pointer">
           <img
             :src="
               hoveredButton === 'BaseBallGame'
@@ -66,8 +64,8 @@ const goToBaseBallTMT = () => {
                 : BaseBallGameIcon
             "
             alt="야구 게임"
-            class="w-20 h-20 icon"
-          />
+            class="w-20 h-20" />
+
         </div>
         <span
           class="mt-2 text-lg"
@@ -87,8 +85,7 @@ const goToBaseBallTMT = () => {
         @click="goToBaseBallQuiz"
       >
         <div
-          class="w-[80px] h-[80px] flex justify-center items-center cursor-pointer"
-        >
+          class="w-[80px] h-[80px] flex justify-center items-center cursor-pointer">
           <img
             :src="
               hoveredButton === 'BaseBallQuiz'
@@ -96,8 +93,7 @@ const goToBaseBallTMT = () => {
                 : BaseBallQuizIcon
             "
             alt="야구 퀴즈"
-            class="w-20 h-20 icon"
-          />
+            class="w-20 h-20" />
         </div>
         <span
           class="mt-2 text-lg"
@@ -117,8 +113,7 @@ const goToBaseBallTMT = () => {
         @click="goToBaseBallTMT"
       >
         <div
-          class="w-[80px] h-[80px] flex justify-center items-center cursor-pointer"
-        >
+          class="w-[80px] h-[80px] flex justify-center items-center cursor-pointer">
           <img
             :src="
               hoveredButton === 'BaseBallTMT'
@@ -126,8 +121,7 @@ const goToBaseBallTMT = () => {
                 : BaseBallTMTIcon
             "
             alt="토너먼트"
-            class="w-20 h-20 icon"
-          />
+            class="w-20 h-20" />
         </div>
         <span
           class="mt-2 text-lg"
