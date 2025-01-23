@@ -18,6 +18,10 @@ const props = defineProps({
     type: String,
     required: true,
   },
+  profileImage: {
+    type: String,
+    required: true,
+  },
 });
 </script>
 <template>
@@ -34,7 +38,7 @@ const props = defineProps({
       <!-- 유저정보 -->
       <div class="flex items-center gap-[10px]">
         <img
-          src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQDr6SB_fokX3TJBAFcrIisQ_YGwVVO0F8PCw&s"
+          :src="profileImage"
           alt="유저 프로필"
           class="w-[25px] h-[25px] rounded-full"
         />

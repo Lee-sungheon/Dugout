@@ -1,11 +1,15 @@
 <script setup>
 import likeIcon from "@/assets/icons/like.svg";
 import commentIcon from "@/assets/icons/comment.svg";
+import defaultImg from "@/assets/images/defaultImg_sm.svg";
+
+const route = useRoute();
 
 // day.js
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import "dayjs/locale/ko"; // 한국어 로케일 가져오기
+import { useRoute } from "vue-router";
 dayjs.extend(relativeTime); // relativeTime 플러그인 활성화
 dayjs.locale("ko"); // 한국어 로케일 설정
 
@@ -17,13 +21,17 @@ const props = defineProps({
 </script>
 <template>
   <div class="flex w-full pb-[20px] border-b border-white02">
-    <div class="flex gap-[30px] border-2 border-red-500 w-full cursor-pointer">
+    <!-- 라우터 처리 -->
+    <RouterLink
+      :to="`/${route.params.team}/freeboard/${props.post.post_id}`"
+      class="flex gap-[30px] w-full cursor-pointer"
+    >
       <!-- 왼쪽 이미지 -->
       <div>
         <img
-          src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQDr6SB_fokX3TJBAFcrIisQ_YGwVVO0F8PCw&s"
+          :src="props.post.thumbnail_url || defaultImg"
           alt="게시물 이미지"
-          class="w-[150px] h-[150px] min-w-[150px] min-h-[150px] rounded-[10px]"
+          class="w-[150px] h-[150px] min-w-[150px] min-h-[150px] rounded-[10px] border border-white01"
         />
       </div>
       <!-- 오른쪽 게시물 정보 -->
@@ -68,7 +76,7 @@ const props = defineProps({
           </div>
         </div>
       </div>
-    </div>
+    </RouterLink>
   </div>
 </template>
 <style scoped></style>
