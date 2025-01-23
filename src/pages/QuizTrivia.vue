@@ -1,16 +1,11 @@
 <script setup>
 import Monitor from "@/assets/images/gamemonitor.svg";
 import { getRandomQuestions } from "@/utils/getRandomQuizs";
-import { computed, onMounted, onUnmounted, ref } from "vue";
+import { useGameStart } from "@/utils/useGameStart";
+import { computed, ref } from "vue";
 
 // 게임 시작 전 [QUIZ START] 화면 3초동안 출력
-const isGameStarting = ref(true);
-const startGame = () => {
-  setTimeout(() => {
-    isGameStarting.value = false;
-  }, 3000);
-};
-startGame();
+const { isGameStarting } = useGameStart();
 
 // 퀴즈
 const allQuestions = ref([]); // 모든 문제
