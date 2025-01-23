@@ -25,7 +25,7 @@ import commentBtnIcon from "@/assets/icons/comment_btn.svg";
       <input
         type="text"
         placeholder="댓글을 입력해주세요"
-        class="w-full outline-none"
+        class="w-full outline-none bg-white01"
       />
       <img :src="commentBtnIcon" alt="댓글 전송 버튼" />
     </div>

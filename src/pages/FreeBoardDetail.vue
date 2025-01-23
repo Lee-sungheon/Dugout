@@ -4,15 +4,15 @@ import CommentSection from "@/components/CommentSection.vue";
 import PostHeader from "@/components/PostHeader.vue";
 </script>
 <template>
-  <div class="px-[50px] py-[30px]">
+  <div class="px-[50px] py-[30px] flex flex-col items-center">
     <!-- 뒤로가기 -->
-    <div class="border-2 border-green-500 mb-[50px] flex">
+    <div class="mb-[50px] flex w-full">
       <button>
         <img :src="backIcon" alt="뒤로가기 아이콘" />
       </button>
     </div>
     <!-- 상세페이지 -->
-    <div class="flex flex-col gap-[50px]">
+    <div class="flex flex-col gap-[50px] w-[990px]">
       <!-- 상세 페이지 정보 -->
       <PostHeader
         title="작년 첫 직관! 난 개막만을 기다려..."
@@ -20,9 +20,7 @@ import PostHeader from "@/components/PostHeader.vue";
         time="4시간 전"
       />
       <!-- 게시물 내용 -->
-      <div
-        class="flex flex-col items-center border border-b border-blue-500 border-gray01 pb-[50px]"
-      >
+      <div class="flex flex-col items-center border-b border-gray01 pb-[50px]">
         <span>
           프로젝트를 진행하면서 야구 얘기를 너무 많이 했더니 야구가 너무
           보고싶다... vue-quill을 사용할 예정입니다 vue-quill을 사용하면 아래와

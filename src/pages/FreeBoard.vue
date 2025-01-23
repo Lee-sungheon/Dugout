@@ -27,7 +27,7 @@ onMounted(() => {
 </script>
 <template>
   <div class="flex flex-col px-[50px] py-[30px] items-center">
-    <div class="w-[990px] gap-[30px] flex flex-col">
+    <div class="w-[990px] gap-[50px] flex flex-col">
       <!-- 글쓰기 버튼 -->
       <div>
         <RouterLink
@@ -40,7 +40,7 @@ onMounted(() => {
       </div>
 
       <!-- 목록 -->
-      <div class="w-full h-full">
+      <div class="flex flex-col w-full h-full gap-[20px]">
         <FreeBoardPost
           v-for="(post, index) in freeboardList"
           :key="index"
