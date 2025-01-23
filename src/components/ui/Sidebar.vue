@@ -5,10 +5,15 @@ import photoBoardIcon from "@/assets/icons/photo_board.svg";
 import foodBoardIcon from "@/assets/icons/food_board.svg";
 import { twMerge } from "tailwind-merge";
 import { useRoute } from "vue-router";
-import { ref, watch } from "vue";
+import { computed, ref, watch } from "vue";
+import { teamList } from "@/constants";
 
 const route = useRoute();
 const teamName = ref(route.params.team);
+
+const teamPage = computed(() =>
+  teamList.find((team) => team.name === teamName.value)
+);
 
 // route.params.team이 변경될 때마다 반응
 watch(
@@ -20,18 +25,38 @@ watch(
 </script>
 <template>
   <div
-    class="fixed left-0 top-[100px] flex h-full w-[190px] bg-white02 flex-col items-center pt-[30px] px-[10px] gap-[50px]"
+    :class="[
+      'fixed',
+      'left-0',
+      'top-[100px]',
+      'flex',
+      'h-full',
+      'w-[190px]',
+      `bg-${teamPage.nickname}_opa30`,
+      'flex-col',
+      'items-center',
+      'pt-[30px]',
+      'px-[10px]',
+      'gap-[50px]',
+    ]"
   >
     <!-- 구단 이름 -->
-    <span class="text-3xl font-sigmar">TWINS</span>
+    <span
+      v-if="teamPage"
+      :class="`text-${teamPage.nickname} text-3xl font-sigmar`"
+      >{{ teamPage.nickname }}</span
+    >
     <!-- 네비게이트 -->
     <nav class="flex flex-col items-center w-full gap-[22px]">
       <RouterLink
         :to="`/${teamName}/freeboard`"
         :class="
           twMerge(
-            'flex px-[10px] py-2 items-center text-lg font-semibold gap-[10px] hover:bg-[#d9d9d9] w-full rounded-[10px]',
-            route.path.includes('/team/freeboard') && 'bg-[#d9d9d9]'
+            'flex px-[10px] py-2 items-center text-lg font-semibold gap-[10px] w-full rounded-[10px]',
+            route.path.includes('/team/freeboard')
+              ? `bg-${teamPage.nickname}_opa10`
+              : '',
+            `hover:bg-${teamPage.nickname}_opa10`
           )
         "
       >
@@ -42,8 +67,11 @@ watch(
         :to="`/${teamName}/crewboard`"
         :class="
           twMerge(
-            'flex px-[10px] py-2 items-center text-lg font-semibold gap-[10px] hover:bg-[#d9d9d9] w-full rounded-[10px]',
-            route.path.includes('/team/crewboard') && 'bg-[#d9d9d9]'
+            'flex px-[10px] py-2 items-center text-lg font-semibold gap-[10px] w-full rounded-[10px]',
+            route.path.includes('/team/crewboard')
+              ? `bg-${teamPage.nickname}_opa10`
+              : '',
+            `hover:bg-${teamPage.nickname}_opa10`
           )
         "
       >
@@ -54,8 +82,11 @@ watch(
         :to="`/${teamName}/photoboard`"
         :class="
           twMerge(
-            'flex px-[10px] py-2 items-center text-lg font-semibold gap-[10px] hover:bg-[#d9d9d9] w-full rounded-[10px]',
-            route.path.includes('/team/photoboard') && 'bg-[#d9d9d9]'
+            'flex px-[10px] py-2 items-center text-lg font-semibold gap-[10px] w-full rounded-[10px]',
+            route.path.includes('/team/photoboard')
+              ? `bg-${teamPage.nickname}_opa10`
+              : '',
+            `hover:bg-${teamPage.nickname}_opa10`
           )
         "
       >
@@ -66,8 +97,11 @@ watch(
         :to="`/${teamName}/foodboard`"
         :class="
           twMerge(
-            'flex px-[10px] py-2 items-center text-lg font-semibold gap-[10px] hover:bg-[#d9d9d9] w-full rounded-[10px]',
-            route.path.includes('/team/foodboard') && 'bg-[#d9d9d9]'
+            'flex px-[10px] py-2 items-center text-lg font-semibold gap-[10px] w-full rounded-[10px]',
+            route.path.includes('/team/foodboard')
+              ? `bg-${teamPage.nickname}_opa10`
+              : '',
+            `hover:bg-${teamPage.nickname}_opa10`
           )
         "
       >

@@ -4,25 +4,29 @@ import deleteBtn from "@/assets/icons/delete-btn.svg";
 
 const props = defineProps({
   teams: Array,
-  selectedTeam: Array,
+  selectedTeam: { type: Array, default: () => [] },
 });
 
 const emit = defineEmits(["update:selectedTeam"]);
 
 const isSelected = (team) =>
-  computed(() => props.selectedTeam.some((t) => t.tag === team.tag));
+  computed(() => (props.selectedTeam ?? []).some((t) => t.tag === team.tag));
 
 const selectTeam = (team) => {
-  if (!props.selectedTeam.value.includes(team)) {
-    props.selectedTeam.value.push(team);
-    console.log("팀 추가됨:", team);
-    console.log("📌 현재 선택된 팀 목록:", props.selectedTeam.value);
+  const selectedArray = Array.isArray(props.selectedTeam)
+    ? props.selectedTeam
+    : props.selectedTeam.value ?? [];
+
+  if (!selectedArray.includes(team)) {
+    emit("update:selectedTeam", [...selectedArray, team]);
+    console.log("✅ 팀 추가됨:", team);
   }
 };
 const removeTeam = (team) => {
-  props.selectedTeam.value = props.selectedTeam.value.filter(
-    (t) => t.tag !== team.tag
-  );
+  if (!Array.isArray(props.selectedTeam)) return;
+
+  const updatedList = props.selectedTeam.filter((t) => t.tag !== team.tag);
+  emit("update:selectedTeam", updatedList);
   console.log("팀 제거됨:", team);
   console.log("📌 현재 선택된 팀 목록:", props.selectedTeam.value);
 };

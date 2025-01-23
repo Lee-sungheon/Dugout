@@ -173,7 +173,7 @@ onMounted(() => {
 });
 </script>
 <template>
-  <TeamSelector :selectedTeam="selectedTeam" :teams="teams" />
+  <TeamSelector v-model:selectedTeam="selectedTeam" :teams="teams" />
   <HighlightList :videos="videos" @playVideo="openModal" />
   <VideoModal
     v-if="activeVideoId"
