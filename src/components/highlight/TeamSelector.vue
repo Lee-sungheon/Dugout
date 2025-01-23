@@ -13,15 +13,13 @@ const isSelected = (team) =>
   computed(() => (props.selectedTeam ?? []).some((t) => t.tag === team.tag));
 
 const selectTeam = (team) => {
-  if (!Array.isArray(props.selectedTeam)) {
-    console.warn("selectedTeam이 배열이 아닙니다. 빈 배열로 초기화합니다.");
-    emit("update:selectedTeam", []);
-  }
+  const selectedArray = Array.isArray(props.selectedTeam)
+    ? props.selectedTeam
+    : props.selectedTeam.value ?? [];
 
-  if (!props.selectedTeam.value.includes(team)) {
-    emit("update:selectedTeam", [...props.selectedTeam, team]);
-    console.log("팀 추가됨:", team);
-    console.log("📌 현재 선택된 팀 목록:", props.selectedTeam.value);
+  if (!selectedArray.includes(team)) {
+    emit("update:selectedTeam", [...selectedArray, team]);
+    console.log("✅ 팀 추가됨:", team);
   }
 };
 const removeTeam = (team) => {
