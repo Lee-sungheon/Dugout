@@ -64,21 +64,18 @@ const handleEmailLogin = async (e) => {
 </script>
 <template>
   <header
-    className="w-full h-[100px] border-b border-white02  bg-white01 flex items-center justify-center"
-  >
+    className="w-full h-[100px] border-b border-white02  bg-white01 flex items-center justify-center">
     <RouterLink to="/">
       <img :src="Logo" alt="main logo" />
     </RouterLink>
   </header>
   <article
-    className="w-full min-h-screen pt-[20px] gap-[57px] flex flex-col items-center justify-center bg-white01 text-black "
-  >
+    className="w-full min-h-screen pt-[20px] gap-[57px] flex flex-col items-center justify-center bg-white01 text-black ">
     <section className="w-[494px] h-auto flex flex-col items-center gap-[60px]">
       <h1 className="font-bold text-[32px] text-[#1A1A1A]">로그인</h1>
       <form
         class="w-full max-w-[494px] flex flex-col gap-[30px] bg-white01"
-        @submit.prevent="handleEmailLogin"
-      >
+        @submit.prevent="handleEmailLogin">
         <div class="flex-1 relative">
           <Input v-model="email" placeholder="이메일을 입력해주세요" />
         </div>
@@ -86,8 +83,7 @@ const handleEmailLogin = async (e) => {
           <Input
             v-model="password"
             type="password"
-            placeholder="비밀번호를 입력해주세요"
-          />
+            placeholder="비밀번호를 입력해주세요" />
           <p v-if="loginError" class="text-[#FF3333] text-xs mt-[10px]">
             이메일 또는 비밀번호를 다시 확인해주세요.
             <br />
@@ -102,25 +98,22 @@ const handleEmailLogin = async (e) => {
       </form>
     </section>
     <section
-      className="w-[494px] h-auto flex flex-col items-center gap-[60px] "
-    >
+      className="w-[494px] h-auto flex flex-col items-center gap-[60px] ">
       <h1 className="font-bold text-[32px] text-[#1A1A1A]">간편 로그인</h1>
       <form
-        class="w-full max-w-[494px] flex flex-col gap-[30px] mb-[65px] bg-white01"
-      >
+        class="w-full max-w-[494px] flex flex-col gap-[30px] mb-[65px] bg-white01">
         <Button
           :logo="KakaoLogo"
           text="카카오 로그인"
           type="submit"
           @click.prevent="handleKakaoLogin"
-
           custom-class="bg-[#FEE500] text-[#000000]" />
         <Button
           :logo="GoogleLogo"
           text="Google 로그인"
           type="submit"
           @click.prevent="handleGoogleLogin"
-          custom-class="bg-[#FFF] text-[#1D1C2B]" />
+          custom-class="bg-[#fff] text-[#1D1C2B]" />
       </form>
     </section>
   </article>

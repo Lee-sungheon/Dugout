@@ -1,12 +1,88 @@
 <script setup>
 import Monitor from "@/assets/images/gamemonitor_crop.svg";
+import Coin from "@/assets/images/coin.svg";
 import { ref, onMounted } from "vue";
 import { gsap } from "gsap";
+import { useRouter } from "vue-router";
+import { getCurrentUser } from "../api/supabase-api/userInfo";
+import { getUserInfoEnCapsulation } from "@/api/supabase-api/userInfo";
+import { getBaseballGame } from "@/api/supabase-api/baseballGame";
 
 const marquee = ref(null);
 const marquee2 = ref(null);
+const user = ref(null);
+const userInfos = ref([]);
+const errorMessage = ref("");
+const gameRecords = ref([]);
+const combinedRecords = ref([]);
+const router = useRouter();
+
+// 사용자 정보 가져오기
+const fetchCurrenthUser = async () => {
+  try {
+    const currentUser = await getCurrentUser();
+    if (currentUser) {
+      user.value = currentUser;
+    } else {
+      errorMessage.value = "로그인된 사용자가 없습니다.";
+    }
+  } catch (error) {
+    console.error("사용자 정보를 가져오는 중 오류 발생:", error);
+    errorMessage.value = "사용자 정보를 가져오지 못했습니다.";
+  }
+};
+
+// 전체 사용자 정보 가져오기 (랭킹 표시용)
+const fetchAllUserInfo = async () => {
+  try {
+    const data = await getUserInfoEnCapsulation("user_info");
+    if (data) {
+      userInfos.value = data;
+      console.log("전체 사용자 정보:", userInfos.value);
+    }
+  } catch (error) {
+    console.error("전체 사용자 정보를 가져오는 중 오류 발생:", error);
+  }
+};
+
+// 게임 기록 가져오기
+const fetchGameRecords = async () => {
+  try {
+    const records = await getBaseballGame();
+    if (records && userInfos.value.length > 0) {
+      const combined = records.map((record) => {
+        const userInfo = userInfos.value.find(
+          (user) => user.id === record.member_id
+        );
+        return {
+          ...record,
+          userName: userInfo ? userInfo.name : "알 수 없음",
+        };
+      });
+
+      combinedRecords.value = combined
+        .sort((a, b) => b.wins - a.wins)
+        .slice(0, 3);
+
+      console.log("결합된 게임 기록:", combinedRecords.value);
+    }
+  } catch (error) {
+    console.error("게임 기록을 가져오는 중 오류 발생:", error);
+  }
+};
+
+const handleRouting = async () => {
+  await fetchCurrenthUser();
+
+  if (user.value) router.push("./game");
+  else router.push("./signin");
+};
 
 onMounted(() => {
+  fetchCurrenthUser();
+  fetchAllUserInfo();
+  fetchGameRecords();
+
   // 첫 번째 마퀴 (왼쪽으로 이동)
   gsap.to(marquee.value, {
     xPercent: -33.33,
@@ -94,28 +170,47 @@ onMounted(() => {
       <img :src="Monitor" class="w-full h-[600px]" />
     </div>
     <div
-      class="absolute left-1/2 top-[100px] -translate-x-1/2 text-white01 flex flex-col items-center gap-[50px]">
+      class="absolute left-1/2 top-[130px] -translate-x-1/2 text-white01 flex flex-col items-center gap-[50px]">
       <div class="font-Galmuri11 text-[24px]">
         야구와 관련된 다양한 게임도 플레이할 수 있어요!
       </div>
       <div class="flex gap-[50px] font-bold">
         <div class="flex flex-col gap-[30px] items-center">
-          <div class="font-Galmuri11 text-[24px] text-gameGreen">STAND</div>
-          <div class="font-Galmuri11 text-[20px]">1st</div>
-          <div class="font-Galmuri11 text-[20px]">2nd</div>
-          <div class="font-Galmuri11 text-[20px]">3rd</div>
+          <div class="font-Galmuri11 text-[20px] text-gameGreen">STAND</div>
+          <div class="font-Galmuri11 text-[16px]">1st</div>
+          <div class="font-Galmuri11 text-[16px]">2nd</div>
+          <div class="font-Galmuri11 text-[16px]">3rd</div>
         </div>
         <div class="flex flex-col gap-[30px] items-center">
-          <div class="font-Galmuri11 text-[24px] text-gameGreen">SCORE</div>
-          <div class="font-Galmuri11 text-[20px]">50000000000</div>
-          <div class="font-Galmuri11 text-[20px]">205734920</div>
-          <div class="font-Galmuri11 text-[20px]"></div>
+          <div class="font-Galmuri11 text-[20px] text-gameGreen">SCORE</div>
+          <div
+            v-for="record in combinedRecords"
+            :key="record.id"
+            class="font-Galmuri11 text-[16px]">
+            {{ record.wins }}
+          </div>
         </div>
         <div class="flex flex-col gap-[30px] items-center">
-          <div class="font-Galmuri11 text-[24px] text-gameGreen">NAME</div>
-          <div class="font-Galmuri11 text-[20px]"></div>
-          <div class="font-Galmuri11 text-[20px]"></div>
-          <div class="font-Galmuri11 text-[20px]"></div>
+          <div class="font-Galmuri11 text-[20px] text-gameGreen">NAME</div>
+          <div
+            v-for="record in combinedRecords"
+            :key="record.id"
+            class="font-Galmuri11 text-[16px]">
+            {{ record.userName }}
+          </div>
+        </div>
+      </div>
+      <div class="flex justify-between gap-[30px]">
+        <div class="font-Galmuri11 text-[24px]">
+          로그인하고 게임하러 가기 >>
+        </div>
+        <div
+          @click="handleRouting"
+          class="flex gap-[10px] cursor-pointer hover:opacity-80 transition-opacity">
+          <p class="font-Galmuri11 font-bold text-[#FEE382] text-[24px]">
+            INSERT COIN
+          </p>
+          <img :src="Coin" />
         </div>
       </div>
     </div>
