@@ -1,13 +1,29 @@
 <script setup>
 import { ref } from "vue";
-import { Delta } from "@vueup/vue-quill";
 import CreateHeader from "@/components/CreateHeader.vue";
+import { useRoute, useRouter } from "vue-router";
+import { teamID } from "@/constants";
+import { createFreePost } from "@/api/supabase-api/freePost";
 
 const title = ref("");
-const content = ref(new Delta()); // Delta 형식 기본값
+const content = ref(""); //
 
-const handleRegister = () => {
-  console.log("등록");
+const route = useRoute();
+const teamName = ref(route.params.team); // url 팀 이름 불러오기
+const clubId = ref(teamID[teamName.value]); // 팀 id 가져오기
+
+const router = useRouter();
+
+// 등록함수
+const handleRegister = async () => {
+  // const data = await createFreePost(
+  //   "d9ac20dc-af86-42e8-9d63-5f1e35b20547", // member ID
+  //   content.value,
+  //   title.value,
+  //   "", //thumbnailUrl
+  //   1 //clubId
+  // );
+  router.push(`/${teamName.value}/freeboard`);
 };
 const handleCancel = () => {
   console.log("취소");
