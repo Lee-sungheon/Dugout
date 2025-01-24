@@ -9,7 +9,7 @@ import router from "./router";
 import { QuillEditor } from "@vueup/vue-quill";
 import VCalendar from "v-calendar";
 import "v-calendar/style.css";
-import { setupCalendar } from "v-calendar";
+import { setupCalendar, DatePicker } from "v-calendar";
 
 const app = createApp(App);
 
