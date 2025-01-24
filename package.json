@@ -16,7 +16,6 @@
     "gsap": "^3.12.7",
     "dayjs": "^1.11.13",
     "dayjs-plugin-utc": "^0.1.2",
-    "gsap": "^3.12.7",
     "pinia": "^2.3.0",
     "quill": "^2.0.3",
     "tailwind-merge": "^2.6.0",
