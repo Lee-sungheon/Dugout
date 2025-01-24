@@ -3,6 +3,7 @@ import { ref } from "vue";
 import { Delta } from "@vueup/vue-quill";
 import CreateHeader from "@/components/CreateHeader.vue";
 
+const title = ref("");
 const content = ref(new Delta()); // Delta 형식 기본값
 </script>
 <template>
@@ -12,6 +13,7 @@ const content = ref(new Delta()); // Delta 형식 기본값
       <!-- 제목부분 -->
       <div>
         <input
+          v-model="title"
           type="text"
           placeholder="제목"
           class="py-[15px] border-b border-white02 w-full outline-none text-3xl text-center bg-white01"
@@ -28,6 +30,7 @@ const content = ref(new Delta()); // Delta 형식 기본값
           @ready="onEditorReady"
         />
         <pre>{{ content }}</pre>
+        <pre>{{ title }}</pre>
       </div>
     </div>
   </div>
