@@ -4,6 +4,9 @@ import { createApp } from "vue";
 import { createPinia } from "pinia";
 import { useKakao } from "vue3-kakao-maps/@utils";
 import { QuillEditor } from "@vueup/vue-quill";
+import { setupCalendar } from "v-calendar";
+import VCalendar from "v-calendar";
+import "v-calendar/style.css";
 import "./styles/index.css";
 import "@vueup/vue-quill/dist/vue-quill.snow.css";
 
@@ -17,5 +20,7 @@ const app = createApp(App);
 app.component("QuillEditor", QuillEditor);
 app.use(createPinia());
 app.use(router);
+app.use(VCalendar, {});
+app.use(setupCalendar, {});
 
 app.mount("#app");

@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@popperjs/core": "^2.11.8",
     "@supabase/supabase-js": "^2.48.0",
     "@vueup/vue-quill": "^1.2.0",
     "axios": "^1.7.9",
@@ -19,6 +20,7 @@
     "quill": "^2.0.3",
     "tailwind-merge": "^2.6.0",
     "tailwind-scrollbar-hide": "^2.0.0",
+    "v-calendar": "^3.1.2",
     "vue": "^3.5.13",
     "vue-router": "^4.5.0",
     "vue3-kakao-maps": "^2.3.10"

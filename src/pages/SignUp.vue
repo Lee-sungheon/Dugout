@@ -2,63 +2,180 @@
 import Button from "@/components/common/Button.vue";
 import Input from "@/components/common/Input.vue";
 import Logo from "@/assets/images/logo.svg";
-import { ref } from "vue";
+import { ref, watch } from "vue";
 import { supabase } from "@/supabase";
+import { useRouter } from "vue-router";
+
+const router = useRouter();
 
 const email = ref("");
 const name = ref("");
 const password = ref("");
 const confirmPassword = ref("");
-const errorMessage = ref("");
+const duplicateEmailError = ref("");
+
+const errors = ref({
+  email: "",
+  name: "",
+  password: "",
+  confirmPassword: "",
+});
 
 const isValidEmail = (email) => {
   const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
   return emailRegex.test(email);
 };
 
-const signUp = async () => {
-  errorMessage.value = "";
+const isValidPassword = (password) => {
+  // 최소 8자, 대문자 1개 이상, 소문자 1개 이상
+  const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
+  return passwordRegex.test(password);
+};
 
-  // 이메일 형식 검사
-  if (!isValidEmail(email.value)) {
-    errorMessage.value = "올바른 이메일 형식이 아닙니다.";
-    console.log("올바르지 않은 이메일 형식");
+// 실시간 유효성 검사
+watch(email, (newValue) => {
+  if (!newValue) {
+    errors.value.email = "이메일을 입력해주세요.";
+  } else if (!isValidEmail(newValue)) {
+    errors.value.email = "올바른 이메일 형식이 아닙니다.";
+  } else {
+    errors.value.email = "";
+  }
+});
+
+watch(name, (newValue) => {
+  if (!newValue) {
+    errors.value.name = "이름을 입력해주세요.";
+  } else {
+    errors.value.name = "";
+  }
+});
+
+watch(password, (newValue) => {
+  if (!newValue) {
+    errors.value.password = "비밀번호를 입력해주세요.";
+  } else if (newValue.length < 8) {
+    errors.value.password = "비밀번호는 8글자 이상이어야 합니다.";
+  } else if (!isValidPassword(newValue)) {
+    errors.value.password =
+      "비밀번호는 대문자와 소문자를 모두 포함해야 합니다.";
+  } else {
+    errors.value.password = "";
+  }
+
+  // 비밀번호 확인 필드 검증도 함께 업데이트
+  if (confirmPassword.value) {
+    if (newValue !== confirmPassword.value) {
+      errors.value.confirmPassword = "비밀번호가 일치하지 않습니다.";
+    } else {
+      errors.value.confirmPassword = "";
+    }
+  }
+});
+
+watch(confirmPassword, (newValue) => {
+  if (!newValue) {
+    errors.value.confirmPassword = "비밀번호 확인을 입력해주세요.";
+  } else if (newValue !== password.value) {
+    errors.value.confirmPassword = "비밀번호가 일치하지 않습니다.";
+  } else {
+    errors.value.confirmPassword = "";
+  }
+});
+
+const signUp = async () => {
+  // 모든 필드가 비어있는지 확인
+  if (
+    !email.value ||
+    !name.value ||
+    !password.value ||
+    !confirmPassword.value
+  ) {
+    if (!email.value) errors.value.email = "이메일을 입력해주세요.";
+    if (!name.value) errors.value.name = "이름을 입력해주세요.";
+    if (!password.value) errors.value.password = "비밀번호를 입력해주세요.";
+    if (!confirmPassword.value)
+      errors.value.confirmPassword = "비밀번호 확인을 입력해주세요.";
     return;
   }
 
-  // 비밀번호 검사
-  if (password.value !== confirmPassword.value) {
-    errorMessage.value = "비밀번호가 일치하지 않습니다.";
-    console.log("비밀번호 불일치");
+  // 모든 유효성 검사 통과 확인
+  if (Object.values(errors.value).some((error) => error !== "")) {
     return;
   }
 
   // 회원가입
   try {
-    const { user, error } = await supabase.auth.signUp({
+    duplicateEmailError.value = "";
+
+    duplicateEmailError.value = "";
+
+    // 이메일 중복 체크
+    const { data: existingUser } = await supabase
+      .from("user_info")
+      .select("email")
+      .eq("email", email.value)
+      .single();
+
+    if (existingUser) {
+      duplicateEmailError.value = "이미 존재하는 이메일입니다.";
+      return;
+    }
+
+    // 회원가입
+    const {
+      data: { user },
+      error,
+    } = await supabase.auth.signUp({
       email: email.value,
       password: password.value,
     });
 
     if (error) {
-      errorMessage.value = "비밀번호는 6글자 이상이어야 합니다.";
-      console.log(errorMessage.value);
-    } else {
-      // 회원가입 성공 후, name 추가하기
-      const { error: updateError } = await supabase
-        .from("user_info")
-        .update({ name: name.value })
-        .eq("id", user.id);
+      console.error("회원가입 실패:", error.message);
+      return;
+    }
 
-      if (updateError) {
-        console.error("이름 저장 실패:", updateError.message);
+    if (user) {
+      // user_info 테이블에 데이터 삽입 전에 해당 ID가 있는지 확인
+      const { data: existingUserInfo } = await supabase
+        .from("user_info")
+        .select("id")
+        .eq("id", user.id)
+        .single();
+
+      if (!existingUserInfo) {
+        // 사용자 정보가 없는 경우에만 삽입
+        const { error: insertError } = await supabase.from("user_info").insert([
+          {
+            id: user.id,
+            email: email.value,
+            name: name.value,
+          },
+        ]);
+
+        if (insertError) {
+          console.error("사용자 정보 저장 실패:", insertError.message);
+          return;
+        }
       } else {
-        console.log("회원가입 성공:", user);
+        // 이미 존재하는 경우 업데이트
+        const { error: updateError } = await supabase
+          .from("user_info")
+          .update({ name: name.value })
+          .eq("id", user.id);
+
+        if (updateError) {
+          console.error("사용자 정보 업데이트 실패:", updateError.message);
+          return;
+        }
       }
+      await supabase.auth.signOut();
+      console.log("회원가입 성공:", user);
+      router.push("/signin");
     }
   } catch (error) {
-    errorMessage.value = "알 수 없는 오류가 발생했습니다.";
-    console.log(error.message);
+    console.error("알 수 없는 오류:", error.message);
   }
 };
 </script>
@@ -79,26 +196,23 @@ const signUp = async () => {
         @submit.prevent="signUp">
         <div class="flex-1 relative">
           <Input v-model="email" placeholder="이메일을 입력해주세요" />
-          <p
-            v-if="errorMessage && !isValidEmail(email)"
-            className="text-[#FF3333] text-xs mt-[10px]">
-            {{ errorMessage }}
+          <p v-if="errors.email" class="text-[#FF3333] text-xs mt-[10px]">
+            {{ errors.email }}
           </p>
         </div>
         <div class="flex-1 relative">
           <Input v-model="name" placeholder="이름을 입력해주세요" />
+          <p v-if="errors.name" class="text-[#FF3333] text-xs mt-[10px]">
+            {{ errors.name }}
+          </p>
         </div>
         <div class="flex-1 relative">
           <Input
             v-model="password"
             type="password"
             placeholder="비밀번호를 입력해주세요" />
-          <p className="text-[#FF3333] text-xs mt-[10px]">
-            {{
-              errorMessage && password.length < 6
-                ? "비밀번호는 6글자 이상이어야 합니다."
-                : ""
-            }}
+          <p v-if="errors.password" class="text-[#FF3333] text-xs mt-[10px]">
+            {{ errors.password }}
           </p>
         </div>
         <div class="flex-1 relative">
@@ -107,12 +221,17 @@ const signUp = async () => {
             type="password"
             placeholder="비밀번호를 확인해주세요" />
           <p
-            v-if="errorMessage && password !== confirmPassword"
-            className="text-[#FF3333] text-xs mt-[10px]">
-            {{ errorMessage }}
+            v-if="errors.confirmPassword"
+            class="text-[#FF3333] text-xs mt-[10px]">
+            {{ errors.confirmPassword }}
           </p>
         </div>
         <Button text="회원가입" type="submit" />
+        <p
+          v-if="duplicateEmailError"
+          class="text-[#FF3333] text-xs text-center">
+          {{ duplicateEmailError }}
+        </p>
       </form>
     </section>
   </article>
