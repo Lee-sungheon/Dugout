@@ -21,22 +21,46 @@ const firstImageLink = computed(() => {
 
 // 등록함수
 const handleRegister = async () => {
-  try {
-    const data = await createFreePost(
-      "d9ac20dc-af86-42e8-9d63-5f1e35b20547", // member ID
-      content.value,
-      title.value,
-      firstImageLink.value, //thumbnailUrl
-      1 //clubId
-    );
-    // router.push(`/${teamName.value}/freeboard`);
-    console.log("첫번째 이미지 링크", firstImageLink.value);
-  } catch (error) {
-    console.error("게시물을 등록하는 도중 오류가 생겼습니다.");
-  }
+  // try {
+  //   const data = await createFreePost(
+  //     "d9ac20dc-af86-42e8-9d63-5f1e35b20547", // member ID
+  //     content.value,
+  //     title.value,
+  //     firstImageLink.value, //thumbnailUrl
+  //     1 //clubId
+  //   );
+  //   // router.push(`/${teamName.value}/freeboard`);
+  //   console.log("첫번째 이미지 링크", firstImageLink.value);
+  // } catch (error) {
+  //   console.error("게시물을 등록하는 도중 오류가 생겼습니다.");
+  // }
+  handleOnClick();
 };
 const handleCancel = () => {
   console.log("취소");
+};
+
+let quillInstance = null; // Quill 인스턴스를 저장할 변수
+const htmlContent = ref(""); // 변환된 HTML을 화면에 출력할 변수
+
+// Delta 형식 -> HTML 변환 함수
+const convertDeltaToHTML = (delta) => {
+  if (quillInstance) {
+    // Delta를 HTML로 변환
+    return quillInstance.root.innerHTML;
+  }
+  return "";
+};
+
+// Quill 에디터가 준비된 후 호출되는 메서드
+const handleOnClick = () => {
+  const html = convertDeltaToHTML(content.value); // Delta -> HTML 변환
+  htmlContent.value = html; // 변환된 HTML을 화면에 저장
+};
+
+// QuillEditor의 onReady 이벤트에서 quillInstance를 설정
+const onEditorReady = (editor) => {
+  quillInstance = editor;
 };
 </script>
 <template>
@@ -56,14 +80,14 @@ const handleCancel = () => {
       <div>
         <QuillEditor
           v-model:content="content"
-          contentType="delta"
+          contentType="html"
           placeholder="자유롭게 게시글을 작성해보세요."
           theme="snow"
           toolbar="full"
-          @ready="onEditorReady"
         />
         <pre>{{ content }}</pre>
         <pre>{{ title }}</pre>
+        <div v-html="content" class="border-2 border-blue-500"></div>
       </div>
     </div>
   </div>
