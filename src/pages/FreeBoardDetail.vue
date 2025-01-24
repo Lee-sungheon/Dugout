@@ -51,7 +51,9 @@ onMounted(() => {
         :profileImage="post.author_image"
       />
       <!-- 게시물 내용 -->
-      <div class="flex flex-col items-center border-b border-gray01 pb-[50px]">
+      <div
+        class="flex flex-col items-center border-b border-gray01 pb-[50px] border-2 border-red-500"
+      >
         <span>
           프로젝트를 진행하면서 야구 얘기를 너무 많이 했더니 야구가 너무
           보고싶다... vue-quill을 사용할 예정입니다 vue-quill을 사용하면 아래와
