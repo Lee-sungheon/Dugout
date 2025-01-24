@@ -16,16 +16,41 @@ import quizIconBlack from "@/assets/images/quiz_logo_black.svg";
 import tournamentIconBlack from "@/assets/images/tournament_logo_black.svg";
 
 export const teamList = [
-  { name: "kia", path: "/kia/freeboard", logo: kiaLogo },
-  { name: "samsung", path: "/samsung/freeboard", logo: samsungLogo },
-  { name: "lg", path: "/lg/freeboard", logo: lgLogo },
-  { name: "doosan", path: "/doosan/freeboard", logo: doosanLogo },
-  { name: "kt", path: "/kt/freeboard", logo: ktLogo },
-  { name: "ssg", path: "/ssg/freeboard", logo: ssgLogo },
-  { name: "lotte", path: "/lotte/freeboard", logo: lotteLogo },
-  { name: "hanhwa", path: "/hanhwa/freeboard", logo: hanhwaLogo },
-  { name: "nc", path: "/nc/freeboard", logo: ncLogo },
-  { name: "kiwoom", path: "/kiwoom/freeboard", logo: kiwoomLogo },
+  { name: "kia", path: "/kia/freeboard", logo: kiaLogo, nickname: "Tigers" },
+  {
+    name: "samsung",
+    path: "/samsung/freeboard",
+    logo: samsungLogo,
+    nickname: "Lions",
+  },
+  { name: "lg", path: "/lg/freeboard", logo: lgLogo, nickname: "Twins" },
+  {
+    name: "doosan",
+    path: "/doosan/freeboard",
+    logo: doosanLogo,
+    nickname: "Bears",
+  },
+  { name: "kt", path: "/kt/freeboard", logo: ktLogo, nickname: "Wiz" },
+  { name: "ssg", path: "/ssg/freeboard", logo: ssgLogo, nickname: "Landers" },
+  {
+    name: "lotte",
+    path: "/lotte/freeboard",
+    logo: lotteLogo,
+    nickname: "Giants",
+  },
+  {
+    name: "hanhwa",
+    path: "/hanhwa/freeboard",
+    logo: hanhwaLogo,
+    nickname: "Eagles",
+  },
+  { name: "nc", path: "/nc/freeboard", logo: ncLogo, nickname: "Dinos" },
+  {
+    name: "kiwoom",
+    path: "/kiwoom/freeboard",
+    logo: kiwoomLogo,
+    nickname: "Heros",
+  },
 ];
 
 export const gameList = [

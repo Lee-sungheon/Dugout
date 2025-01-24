@@ -14,6 +14,7 @@ import {
 
 const email = ref("");
 const password = ref("");
+const loginError = ref(false);
 const router = useRouter();
 
 // 구글 로그인
@@ -40,16 +41,24 @@ const handleKakaoLogin = async () => {
 
 // 일반 로그인
 const handleEmailLogin = async (e) => {
-  const response = await signInWithEmail(email.value, password.value);
-  if (response) {
-    const { success, user, error } = response;
+  if (!email.value || !password.value) return;
+
+  try {
+    const { success, error } = await signInWithEmail(
+      email.value,
+      password.value
+    );
+
     if (success) {
-      router.push("/");
+      loginError.value = false;
+      router.push("/"); // 로그인 성공 시 메인 페이지로 이동
     } else {
-      errorMessage.value = error.message;
+      loginError.value = true;
+      console.error("로그인 실패:", error);
     }
-  } else {
-    console.log("이메일 로그인 함수에서 예상하지 못한 응답이 왔습니다: ");
+  } catch (error) {
+    loginError.value = true;
+    console.error("로그인 처리 중 오류 발생:", error);
   }
 };
 </script>
@@ -75,7 +84,7 @@ const handleEmailLogin = async (e) => {
             v-model="password"
             type="password"
             placeholder="비밀번호를 입력해주세요" />
-          <p className="text-[#FF3333] text-xs mt-[10px]">
+          <p v-if="loginError" class="text-[#FF3333] text-xs mt-[10px]">
             이메일 또는 비밀번호를 다시 확인해주세요.
             <br />
             등록되지 않은 이메일이거나, 이메일 혹은 비밀번호를 잘못
@@ -83,7 +92,9 @@ const handleEmailLogin = async (e) => {
           </p>
         </div>
         <Button text="로그인" type="submit" />
-        <Button text="회원가입" type="submit" custom-class="bg-white01" />
+        <RouterLink to="signup">
+          <Button text="회원가입" type="button" custom-class="bg-white01" />
+        </RouterLink>
       </form>
     </section>
     <section
