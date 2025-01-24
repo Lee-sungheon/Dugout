@@ -7,9 +7,18 @@ import { ref } from "vue";
 const title = ref("");
 const content = ref("");
 
-//개발할 때 달력 라이브러리로
-const gameDateStatus = ref("2025.03.22. 토요일");
-const gameDateOptions = ["2025.03.22. 토요일", "2025.03.23. 일요일"];
+const formatDateToKoreanStyle = (date) => {
+  return new Intl.DateTimeFormat("ko-KR", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    weekday: "long",
+  })
+    .format(date)
+    .replace(/\./g, ".");
+};
+
+const gameDateStatus = ref(formatDateToKoreanStyle(new Date()));
 </script>
 <template>
   <div class="px-[50px]">
@@ -37,7 +46,6 @@ const gameDateOptions = ["2025.03.22. 토요일", "2025.03.23. 일요일"];
               </div>
               <DropdownSelect
                 v-model:selectedOption="gameDateStatus"
-                :options="gameDateOptions"
                 part="경기일"
               />
             </div>
