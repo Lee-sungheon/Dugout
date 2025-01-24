@@ -39,7 +39,7 @@ const goToBaseBallTMT = () => {
       <img
         :src="GameMonitorIcon"
         alt="Monitor Background"
-        class="w-full h-full object-contain" />
+        class="w-full h-full object-contain blur-sm" />
     </div>
     <div
       class="absolute top-0 left-0 w-full h-full z-20"
@@ -47,16 +47,15 @@ const goToBaseBallTMT = () => {
 
     <!-- 버튼 레이어 -->
     <div
-      class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex justify-center gap-[200px] z-30">
+      class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-[110%] flex justify-center gap-[200px] z-30">
       <!-- 야구 게임 버튼 -->
       <div
         class="flex flex-col items-center button"
         @mouseover="hoveredButton = 'BaseBallGame'"
         @mouseleave="hoveredButton = null"
-        @click="goToBaseBallGame"
-      >
+        @click="goToBaseBallGame">
         <div
-          class="w-[80px] h-[80px] flex justify-center items-center cursor-pointer">
+          class="w-[80px] h-[80px] flex justify-center items-center cursor-pointer drop-shadow-[0_4px_4px_rgba(0,0,0,0.8)]">
           <img
             :src="
               hoveredButton === 'BaseBallGame'
@@ -65,14 +64,12 @@ const goToBaseBallTMT = () => {
             "
             alt="야구 게임"
             class="w-20 h-20" />
-
         </div>
         <span
-          class="mt-2 text-lg"
+          class="mt-2 text-lg drop-shadow-[0_4px_4px_rgba(0,0,0,0.8)]"
           :style="{
             color: hoveredButton === 'BaseBallGame' ? '#0BF89F' : 'white',
-          }"
-        >
+          }">
           야구 게임
         </span>
       </div>
@@ -82,10 +79,9 @@ const goToBaseBallTMT = () => {
         class="flex flex-col items-center button"
         @mouseover="hoveredButton = 'BaseBallQuiz'"
         @mouseleave="hoveredButton = null"
-        @click="goToBaseBallQuiz"
-      >
+        @click="goToBaseBallQuiz">
         <div
-          class="w-[80px] h-[80px] flex justify-center items-center cursor-pointer">
+          class="w-[80px] h-[80px] flex justify-center items-center cursor-pointer drop-shadow-[0_4px_4px_rgba(0,0,0,0.8)]">
           <img
             :src="
               hoveredButton === 'BaseBallQuiz'
@@ -96,11 +92,10 @@ const goToBaseBallTMT = () => {
             class="w-20 h-20" />
         </div>
         <span
-          class="mt-2 text-lg"
+          class="mt-2 text-lg drop-shadow-[0_4px_4px_rgba(0,0,0,0.8)]"
           :style="{
             color: hoveredButton === 'BaseBallQuiz' ? '#0BF89F' : 'white',
-          }"
-        >
+          }">
           야구 퀴즈
         </span>
       </div>
@@ -110,10 +105,9 @@ const goToBaseBallTMT = () => {
         class="flex flex-col items-center button"
         @mouseover="hoveredButton = 'BaseBallTMT'"
         @mouseleave="hoveredButton = null"
-        @click="goToBaseBallTMT"
-      >
+        @click="goToBaseBallTMT">
         <div
-          class="w-[80px] h-[80px] flex justify-center items-center cursor-pointer">
+          class="w-[80px] h-[80px] flex justify-center items-center cursor-pointer drop-shadow-[0_4px_4px_rgba(0,0,0,0.8)]">
           <img
             :src="
               hoveredButton === 'BaseBallTMT'
@@ -124,11 +118,10 @@ const goToBaseBallTMT = () => {
             class="w-20 h-20" />
         </div>
         <span
-          class="mt-2 text-lg"
+          class="mt-2 text-lg drop-shadow-[0_4px_4px_rgba(0,0,0,0.8)]"
           :style="{
             color: hoveredButton === 'BaseBallTMT' ? '#0BF89F' : 'white',
-          }"
-        >
+          }">
           토너먼트
         </span>
       </div>
