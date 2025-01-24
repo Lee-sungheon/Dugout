@@ -6,61 +6,46 @@ import { teamID } from "@/constants";
 import { createFreePost } from "@/api/supabase-api/freePost";
 
 const title = ref("");
-const content = ref(""); //
+const content = ref("");
+const thumbnailUrl = ref("");
 
 const route = useRoute();
 const teamName = ref(route.params.team); // url 팀 이름 불러오기
 const clubId = ref(teamID[teamName.value]); // 팀 id 가져오기
 
 const router = useRouter();
+
 // 첫 번째 이미지 링크 추출
-const firstImageLink = computed(() => {
-  const imageOp = content.value.ops.find((op) => op.insert && op.insert.image);
-  return imageOp ? imageOp.insert.image : null;
-});
+const findThumbnailImage = () => {
+  // 문자열을 DOM으로 파싱
+  const tempDiv = document.createElement("div");
+  tempDiv.innerHTML = content.value;
+
+  // 첫 번째 <img> 태그 선택
+  const firstImg = tempDiv.querySelector("img");
+
+  // src 속성 가져오기
+  thumbnailUrl.value = firstImg ? firstImg.src : "";
+};
 
 // 등록함수
 const handleRegister = async () => {
-  // try {
-  //   const data = await createFreePost(
-  //     "d9ac20dc-af86-42e8-9d63-5f1e35b20547", // member ID
-  //     content.value,
-  //     title.value,
-  //     firstImageLink.value, //thumbnailUrl
-  //     1 //clubId
-  //   );
-  //   // router.push(`/${teamName.value}/freeboard`);
-  //   console.log("첫번째 이미지 링크", firstImageLink.value);
-  // } catch (error) {
-  //   console.error("게시물을 등록하는 도중 오류가 생겼습니다.");
-  // }
-  handleOnClick();
+  findThumbnailImage(); // 썸네일 지정하기
+  try {
+    const data = await createFreePost(
+      "d9ac20dc-af86-42e8-9d63-5f1e35b20547", // member ID
+      content.value,
+      title.value,
+      thumbnailUrl.value, //thumbnailUrl
+      1 //clubId
+    );
+    router.push(`/${teamName.value}/freeboard`);
+  } catch (error) {
+    console.error("게시물을 등록하는 도중 오류가 생겼습니다.");
+  }
 };
 const handleCancel = () => {
   console.log("취소");
-};
-
-let quillInstance = null; // Quill 인스턴스를 저장할 변수
-const htmlContent = ref(""); // 변환된 HTML을 화면에 출력할 변수
-
-// Delta 형식 -> HTML 변환 함수
-const convertDeltaToHTML = (delta) => {
-  if (quillInstance) {
-    // Delta를 HTML로 변환
-    return quillInstance.root.innerHTML;
-  }
-  return "";
-};
-
-// Quill 에디터가 준비된 후 호출되는 메서드
-const handleOnClick = () => {
-  const html = convertDeltaToHTML(content.value); // Delta -> HTML 변환
-  htmlContent.value = html; // 변환된 HTML을 화면에 저장
-};
-
-// QuillEditor의 onReady 이벤트에서 quillInstance를 설정
-const onEditorReady = (editor) => {
-  quillInstance = editor;
 };
 </script>
 <template>
@@ -85,9 +70,7 @@ const onEditorReady = (editor) => {
           theme="snow"
           toolbar="full"
         />
-        <pre>{{ content }}</pre>
-        <pre>{{ title }}</pre>
-        <div v-html="content" class="border-2 border-blue-500"></div>
+        <div v-html="content" class="border-2 border-blue-500 ql-editor"></div>
       </div>
     </div>
   </div>
