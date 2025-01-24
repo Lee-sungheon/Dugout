@@ -6,7 +6,24 @@ import { ref } from "vue";
 
 const title = ref("");
 const content = ref("");
+const selectedImage = ref(null);
 
+const handleFileChange = (event) => {
+  const file = event.target.files[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      selectedImage.value = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  }
+};
+
+const triggerFileInput = () => {
+  document.getElementById("imageUpload").click();
+};
+
+//경기일 오늘 날짜를 기본으로 지정
 const formatDateToKoreanStyle = (date) => {
   return new Intl.DateTimeFormat("ko-KR", {
     year: "numeric",
@@ -51,11 +68,27 @@ const gameDateStatus = ref(formatDateToKoreanStyle(new Date()));
             </div>
           </div>
           <div class="flex px-[20px] gap-[30px]">
-            <button
-              class="aspect-square w-full rounded-[10px] bg-white02 flex justify-center items-center"
-            >
-              <img :src="Camera" />
-            </button>
+            <div class="relative w-full rounded-[10px]">
+              <input
+                type="file"
+                id="imageUpload"
+                class="hidden"
+                accept="image/*"
+                @change="handleFileChange"
+              />
+              <div
+                class="aspect-square w-full rounded-[10px] bg-white02 flex justify-center items-center cursor-pointer"
+                @click="triggerFileInput"
+              >
+                <img
+                  v-if="selectedImage"
+                  :src="selectedImage"
+                  alt="Uploaded"
+                  class="w-full h-full object-cover"
+                />
+                <img v-else :src="Camera" />
+              </div>
+            </div>
             <textarea
               type="text"
               v-model="content"

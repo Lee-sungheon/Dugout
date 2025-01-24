@@ -1,7 +1,6 @@
 import { supabase } from "@/supabase";
 import { getCurrentUser } from "./userInfo";
 
-
 // 특정 클럽의 모든 직관 인증 게시물을 가져오기
 export const getViewingCertificationPostsByClub = async (clubId) => {
   try {
@@ -72,6 +71,30 @@ export const createCertificationPost = async (
     return data;
   } catch (error) {
     console.error("게시물 생성 실패: ", error);
+    return null;
+  }
+};
+
+// supabase storage에 이미지 업로드하기
+export const uploadImageToSupabase = async (file) => {
+  if (!file) return null;
+
+  try {
+    const fileName = `${Date.now()}_${file.name}`; // 파일 이름을 고유하게 설정
+    const { data, error } = await supabase.storage
+      .from("images")
+      .upload(fileName, file);
+
+    if (error) throw new Error(error.message);
+
+    // 업로드된 이미지의 URL 생성
+    const imageUrl = supabase.storage
+      .from("certification_images")
+      .getPublicUrl(fileName).publicUrl;
+
+    return imageUrl;
+  } catch (error) {
+    console.error("이미지 업로드 실패: ", error);
     return null;
   }
 };
@@ -148,4 +171,3 @@ export const deleteCertificationPost = async (postId) => {
     return null;
   }
 };
-
