@@ -72,7 +72,7 @@ watch(gameDateStatus, (newDate) => {
 });
 
 // 크루 모집 게시글 등록 함수
-const submitClick = () => {
+const handleRegister = () => {
   createCrewRecruitmentPost({
     member_id: "20a1a866-596b-4c54-b99a-792efcda8aef",
     status: recruitStatus.value,
@@ -88,14 +88,14 @@ const submitClick = () => {
     game_stadium: stadium.value,
   });
   alert("게시글이 성공적으로 등록되었습니다.");
-  router.push("/team/crewboard");
+  router.push("/kia/crewboard");
 };
 
 // 게시글 작성 취소 함수
-const cancelClick = () => {
+const handleCancel = () => {
   const isConfirmed = confirm("정말로 취소 하시겠습니까?");
   if (isConfirmed) {
-    router.push("/team/crewboard");
+    router.push("/kia/crewboard");
   } else {
     return;
   }
@@ -103,7 +103,10 @@ const cancelClick = () => {
 </script>
 <template>
   <div class="px-[50px]">
-    <CreateHeader @submitClick="submitClick" @cancelClick="cancelClick" />
+    <CreateHeader
+      :handleRegister="handleRegister"
+      :handleCancel="handleCancel"
+    />
     <div class="gap-[50px]">
       <div class="mt-[40px] mb-[85px] gap-[30px]">
         <div>

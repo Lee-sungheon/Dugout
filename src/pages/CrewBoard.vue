@@ -21,13 +21,6 @@ import PostArrow from "@/assets/icons/post_arrow.svg";
         <CrewCard />
         <CrewCard />
         <CrewCard />
-        <CrewCard />
-        <CrewCard />
-        <CrewCard />
-        <CrewCard />
-        <CrewCard />
-        <CrewCard />
-        <CrewCard />
       </div>
     </div>
   </div>
