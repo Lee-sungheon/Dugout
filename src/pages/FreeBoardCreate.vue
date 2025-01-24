@@ -4,11 +4,18 @@ import { Delta } from "@vueup/vue-quill";
 import CreateHeader from "@/components/CreateHeader.vue";
 
 const content = ref(new Delta()); // Delta 형식 기본값
+
+const handleRegister = () => {
+  console.log("등록");
+};
+const handleCancel = () => {
+  console.log("취소");
+};
 </script>
 <template>
   <div class="flex flex-col items-center">
     <div class="w-[1090px] flex flex-col">
-      <CreateHeader />
+      <CreateHeader :handleRegister :handleCancel />
       <!-- 제목부분 -->
       <div>
         <input
