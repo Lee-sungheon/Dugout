@@ -1,8 +1,10 @@
 <script setup>
 import ToggleDropdown from "@/assets/icons/theme_toggle.svg";
-import Calendar from "@/assets/icons/calendar.svg";
+import CalendarIcon from "@/assets/icons/calendar.svg";
 import { computed, ref } from "vue";
 import { twMerge } from "tailwind-merge";
+import { Calendar, DatePicker } from "v-calendar";
+import "v-calendar/style.css";
 
 const props = defineProps({
   part: String,
@@ -28,7 +30,7 @@ const selectOption = (option) => {
 };
 
 const toggleIconSrc = computed(() => {
-  return props.part === "경기일" ? Calendar : ToggleDropdown;
+  return props.part === "경기일" ? CalendarIcon : ToggleDropdown;
 });
 </script>
 <template>

@@ -1,6 +1,4 @@
 <script setup>
-import { computed, defineProps } from "vue";
-
 const props = defineProps({ videos: Array });
 const videoList = computed(() => props.videos || []);
 

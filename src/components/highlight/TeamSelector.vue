@@ -1,5 +1,5 @@
 <script setup>
-import { computed, defineProps, defineEmits } from "vue";
+import { computed } from "vue";
 import deleteBtn from "@/assets/icons/delete-btn.svg";
 
 const props = defineProps({

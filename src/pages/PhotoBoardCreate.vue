@@ -21,7 +21,7 @@ const gameDateOptions = ["2025.03.22. 토요일", "2025.03.23. 일요일"];
             <input
               type="text"
               v-model="title"
-              class="w-full text-[30px] placeholder-gray01 placeholder-[30px] text-center outline-none"
+              class="w-full text-[30px] placeholder-gray01 bg-white01 placeholder-[30px] text-center outline-none"
               placeholder="제목"
             />
           </div>
@@ -51,7 +51,7 @@ const gameDateOptions = ["2025.03.22. 토요일", "2025.03.23. 일요일"];
             <textarea
               type="text"
               v-model="content"
-              class="w-full p-0 outline-none resize-none text-4 placeholder-gray01 placeholder-4"
+              class="w-full p-0 outline-none resize-none text-4 bg-white01 placeholder-gray01 placeholder-4"
               placeholder="인증 사진은 단 하나만 업로드할 수 있으며,
 인증 글은 최대 500자까지만 작성 가능합니다!"
             />
