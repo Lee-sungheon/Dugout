@@ -5,22 +5,24 @@ export const createCrewRecruitmentPost = async ({
   member_id,
   status,
   game_date,
-  members,
   author_sex,
   author_age,
   crew_sex,
   crew_age,
   content,
   club_id,
+  member_number,
+  member_range,
+  game_stadium,
 }) => {
   try {
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser();
+    // const {
+    //   data: { user },
+    //   error: authError,
+    // } = await supabase.auth.getUser();
 
-    if (authError) throw new Error("인증 실패");
-    if (!user) throw new Error("사용자 정보가 없습니다.");
+    // if (authError) throw new Error("인증 실패");
+    // if (!user) throw new Error("사용자 정보가 없습니다.");
 
     const { data, error } = await supabase
       .from("crew_recruitment_post")
@@ -28,13 +30,15 @@ export const createCrewRecruitmentPost = async ({
         member_id, // 유저id
         status, // 모집 상태
         game_date, // 경기 날짜
-        members, // 모집 인원
         author_sex, // 작성자 성별
         author_age, // 작성자 나이
         crew_sex, // 모집 크루 성별
         crew_age, // 모집 크루 나이
         content, // 게시글 내용
         club_id, // 클럽 ID
+        member_number, // 모집 인원
+        member_range, // 모집인원 (이상, 이하)
+        game_stadium, // 경기 장소
       });
 
     if (error) throw new Error("게시글 생성 실패");
@@ -44,7 +48,6 @@ export const createCrewRecruitmentPost = async ({
     return null;
   }
 };
-
 
 // 게시글 댓글 추가 함수
 export const createPostComment = async ({ member_id, post_id, content }) => {
@@ -77,8 +80,10 @@ export const createPostComment = async ({ member_id, post_id, content }) => {
 // 특정 클럽의 모든 크루 모집 게시물을 가져오기
 export const getCrewRecruitmentPostsByClub = async (clubId) => {
   try {
-    const { data, error } = await supabase
-      .rpc('get_crew_recruitment_posts_by_club', { input_club_id: clubId });
+    const { data, error } = await supabase.rpc(
+      "get_crew_recruitment_posts_by_club",
+      { input_club_id: clubId }
+    );
 
     if (error) throw new Error("특정 클럽의 크루 모집 게시물 조회 실패");
 
@@ -89,12 +94,13 @@ export const getCrewRecruitmentPostsByClub = async (clubId) => {
   }
 };
 
-
 // 특정 크루 모집 게시물의 상세 정보를 불러오는 함수
 export const getCrewRecruitmentPostDetails = async (postId) => {
   try {
-    const { data, error } = await supabase
-      .rpc('get_crew_recruitment_post_details_by_id', { input_post_id: postId });
+    const { data, error } = await supabase.rpc(
+      "get_crew_recruitment_post_details_by_id",
+      { input_post_id: postId }
+    );
 
     if (error) throw new Error("특정 크루 모집 게시물의 상세 정보 조회 실패");
 
@@ -164,7 +170,6 @@ export const updatePostComment = async (commentId) => {
     return null;
   }
 };
-
 
 // 특정 크루 모집 게시글 삭제 함수
 export const deleteCrewRecruitmentPost = async (postId) => {
