@@ -1,8 +1,9 @@
 <script setup>
 import { ref } from "vue";
-import deleteBtn from "../assets/icons/delete-btn.svg";
-import FoodBoardCard from "@/components/foodboard/FoodBoardCard.vue";
-import PostArrow from "@/assets/icons/post_arrow.svg";
+import Baseball from "@/assets/icons/baseball.svg";
+import DeleteBtn from "@/assets/icons/delete-btn.svg";
+
+const selectedTag = ref([]);
 
 const foodBoardTag = [
   "# 야구장 내부 맛집",
@@ -10,9 +11,7 @@ const foodBoardTag = [
   "# 야구 볼 수 있는 식당",
 ];
 
-
-
-const selectedTag = ref([]);
+// 태그 선택 및 제거
 const selectTag = (tag) => {
   if (!selectedTag.value.includes(tag)) {
     selectedTag.value.push(tag);
@@ -23,18 +22,10 @@ const removeTag = (tag) => {
 };
 </script>
 <template>
-  <div
-    class="flex border border-red-500 gap-[30px] flex-col px-[50px] py-[30px]"
-  >
-    <!-- 글쓰기 버튼 -->
-    <div class="cursor-pointer">
-      <RouterLink
-        :to="`/${$route.params.team}/foodboard/create`"
-        class="flex items-center justify-center w-full font-medium bg-white02 py-[10px] rounded-[10px] gap-[10px]"
-      >
-        직관 맛집 공유하기
-        <img :src="PostArrow" class="w-[14px] h-[8px]" />
-      </RouterLink>
+  <div class="flex flex-col gap-[20px]">
+    <div class="flex gap-[10px] items-center">
+      <img :src="Baseball" class="w-[18px] h-[18px]" />
+      <p class="text-[14px] text-gray03">태그를 1개 이상 선택해주세요</p>
     </div>
     <div class="min-h-[39px] overflow-x-auto scrollbar-hide">
       <div class="flex items-center gap-x-[10px] w-max flex-nowrap">
@@ -52,15 +43,12 @@ const removeTag = (tag) => {
           <img
             v-if="selectedTag.includes(tag)"
             @click.stop="removeTag(tag)"
-            :src="deleteBtn"
+            :src="DeleteBtn"
             class="cursor-pointer"
           />
         </button>
       </div>
     </div>
-    <section>
-      <FoodBoardCard />
-    </section>
   </div>
 </template>
 <style scoped></style>
