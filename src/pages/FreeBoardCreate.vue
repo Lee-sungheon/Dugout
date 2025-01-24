@@ -70,7 +70,6 @@ const handleCancel = () => {
           theme="snow"
           toolbar="full"
         />
-        <div v-html="content" class="border-2 border-blue-500 ql-editor"></div>
       </div>
     </div>
   </div>
