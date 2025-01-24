@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import CreateHeader from "@/components/CreateHeader.vue";
 import { useRoute, useRouter } from "vue-router";
 import { teamID } from "@/constants";
@@ -13,17 +13,27 @@ const teamName = ref(route.params.team); // url 팀 이름 불러오기
 const clubId = ref(teamID[teamName.value]); // 팀 id 가져오기
 
 const router = useRouter();
+// 첫 번째 이미지 링크 추출
+const firstImageLink = computed(() => {
+  const imageOp = content.value.ops.find((op) => op.insert && op.insert.image);
+  return imageOp ? imageOp.insert.image : null;
+});
 
 // 등록함수
 const handleRegister = async () => {
-  // const data = await createFreePost(
-  //   "d9ac20dc-af86-42e8-9d63-5f1e35b20547", // member ID
-  //   content.value,
-  //   title.value,
-  //   "", //thumbnailUrl
-  //   1 //clubId
-  // );
-  router.push(`/${teamName.value}/freeboard`);
+  try {
+    const data = await createFreePost(
+      "d9ac20dc-af86-42e8-9d63-5f1e35b20547", // member ID
+      content.value,
+      title.value,
+      firstImageLink.value, //thumbnailUrl
+      1 //clubId
+    );
+    // router.push(`/${teamName.value}/freeboard`);
+    console.log("첫번째 이미지 링크", firstImageLink.value);
+  } catch (error) {
+    console.error("게시물을 등록하는 도중 오류가 생겼습니다.");
+  }
 };
 const handleCancel = () => {
   console.log("취소");
