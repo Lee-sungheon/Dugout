@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from "vue";
-import { useRouter } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { Delta } from "@vueup/vue-quill";
 import { QuillEditor } from "@vueup/vue-quill";
 import CreateHeader from "@/components/CreateHeader.vue";
@@ -10,17 +10,32 @@ import TagsSelect from "@/components/foodboard/foodBoardCreate/TagsSelect.vue";
 import Modal from "@/components/common/Modal.vue";
 
 const router = useRouter();
+const route = useRoute();
 
 const modalmessage = ref("");
+const isModalVisible = ref(false);
 const inputTitle = ref("");
 const inputContent = ref(new Delta());
 // const deltaString = JSON.stringify(content.value);
 
-const messageList = ["삭제 후에는 복구할 수 없습니다\n삭제하시겠습니까?"];
-modalmessage.value = messageList[0];
+const messageList = [
+  "작성했던 모든 내용은 저장되지 않습니다\n취소하시겠습니까?",
+  "수정을 완료하시겠습니까?",
+];
 
-// const submitRestaurantPost = () => {};
-// const cancelRestaurantPost = () => {};
+const submitRestaurantPost = () => {
+  console.log("제출");
+};
+const cancelRestaurantPost = () => {
+  modalmessage.value = messageList[0];
+  isModalVisible.value = true;
+  console.log(route.params);
+};
+const onClickModalCancelBtn = () => {
+  const team = route.params.team;
+  console.log(route.params);
+  router.push(`/${team}/foodboard`);
+};
 
 const toolbarOptions = [
   [{ header: "1" }, { header: "2" }, { font: [] }],
@@ -28,22 +43,22 @@ const toolbarOptions = [
   ["bold", "italic", "underline"],
   ["link"],
   [{ align: [] }],
-  // ['image'], // 이미지 버튼을 아예 제거
+  // ['image'], // 이미지 버튼을 제거
 ];
-
-const test = () => {
-  console.log(content);
-};
 </script>
 
 <template>
-  <!-- <Modal :message="messageList[0]" /> -->
+  <Modal
+    v-if="isModalVisible"
+    :message="modalmessage"
+    :onCancel="onClickModalCancelBtn"
+    :onConfirm="submitRestaurantPost"
+  />
   <section class="flex flex-col px-[50px] gap-[30px]">
-    <CreateHeader />
-    <!-- <CreateHeader
+    <CreateHeader
       :handleRegister="submitRestaurantPost"
       :handleCancel="cancelRestaurantPost"
-    /> -->
+    />
     <div>
       <input
         v-model="inputTitle"
@@ -65,7 +80,7 @@ const test = () => {
           theme="snow"
           :toolbar="toolbarOptions"
           @ready="onEditorReady"
-          class="w-full text-center placeholder:text-center"
+          class="w-full text-center"
         />
       </div>
       <PhotoUpload />
