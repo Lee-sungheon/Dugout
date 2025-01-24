@@ -1,6 +1,8 @@
 <script setup>
 import PostArrow from "@/assets/icons/post_arrow.svg";
 import PhotoboardCard from "@/components/photoboard/PhotoboardCard.vue";
+import { ref } from "vue";
+import { useRoute } from "vue-router";
 
 const posts = [
   {
@@ -68,6 +70,9 @@ const posts = [
 const props = defineProps({
   posts: Array,
 });
+
+const route = useRoute();
+const teamName = ref(route.params.team);
 </script>
 <template>
   <div
@@ -76,7 +81,7 @@ const props = defineProps({
     <!-- 글쓰기 버튼 -->
     <div class="cursor-pointer">
       <RouterLink
-        to="/team/photoboard/create"
+        :to="`/${teamName}/photoboard/create`"
         class="flex items-center justify-center w-full font-medium bg-white02 py-[10px] rounded-[10px] gap-[10px]"
       >
         직관 인증 포토 올리러 가기
