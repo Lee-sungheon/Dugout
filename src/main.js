@@ -7,11 +7,16 @@ import { createPinia } from "pinia";
 import App from "./App.vue";
 import router from "./router";
 import { QuillEditor } from "@vueup/vue-quill";
+import VCalendar from "v-calendar";
+import "v-calendar/style.css";
+import { setupCalendar } from "v-calendar";
 
 const app = createApp(App);
 
 app.component("QuillEditor", QuillEditor);
 app.use(createPinia());
 app.use(router);
+app.use(VCalendar, {});
+app.use(setupCalendar, {});
 
 app.mount("#app");
