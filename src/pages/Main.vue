@@ -11,9 +11,7 @@ import { getBaseballGame } from "@/api/supabase-api/baseballGame";
 const marquee = ref(null);
 const marquee2 = ref(null);
 const user = ref(null);
-const userInfos = ref([]);
 const errorMessage = ref("");
-const gameRecords = ref([]);
 const combinedRecords = ref([]);
 const router = useRouter();
 
@@ -45,43 +43,48 @@ const fetchAllUserInfo = async () => {
   }
 };
 
-// 게임 기록 가져오기
-const fetchGameRecords = async () => {
+const fetchGameRanking = async () => {
   try {
-    const records = await getBaseballGame();
-    if (records && userInfos.value.length > 0) {
-      const combined = records.map((record) => {
-        const userInfo = userInfos.value.find(
-          (user) => user.id === record.member_id
-        );
-        return {
-          ...record,
-          userName: userInfo ? userInfo.name : "알 수 없음",
-        };
-      });
-
-      combinedRecords.value = combined
-        .sort((a, b) => b.wins - a.wins)
-        .slice(0, 3);
-
-      console.log("결합된 게임 기록:", combinedRecords.value);
+    const gameRecords = await getBaseballGame();
+    if (!gameRecords) {
+      console.error("게임 기록을 가져오는데 실패했습니다.");
+      return;
     }
+
+    const userInfos = await getUserInfoEnCapsulation("user_info");
+    if (!userInfos) {
+      console.error("사용자 정보를 가져오는데 실패했습니다.");
+      return;
+    }
+
+    const combined = gameRecords.map((record) => {
+      const userInfo = userInfos.find((user) => user.id === record.member_id);
+      return {
+        id: record.id,
+        wins: record.wins,
+        name: userInfo ? userInfo.name : "알 수 없음",
+      };
+    });
+
+    combinedRecords.value = combined
+      .sort((a, b) => b.wins - a.wins)
+      .slice(0, 3);
+
+    console.log("순위 데이터:", combinedRecords.value);
   } catch (error) {
-    console.error("게임 기록을 가져오는 중 오류 발생:", error);
+    console.error("순위 데이터를 가져오는 중 오류 발생:", error);
   }
 };
 
 const handleRouting = async () => {
   await fetchCurrenthUser();
-
   if (user.value) router.push("./game");
   else router.push("./signin");
 };
 
-onMounted(() => {
-  fetchCurrenthUser();
-  fetchAllUserInfo();
-  fetchGameRecords();
+onMounted(async () => {
+  await fetchCurrenthUser();
+  await fetchGameRanking();
 
   // 첫 번째 마퀴 (왼쪽으로 이동)
   gsap.to(marquee.value, {
@@ -170,7 +173,7 @@ onMounted(() => {
       <img :src="Monitor" class="w-full h-[600px]" />
     </div>
     <div
-      class="absolute left-1/2 top-[130px] -translate-x-1/2 text-white01 flex flex-col items-center gap-[50px]">
+      class="absolute left-1/2 -translate-x-1/2 bottom-[130px] w-full flex flex-col items-center gap-[50px] text-white01">
       <div class="font-Galmuri11 text-[24px]">
         야구와 관련된 다양한 게임도 플레이할 수 있어요!
       </div>
@@ -187,7 +190,7 @@ onMounted(() => {
             v-for="record in combinedRecords"
             :key="record.id"
             class="font-Galmuri11 text-[16px]">
-            {{ record.wins }}
+            {{ record.wins || "-" }}
           </div>
         </div>
         <div class="flex flex-col gap-[30px] items-center">
@@ -196,7 +199,7 @@ onMounted(() => {
             v-for="record in combinedRecords"
             :key="record.id"
             class="font-Galmuri11 text-[16px]">
-            {{ record.userName }}
+            {{ record.name || "-" }}
           </div>
         </div>
       </div>
