@@ -1,5 +1,8 @@
 <script setup>
-import { getFreePostDetailsById } from "@/api/supabase-api/freePost";
+import {
+  createFreePostComment,
+  getFreePostDetailsById,
+} from "@/api/supabase-api/freePost";
 import backIcon from "@/assets/icons/back.svg";
 import CommentSection from "@/components/CommentSection.vue";
 import PostHeader from "@/components/PostHeader.vue";
@@ -26,6 +29,19 @@ const fetchFreeboardDetail = async (id) => {
     post.value = data;
   } catch (error) {
     console.error("데이터를 불러오는 도중에 오류가 발생했습니다.");
+  }
+};
+
+// 댓글 생성하는 사용자 정의 함수
+const createComment = async (comment) => {
+  try {
+    const data = createFreePostComment(
+      "d9ac20dc-af86-42e8-9d63-5f1e35b20547", // member ID,
+      post_id.value,
+      comment
+    );
+  } catch (error) {
+    console.error("댓글 작성중 오류가 생겼습니다.");
   }
 };
 
@@ -59,6 +75,7 @@ onMounted(() => {
       <CommentSection
         :likeLength="post.like_count"
         :commentLength="post.comment_count"
+        @create-comment="createComment"
       />
     </div>
   </div>

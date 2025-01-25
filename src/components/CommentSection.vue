@@ -3,6 +3,9 @@ import Commentbox from "./Commentbox.vue";
 import likeIcon from "@/assets/icons/like.svg";
 import commentIcon from "@/assets/icons/comment.svg";
 import commentBtnIcon from "@/assets/icons/comment_btn.svg";
+import { ref } from "vue";
+
+const text = ref("");
 
 const props = defineProps({
   likeLength: {
@@ -18,6 +21,12 @@ const props = defineProps({
     },
   },
 });
+// 사용자 정의 이벤트 정의
+const emits = defineEmits(["createComment"]);
+// 이벤트 트리거 함수
+const createComment = (text) => {
+  emits("createComment", text);
+};
 </script>
 <template>
   <div class="px-[30px] flex flex-col gap-[30px]">
@@ -41,10 +50,17 @@ const props = defineProps({
         type="text"
         placeholder="댓글을 입력해주세요"
         class="w-full outline-none bg-white01"
+        v-model="text"
       />
-      <img :src="commentBtnIcon" alt="댓글 전송 버튼" />
-    </div>
 
+      <button @click="createComment(text)">
+        <img
+          :src="commentBtnIcon"
+          alt="댓글 전송 버튼"
+          class="w-[24px] h-[24px]"
+        />
+      </button>
+    </div>
     <!-- 댓글리스트 -->
     <div class="flex flex-col gap-5">
       <Commentbox />
