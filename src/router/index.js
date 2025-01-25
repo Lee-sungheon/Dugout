@@ -109,10 +109,6 @@ const router = createRouter({
           path: "freeboard/create",
           name: "freeboardCreate",
           component: () => import("@/pages/FreeBoardCreate.vue"),
-          beforeEnter: (to, from, next) => {
-            const team = to.params.team; // 현재 URL의 team 값
-            next(`/${team}/foodboard`); // 동적으로 리다이렉트
-          },
         },
         {
           path: "crewboard",
