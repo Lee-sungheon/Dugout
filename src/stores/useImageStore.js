@@ -53,11 +53,18 @@ export const useImageStore = defineStore("image", () => {
     return imageUrls.value.filter((url) => url !== null);
   };
 
+  // 이미지 초기화 함수
+  const resetImageData = () => {
+    imageUrls.value = [null, null, null];
+    errorMessage.value = null;
+  };
+
   return {
     imageUrls,
     errorMessage,
     uploadImage,
     removeImage,
     filterNullImage,
+    resetImageData, // resetData 메서드 추가
   };
 });

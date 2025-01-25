@@ -74,13 +74,15 @@ const calculatedCreatedAt = computed(() => {
         <!-- 제목 / 내용 -->
         <div class="flex flex-col gap-[15px]">
           <div class="gap[10px]">
-            <span
-              v-for="(tag, i) in props.restaurantPostData.tags || []"
-              :key="i"
-              class="text-gray02 text-[14px]"
-            >
-              {{ tag }}
-            </span>
+            <div class="flex gap-[5px]">
+              <span
+                v-for="(tag, i) in props.restaurantPostData.tags || []"
+                :key="i"
+                class="text-gray02 text-[14px]"
+              >
+                {{ tag }}
+              </span>
+            </div>
           </div>
           <span class="text-black01 text-[24px] font-bold">{{
             props.restaurantPostData.title
@@ -94,7 +96,7 @@ const calculatedCreatedAt = computed(() => {
           <div class="flex text-[12px] gap-[10px] items-center">
             <div class="w-[25px] h-[25px] rounded-full overflow-hidden">
               <img
-                src="https://news.nateimg.co.kr/orgImg/aj/2024/01/21/20240121132054894779.jpg"
+                :src="props.restaurantPostData.author_image"
                 class="w-full h-full object-cover"
               />
             </div>
