@@ -79,20 +79,39 @@ export const createCertificationPost = async (
 export const uploadImageToSupabase = async (file) => {
   if (!file) return null;
 
+  const sanitizeFileName = (fileName) => {
+    return fileName
+      .normalize("NFD") // 유니코드 정규화
+      .replace(/[\u0300-\u036f]/g, "") // 결합 문자 제거
+      .replace(/[^\w.-]/g, "_") // 특수문자 제거
+      .replace(/\s+/g, "_"); // 공백을 밑줄(_)로 변환
+  };
+
   try {
-    const fileName = `${Date.now()}_${file.name}`; // 파일 이름을 고유하게 설정
+    const sanitizedFileName = `${Date.now()}_${sanitizeFileName(file.name)}`;
     const { data, error } = await supabase.storage
       .from("images")
-      .upload(fileName, file);
+      .upload(sanitizedFileName, file);
 
-    if (error) throw new Error(error.message);
+    if (error) {
+      console.error("Supabase 이미지 업로드 실패:", error.message);
+      return null;
+    }
 
-    // 업로드된 이미지의 URL 생성
-    const imageUrl = supabase.storage
+    console.log("✅ 이미지 업로드 성공:", data);
+
+    // getPublicUrl()을 통해 URL 가져오기
+    const { data: publicUrlData } = supabase.storage
       .from("certification_images")
-      .getPublicUrl(fileName).publicUrl;
+      .getPublicUrl(sanitizedFileName);
 
-    return imageUrl;
+    if (!publicUrlData) {
+      console.error("❌ 퍼블릭 URL을 가져오지 못함");
+      return null;
+    }
+
+    console.log("✅ 퍼블릭 URL:", publicUrlData.publicUrl);
+    return publicUrlData.publicUrl;
   } catch (error) {
     console.error("이미지 업로드 실패: ", error);
     return null;
