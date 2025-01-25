@@ -36,7 +36,7 @@ const returnToMapSelect = () => {
         :lng="finalSelectedLocation.x"
       />
     </KakaoMap>
-    <!-- finalSelectedLocation이 null일 경우에는 기본 UI를 표시하거나 다른 안내 메시지를 보여줄 수 있습니다 -->
+    <!-- finalSelectedLocation이 null일 경우에는 기본 UI를 표시하거나 다른 안내 메시지를 보여줄 수 있음 -->
     <div
       v-else
       class="w-full h-[300px] flex justify-center items-center text-gray-500"
