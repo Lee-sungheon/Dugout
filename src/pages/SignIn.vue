@@ -40,7 +40,7 @@ const handleKakaoLogin = async () => {
 };
 
 // 일반 로그인
-const handleEmailLogin = async (e) => {
+const handleEmailLogin = async () => {
   if (!email.value || !password.value) return;
 
   try {
