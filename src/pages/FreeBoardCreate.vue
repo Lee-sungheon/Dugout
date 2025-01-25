@@ -65,8 +65,8 @@ const handleCancel = () => {
       <div>
         <QuillEditor
           v-model:content="content"
-          contentType="html"
           placeholder="자유롭게 게시글을 작성해보세요."
+          contentType="html"
           theme="snow"
           toolbar="full"
         />

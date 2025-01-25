@@ -2,6 +2,7 @@
 import { computed, ref } from "vue";
 import { useMapStore } from "@/stores/mapStore";
 import { KakaoMap, KakaoMapMarker } from "vue3-kakao-maps";
+import DeleteBtn from "@/assets/icons/map_close.svg";
 import MapSearchBar from "./MapSearchBar.vue";
 
 const mapStore = useMapStore();
@@ -146,19 +147,26 @@ const getFirstAndLastCategory = (category) => {
         <li
           v-for="(place, index) in searchResults"
           :key="index"
-          class="cursor-pointer text-black01 hover:text-gray02 mb-[10px] rounded-[10px] w-full"
+          class="cursor-pointer text-black01 hover:text-gray02 mb-[10px] rounded-[10px] w-full group hover:bg-white01 hover:shadow-md hover:p-[10px] hover:rounded-[10px] hover:border-none"
           @click="onClickSearchResultItem(place)"
         >
-          <div class="w-full h-[51px] border-b">
-            <p class="h-[18px] text-[18px] font-bold mb-[5px]">
+          <div class="w-full border-b pb-[10px] group-hover:border-none">
+            <!-- place_name -->
+            <p
+              class="text-[18px] font-bold mb-[5px] overflow-hidden text-ellipsis whitespace-nowrap group-hover:whitespace-normal group-hover:overflow-visible"
+            >
               {{ place.place_name }}
             </p>
-            <p class="h-[18px] text-[14px]">
+            <!-- address_name -->
+            <p
+              class="text-[14px] overflow-hidden text-ellipsis whitespace-nowrap group-hover:whitespace-normal group-hover:overflow-visible"
+            >
               {{ place.address_name }}
             </p>
           </div>
         </li>
       </ul>
+
       <div v-else>
         <div
           class="h-[375px] flex flex-col justify-center items-center m-[20px] text-gray01"
@@ -175,19 +183,17 @@ const getFirstAndLastCategory = (category) => {
     <!-- 커스텀 오버레이 -->
     <div
       v-if="overlayVisible"
-      class="w-[250px] p-[20px] bg-white01 rounded-[10px] z-50 absolute top-[50px] right-3 shadow-md flex flex-col gap-[10px]"
+      class="w-[250px] p-[20px] bg-white01 rounded-[10px] z-50 absolute top-[50px] right-3 shadow-md flex flex-col gap-[10px] group"
     >
-      <div class="flex flex-col gap-[5px]">
-        <p>
-          <span class="line-clamp text-[18px] font-bold">
-            {{ tempSelectedLocation.place_name }}</span
-          >
-          <span
-            style="float: right; cursor: pointer"
-            @click="onClickCloseOverLay"
-            title="닫기"
-            ><img :src="DeleteBtn"
-          /></span>
+      <div class="flex flex-col gap-[5px] relative">
+        <span
+          @click="onClickCloseOverLay"
+          class="absolute right-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+        >
+          <img :src="DeleteBtn" />
+        </span>
+        <p class="text-[18px] font-bold">
+          {{ tempSelectedLocation.place_name }}
         </p>
         <p class="leaing-[18px] text-[14px] text-gray03 line-clamp">
           {{ tempSelectedLocation.phone }}

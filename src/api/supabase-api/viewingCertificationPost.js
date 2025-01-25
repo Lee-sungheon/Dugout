@@ -1,7 +1,6 @@
 import { supabase } from "@/supabase";
 import { getCurrentUser } from "./userInfo";
 
-
 // 특정 클럽의 모든 직관 인증 게시물을 가져오기
 export const getViewingCertificationPostsByClub = async (clubId) => {
   try {
@@ -72,6 +71,49 @@ export const createCertificationPost = async (
     return data;
   } catch (error) {
     console.error("게시물 생성 실패: ", error);
+    return null;
+  }
+};
+
+// supabase storage에 이미지 업로드하기
+export const uploadImageToSupabase = async (file) => {
+  if (!file) return null;
+
+  const sanitizeFileName = (fileName) => {
+    return fileName
+      .normalize("NFD") // 유니코드 정규화
+      .replace(/[\u0300-\u036f]/g, "") // 결합 문자 제거
+      .replace(/[^\w.-]/g, "_") // 특수문자 제거
+      .replace(/\s+/g, "_"); // 공백을 밑줄(_)로 변환
+  };
+
+  try {
+    const sanitizedFileName = `${Date.now()}_${sanitizeFileName(file.name)}`;
+    const { data, error } = await supabase.storage
+      .from("images")
+      .upload(sanitizedFileName, file);
+
+    if (error) {
+      console.error("Supabase 이미지 업로드 실패:", error.message);
+      return null;
+    }
+
+    console.log("✅ 이미지 업로드 성공:", data);
+
+    // getPublicUrl()을 통해 URL 가져오기
+    const { data: publicUrlData } = supabase.storage
+      .from("certification_images")
+      .getPublicUrl(sanitizedFileName);
+
+    if (!publicUrlData) {
+      console.error("❌ 퍼블릭 URL을 가져오지 못함");
+      return null;
+    }
+
+    console.log("✅ 퍼블릭 URL:", publicUrlData.publicUrl);
+    return publicUrlData.publicUrl;
+  } catch (error) {
+    console.error("이미지 업로드 실패: ", error);
     return null;
   }
 };
@@ -148,4 +190,3 @@ export const deleteCertificationPost = async (postId) => {
     return null;
   }
 };
-
