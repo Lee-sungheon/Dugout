@@ -1,5 +1,7 @@
 <script setup>
 import RecruitmentStatus from "./RecruitmentStatus.vue";
+import { computed } from "vue";
+
 const props = defineProps({
   crewBoard: {
     type: Boolean,
@@ -22,7 +24,32 @@ const props = defineProps({
     type: String,
     required: true,
   },
+  status: {
+    type: String,
+    required: true,
+  },
 });
+// 시간 차이를 계산하는 함수
+const timeAgo = (givenTime) => {
+  const givenDate = new Date(givenTime);
+  const currentDate = new Date();
+  const timeDifference = currentDate - givenDate;
+
+  if (timeDifference < 60 * 1000) {
+    return "방금 전";
+  } else if (timeDifference < 60 * 60 * 1000) {
+    return `${Math.floor(timeDifference / (60 * 1000))}분 전`;
+  } else if (timeDifference < 24 * 60 * 60 * 1000) {
+    return `${Math.floor(timeDifference / (60 * 60 * 1000))}시간 전`;
+  } else if (timeDifference < 7 * 24 * 60 * 60 * 1000) {
+    return `${Math.floor(timeDifference / (24 * 60 * 60 * 1000))}일 전`;
+  } else {
+    return givenDate.toISOString().split("T")[0]; // 날짜만 출력
+  }
+};
+
+// 계산된 시간 차이
+const formattedTime = computed(() => timeAgo(props.time));
 </script>
 <template>
   <!-- 상세 페이지 정보 -->
@@ -31,7 +58,7 @@ const props = defineProps({
     <div class="flex items-center gap-[15px]">
       <span class="text-2xl font-bold">{{ props.title }}</span>
       <!-- crew모집 페이지에서만 다음 컴포넌트 출력 -->
-      <RecruitmentStatus v-if="props.crewBoard" status="done" />
+      <RecruitmentStatus v-if="props.crewBoard" :status="props.status" />
     </div>
     <!-- 유저 정보 / 수정 삭제 -->
     <div class="flex items-center justify-between">
@@ -43,7 +70,7 @@ const props = defineProps({
           class="w-[25px] h-[25px] rounded-full"
         />
         <span class="text-xs text-gray03">{{ props.nickname }}</span>
-        <span class="text-xs text-gray02">{{ props.time }}</span>
+        <span class="text-xs text-gray02">{{ formattedTime }}</span>
       </div>
       <!-- 수정 삭제 버튼 -->
       <div class="flex text-xs text-gray02 gap-[4px]">

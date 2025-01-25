@@ -4,29 +4,36 @@ import CommentSection from "@/components/CommentSection.vue";
 import PostHeader from "@/components/PostHeader.vue";
 import { getCrewRecruitmentPostDetails } from "@/api/supabase-api/crewRecruitmentPost";
 import { onMounted, ref } from "vue";
+import { useRoute, useRouter } from "vue-router";
 
+const route = useRoute();
+const router = useRouter();
 const post = ref(null);
+const currentTeam = router.currentRoute.value.params.team;
 
 const fetchPostDetails = async () => {
-  const postId = "77"; //route.params.id;
+  const postId = route.params.id;
   const data = await getCrewRecruitmentPostDetails(postId);
   if (data) {
     post.value = data;
-    console.log(post.value.club_id);
   } else {
     alert("게시물 정보를 가져오는 데 실패했습니다.");
   }
 };
 
+const handleBack = () => {
+  router.push(`/${currentTeam}/crewboard/`);
+};
 onMounted(() => {
   fetchPostDetails();
+  console.log(post.value);
 });
 </script>
 <template>
   <div v-if="post" class="px-[50px] py-[30px]">
     <!-- 뒤로가기 -->
     <div class="mb-[50px] flex">
-      <button>
+      <button @click="handleBack">
         <img :src="backIcon" alt="뒤로가기 아이콘" />
       </button>
     </div>
@@ -38,6 +45,7 @@ onMounted(() => {
         :title="post.title"
         :nickname="post.author_name"
         :time="post.created_at"
+        :status="post.status"
       />
       <!-- 게시물 내용 -->
       <div class="pb-[50px] border-b border-gray01 flex flex-col gap-[50px]">

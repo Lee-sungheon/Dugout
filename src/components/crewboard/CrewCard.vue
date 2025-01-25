@@ -1,19 +1,26 @@
 <script setup>
 import mascotImg from "@/assets/images/mascot_lg.svg";
 import { useRouter } from "vue-router";
+
+const router = useRouter();
 // props로 post 데이터를 받아옵니다.
-defineProps({
+const props = defineProps({
   post: {
     type: Object,
     required: true,
   },
 });
-
-const router = useRouter();
-
 // 카드 클릭 시 상세 페이지로 이동
 const goToDetail = () => {
-  router.push({ name: "crewboardDetail", params: { id: post.post_id } });
+  if (!props.post || !props.post.post_id) {
+    console.error("Invalid post data:", props.post);
+    return;
+  }
+  // 현재 팀 이름을 라우터에서 가져옴
+  const currentTeam = router.currentRoute.value.params.team;
+
+  // 라우팅: 팀 이름과 포스트 ID를 포함한 경로로 이동
+  router.push(`/${currentTeam}/crewboard/${props.post.post_id}`);
 };
 </script>
 
@@ -33,23 +40,23 @@ const goToDetail = () => {
     <div
       class="absolute flex flex-col items-center w-full text-xl font-bold transform -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2"
     >
-      <span>{{ post.title || "제목 없음" }}</span>
-      <span>{{ post.status || "상태 없음" }}</span>
+      <span>{{ props.post.title || "제목 없음" }}</span>
+      <span>{{ props.post.status || "상태 없음" }}</span>
     </div>
 
     <!-- 하단 유저 정보 및 모집 상태 -->
     <div class="flex items-center justify-between w-full">
       <div class="flex items-center gap-[10px]">
         <img
-          :src="post.author_image || mascotImg"
+          :src="props.post.author_image || mascotImg"
           alt="유저 프로필"
           class="w-[25px] h-[25px] rounded-full"
         />
         <span class="text-xs text-gray03"
-          >작성자: {{ post.author_name || "정보 없음" }}</span
+          >작성자: {{ props.post.author_name || "정보 없음" }}</span
         >
         <span class="text-xs text-gray02">{{
-          post.created_at.split("T")[0] || "날짜 없음"
+          props.post.created_at.split("T")[0] || "날짜 없음"
         }}</span>
       </div>
 
@@ -57,11 +64,11 @@ const goToDetail = () => {
         <div
           class="w-[6px] h-[6px] rounded-full"
           :class="{
-            'bg-green-500': post.status === '모집 중',
-            'bg-red-500': post.status === '모집 완료',
+            'bg-green-500': props.post.status === '모집 중',
+            'bg-red-500': props.post.status === '모집 완료',
           }"
         ></div>
-        <span class="text-xs">{{ post.status || "상태 정보 없음" }}</span>
+        <span class="text-xs">{{ props.post.status || "상태 정보 없음" }}</span>
       </div>
     </div>
   </div>

@@ -11,7 +11,7 @@ const posts = ref([]);
 
 // 특정 게시물 데이터 가져오기
 const fetchPosts = async () => {
-  const clubId = "1";
+  const clubId = 1; // 임시 설정
   const data = await getCrewRecruitmentPostsByClub(clubId);
 
   if (data) {
@@ -19,11 +19,10 @@ const fetchPosts = async () => {
   } else {
     alert("특정 게시물 데이터 가져오기 실패!");
   }
-  console.log(posts.value);
 };
 
-onMounted(() => {
-  fetchPosts();
+onMounted(async () => {
+  await fetchPosts();
 });
 </script>
 <template>
@@ -41,8 +40,8 @@ onMounted(() => {
       </div>
 
       <!-- 크루 모집 게시물 리스트 -->
-      <div class="grid grid-cols-3 gap-[30px]">
-        <CrewCard v-for="post in posts" :key="post.id" :post="post" />
+      <div v-if="posts.length" class="grid grid-cols-3 gap-[30px]">
+        <CrewCard v-for="post in posts" :key="post.post_id" :post="post" />
       </div>
     </div>
   </div>
