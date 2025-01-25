@@ -1,127 +1,185 @@
 <script setup>
-import { ref } from "vue";
-import { Delta } from "@vueup/vue-quill";
-import CreateHeader from "@/components/CreateHeader.vue";
+import { ref, computed } from "vue";
+import { useRoute, useRouter } from "vue-router";
 import { QuillEditor } from "@vueup/vue-quill";
-import SearchIcon from "@/assets/icons/search.svg";
-import Camera from "@/assets/icons/camera.svg";
-import Baseball from "@/assets/icons/baseball.svg";
+import { useImageStore } from "@/stores/useImageStore";
+import { useMapStore } from "@/stores/mapStore";
+import {
+  createRestaurantPost,
+  createRestaurantLocation,
+} from "@/api/supabase-api/restaurantPost";
+import { getCurrentUser } from "@/api/supabase-api/userInfo";
+import CreateHeader from "@/components/CreateHeader.vue";
+import MapSelectAndView from "@/components/foodboard/foodBoardCreate/MapSelectAndView.vue";
+import PhotoUpload from "@/components/foodboard/foodBoardCreate/PhotoUpload.vue";
+import TagsSelect from "@/components/foodboard/foodBoardCreate/TagsSelect.vue";
+import Modal from "@/components/common/Modal.vue";
+import { teamID } from "@/constants/index";
+import { createRestaurantPostImage } from "@/api/supabase-api/restaurantImage";
 
-const content = ref(new Delta()); // Delta 형식 기본값
+const imageStore = useImageStore();
+const mapStore = useMapStore();
+const router = useRouter();
+const route = useRoute();
+const teamName = ref(route.params.team); // URL에서 팀 이름 가져오기
+const clubId = ref(teamID[teamName.value]);
 
-const foodBoardTag = [
-  "# 야구장 내부 맛집",
-  "# 야구장 주변 맛집",
-  "# 야구 볼 수 있는 식당",
+const modalmessage = ref("");
+const isModalVisible = ref(false);
+const title = ref("");
+const content = ref("");
+const selectedTags = ref([]);
+const messageList = [
+  "작성했던 모든 내용은 저장되지 않습니다\n취소하시겠습니까?",
+  "수정을 완료하시겠습니까?",
 ];
 
-const selectedTag = ref([]);
-const selectTag = (tag) => {
-  if (!selectedTag.value.includes(tag)) {
-    selectedTag.value.push(tag);
+const finalSelectedLocation = computed(() => mapStore.finalSelectedLocation);
+
+const handleTagUpdate = (tags) => {
+  selectedTags.value = tags;
+};
+
+const submitRestaurantPost = async () => {
+  const filteredImg = imageStore.filterNullImage();
+  console.log("필터링 된 이미지 데이터를 확인합니다", filteredImg);
+  const userData = await getCurrentUser();
+  try {
+    // 게시물 등록
+    const data = await createRestaurantPost(
+      userData.id,
+      content.value,
+      title.value,
+      filteredImg[0], // 첫 번째 이미지를 메인 이미지로 저장
+      selectedTags.value,
+      clubId.value
+    );
+    console.log("포스팅된 전체 데이터를 확인합니다", data);
+
+    // 위치 데이터 등록
+    const locationData = await createRestaurantLocation(
+      data[0].id,
+      finalSelectedLocation.value.place_name,
+      finalSelectedLocation.value.address_name,
+      finalSelectedLocation.value.category_name,
+      finalSelectedLocation.value.y,
+      finalSelectedLocation.value.x,
+      finalSelectedLocation.value.phone,
+      finalSelectedLocation.value.place_url
+    );
+
+    // 나머지 이미지 등록 (첫 번째 이미지는 이미 등록됨)
+    const imagesData = [];
+    for (const [i, image] of filteredImg.entries()) {
+      try {
+        console.log(`이미지 업로드 요청 데이터 (index: ${i})`, {
+          postId: data[0].id,
+          imageUrl: image,
+          index: i,
+        });
+
+        const imageData = await createRestaurantPostImage(data[0].id, image, i);
+        console.log("이미지 업로드 성공", imageData);
+        imagesData.push(imageData);
+      } catch (err) {
+        console.error(`이미지 업로드 실패 (index: ${i})`, err);
+      }
+    }
+
+    // 결과 출력
+    console.log("맛집 게시물 등록 성공", data, locationData, imagesData);
+    router.push(`/${teamName.value}/foodboard`);
+  } catch (error) {
+    console.log("맛집 게시물 등록 실패", error);
   }
 };
-const removeTag = (tag) => {
-  selectedTag.value = selectedTag.value.filter((t) => t !== tag);
+
+const cancelRestaurantPost = () => {
+  modalmessage.value = messageList[0];
+  isModalVisible.value = true;
 };
+
+const cancelModalWindow = () => {
+  isModalVisible.value = false;
+};
+
+const backToFoodboard = () => {
+  router.go(-1);
+};
+
+const toolbarOptions = [
+  [{ header: "1" }, { header: "2" }, { font: [] }],
+  [{ list: "ordered" }, { list: "bullet" }],
+  ["bold", "italic", "underline"],
+  ["link"],
+  [{ align: [] }],
+];
 </script>
+
 <template>
-  <div class="flex flex-col px-[50px] gap-[50px]">
-    <CreateHeader />
-    <!-- 제목부분 -->
+  <Modal
+    v-if="isModalVisible"
+    :message="modalmessage"
+    :onCancel="cancelModalWindow"
+    :onConfirm="backToFoodboard"
+  />
+  <section class="flex flex-col px-[50px] gap-[30px]">
+    <CreateHeader
+      :handleRegister="submitRestaurantPost"
+      :handleCancel="cancelRestaurantPost"
+    />
     <div>
       <input
+        v-model="title"
         type="text"
         placeholder="제목"
-        class="py-[15px] border-b border-white02 w-full outline-none text-3xl text-center"
+        class="h-[70px] border-b w-full outline-none text-center placeholder:text-[20px]"
       />
     </div>
-    <div class="flex flex-col gap-[30px] mb-[142px]">
-      <div class="relative w-full">
-        <input
-          type="text"
-          placeholder="맛집을 검색하세요"
-          class="w-full h-[62px] bg-white border border-white02 rounded-[10px] px-5 py-5 text-[18px] text-black01 placeholder-[18px] placeholder-gray02 focus:outline-none"
-        />
-        <button class="absolute right-5 top-1/2 transform -translate-y-1/2">
-          <img :src="SearchIcon" class="w-6 h-6" alt="검색" />
-        </button>
-      </div>
-
-      <!-- 에디터 부분 -->
+    <section
+      id="post_content--input"
+      class="flex flex-col gap-[30px] mb-[142px] w-full"
+    >
+      <MapSelectAndView />
       <div>
         <QuillEditor
           v-model:content="content"
-          contentType="delta"
+          contentType="html"
           :placeholder="'맛집을 마구 공유해주세요!\n맛집 사진은 최대 3개까지 업로드할 수 있습니다.'"
           theme="snow"
-          toolbar="full"
-          @ready="onEditorReady"
-          class="w-full text-center placeholder:text-center"
+          :toolbar="toolbarOptions"
+          class="w-full text-center"
         />
       </div>
-      <div class="flex gap-[30px]">
-        <button
-          class="aspect-square w-full rounded-[10px] bg-white02 flex justify-center items-center"
-        >
-          <img :src="Camera" />
-        </button>
-        <button
-          class="aspect-square w-full rounded-[10px] bg-white02 flex justify-center items-center"
-        >
-          <img :src="Camera" />
-        </button>
-        <button
-          class="aspect-square w-full rounded-[10px] bg-white02 flex justify-center items-center"
-        >
-          <img :src="Camera" />
-        </button>
-      </div>
-      <div class="flex flex-col gap-[20px]">
-        <div class="flex gap-[10px] items-center">
-          <img :src="Baseball" class="w-[18px] h-[18px]" />
-          <p class="text-[14px] text-gray03">태그를 1개 이상 선택해주세요</p>
-        </div>
-        <div class="min-h-[39px] overflow-x-auto scrollbar-hide">
-          <div class="flex items-center gap-x-[10px] w-max flex-nowrap">
-            <button
-              v-for="(tag, index) of foodBoardTag"
-              :key="index"
-              @click="selectTag(tag)"
-              class="inline-flex items-center h-[39px] px-[15px] rounded-[10px] whitespace-nowrap"
-              :class="{
-                'bg-gray02 text-white01 gap-[10px]': selectedTag.includes(tag),
-                'bg-white02 text-black01': !selectedTag.includes(tag),
-              }"
-            >
-              <p>{{ tag }}</p>
-              <img
-                v-if="selectedTag.includes(tag)"
-                @click.stop="removeTag(tag)"
-                :src="deleteBtn"
-                class="cursor-pointer"
-              />
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+      <PhotoUpload />
+      <TagsSelect @update:selectedTag="handleTagUpdate" />
+    </section>
+  </section>
 </template>
 
 <style scoped>
+/* placeholder 가운데 정렬 */
 ::v-deep(.ql-editor::before) {
   text-align: center;
   width: 100%;
+  height: 100px;
   display: block;
   color: #b1b1b1;
   font-size: 18px;
   white-space: pre-wrap !important;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
+
 ::v-deep(.ql-editor) {
+  width: 100%;
+  height: 100px;
   text-align: center;
   color: #0a0a0a;
   font-size: 18px;
   white-space: normal;
+  position: relative;
 }
 </style>

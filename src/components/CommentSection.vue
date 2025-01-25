@@ -6,13 +6,16 @@ import commentBtnIcon from "@/assets/icons/comment_btn.svg";
 
 const props = defineProps({
   likeLength: {
-    type: Boolean,
-    required: false,
-    default: false, // 기본값은 false로 설정
+    type: Number,
+    default() {
+      return 0;
+    },
   },
   commentLength: {
-    type: String,
-    required: true,
+    type: Number,
+    default() {
+      return 0;
+    },
   },
 });
 </script>
