@@ -11,24 +11,29 @@ const route = useRoute();
 const teamName = ref(route.params.team);
 const clubId = ref(teamID[teamName.value]);
 const restaurantPosts = ref([]);
-const selectedTag = ref([]);
+const selectedTag = ref(null); // 하나의 태그만 선택되도록 변경
 
 const selectTag = (tag) => {
-  if (!selectedTag.value.includes(tag)) {
-    selectedTag.value.push(tag);
+  if (selectedTag.value === tag) {
+    selectedTag.value = null; // 이미 선택된 태그가 클릭되면 선택 해제
+  } else {
+    selectedTag.value = tag; // 새로운 태그를 선택
   }
-};
-const removeTag = (tag) => {
-  selectedTag.value = selectedTag.value.filter((t) => t !== tag); // 태그가 있으면 제거
 };
 
 const fetchFoodBoardList = async () => {
   try {
     const restaurantPostsData = await getRestaurantPostsByTagAndClub(
       clubId.value,
-      selectedTag.length > 0 ? selectedTag.value : null
+      selectedTag.value ? [selectedTag.value] : null // 선택된 태그가 있으면 그 태그만 필터링
     );
-    return { data: restaurantPostsData, error: null };
+
+    // 최신순
+    const sortedPosts = restaurantPostsData.sort((a, b) => {
+      return new Date(b.created_at) - new Date(a.created_at);
+    });
+
+    return { data: sortedPosts, error: null };
   } catch (error) {
     console.error("데이터를 불러오는 도중에 오류가 발생했습니다.");
     return { data: null, error };
@@ -36,7 +41,7 @@ const fetchFoodBoardList = async () => {
 };
 
 watch(selectedTag, async () => {
-  console.log("selectedTag changed:", selectedTag.value); // 로그 추가
+  console.log("selectedTag 변경:", selectedTag.value);
   const { data, error } = await fetchFoodBoardList();
   if (error) {
     console.error("데이터를 불러오는 도중에 오류가 발생했습니다.");
@@ -48,13 +53,28 @@ watch(selectedTag, async () => {
 // 페이지가 로드될 때 데이터를 한 번 불러옴
 onMounted(async () => {
   const { data, error } = await fetchFoodBoardList();
-  console.log("Fetched onMounted:", data); // 로그 추가
+  console.log("데이터를 마운팅 했습니다.", data);
   if (error) {
     console.error("데이터를 불러오는 도중에 오류가 발생했습니다.");
   } else {
     restaurantPosts.value = data;
   }
 });
+
+// 중복된 postId를 가진 게시물 제거 함수
+const removeDuplicatePosts = (posts) => {
+  const uniquePosts = [];
+  const postIds = new Set();
+
+  posts.forEach((post) => {
+    if (!postIds.has(post.id)) {
+      uniquePosts.push(post);
+      postIds.add(post.id);
+    }
+  });
+
+  return uniquePosts;
+};
 </script>
 
 <template>
@@ -77,17 +97,12 @@ onMounted(async () => {
           @click="selectTag(tag)"
           class="inline-flex items-center h-[39px] px-[15px] rounded-[10px] whitespace-nowrap"
           :class="{
-            'bg-gray02 text-white01 gap-[10px]': selectedTag.includes(tag),
-            'bg-white02 text-black01': !selectedTag.includes(tag),
+            'bg-gray02 text-white01 gap-[10px]': selectedTag === tag,
+            'bg-white02 text-black01': selectedTag !== tag,
           }"
         >
           <p>{{ tag }}</p>
-          <img
-            v-if="selectedTag.includes(tag)"
-            @click.stop="removeTag(tag)"
-            :src="deleteBtn"
-            class="cursor-pointer"
-          />
+          <img v-if="selectedTag === tag" @click.stop="selectTag(tag)" :src="deleteBtn" class="cursor-pointer" />
         </button>
       </div>
     </div>
@@ -98,8 +113,8 @@ onMounted(async () => {
           restaurantPosts.length === 0 ||
           restaurantPosts.filter(
             (post) =>
-              selectedTag.length === 0 ||
-              selectedTag.some((tag) => post.tags.includes(tag))
+              selectedTag === null ||
+              post.tags.some((tag) => tag === selectedTag) // 태그명으로 필터링
           ).length === 0
         "
       >
@@ -110,10 +125,12 @@ onMounted(async () => {
         </section>
       </div>
       <FoodBoardCard
-        v-for="(restaurantPost, index) in restaurantPosts.filter(
-          (post) =>
-            selectedTag.length === 0 ||
-            selectedTag.some((tag) => post.tags.includes(tag))
+        v-for="(restaurantPost, index) in removeDuplicatePosts(
+          restaurantPosts.filter(
+            (post) =>
+              selectedTag === null ||
+              post.tags.some((tag) => tag === selectedTag) // 태그명으로 필터링
+          )
         )"
         :key="index"
         :restaurantPostData="restaurantPost"

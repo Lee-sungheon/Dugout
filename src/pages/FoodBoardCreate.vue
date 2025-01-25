@@ -9,16 +9,17 @@ import {
   createRestaurantLocation,
 } from "@/api/supabase-api/restaurantPost";
 import { getCurrentUser } from "@/api/supabase-api/userInfo";
+import { createRestaurantPostImage } from "@/api/supabase-api/restaurantImage";
 import CreateHeader from "@/components/CreateHeader.vue";
 import MapSelectAndView from "@/components/foodboard/foodBoardCreate/MapSelectAndView.vue";
 import PhotoUpload from "@/components/foodboard/foodBoardCreate/PhotoUpload.vue";
 import TagsSelect from "@/components/foodboard/foodBoardCreate/TagsSelect.vue";
 import Modal from "@/components/common/Modal.vue";
 import { teamID } from "@/constants/index";
-import { createRestaurantPostImage } from "@/api/supabase-api/restaurantImage";
+import Baseball from "@/assets/icons/baseball.svg";
 
 const imageStore = useImageStore();
-const mapStore = useMapStore();
+const mapStore = useMapStore(); // Pinia store instance
 const router = useRouter();
 const route = useRoute();
 const teamName = ref(route.params.team); // URL에서 팀 이름 가져오기
@@ -36,14 +37,47 @@ const messageList = [
 
 const finalSelectedLocation = computed(() => mapStore.finalSelectedLocation);
 
+const tagErrorClass = ref(""); // 에러 클래스 초기화
+const tagErrorMessage = ref("태그를 1개 이상 선택해주세요"); // 기존 메시지 그대로 유지
+
 const handleTagUpdate = (tags) => {
   selectedTags.value = tags;
+  // 태그 선택이 완료되면 에러 상태 초기화
+  if (selectedTags.value.length > 0) {
+    tagErrorClass.value = ""; // 에러 스타일 제거
+  }
 };
 
 const submitRestaurantPost = async () => {
   const filteredImg = imageStore.filterNullImage();
-  console.log("필터링 된 이미지 데이터를 확인합니다", filteredImg);
   const userData = await getCurrentUser();
+
+  if (!title.value.trim()) {
+    // 포커스 이동
+    const titleElement = document.querySelector('input[type="text"]');
+    titleElement.focus();
+    return;
+  }
+
+  if (!content.value.trim()) {
+    // 포커스 이동
+    const contentElement = document.querySelector(".ql-editor");
+    contentElement.focus();
+    contentElement.scrollIntoView({ behavior: "smooth" });
+    return;
+  }
+
+  if (selectedTags.value.length === 0) {
+    tagErrorClass.value = "error";
+    const tagSelectElement = document.getElementById("tags-select");
+    tagSelectElement.scrollIntoView({ behavior: "smooth" });
+
+    setTimeout(() => {
+      tagErrorClass.value = ""; // 애러 후 스타일 초기화
+    }, 3000);
+
+    return;
+  }
   try {
     // 게시물 등록
     const data = await createRestaurantPost(
@@ -89,6 +123,10 @@ const submitRestaurantPost = async () => {
     // 결과 출력
     console.log("맛집 게시물 등록 성공", data, locationData, imagesData);
     router.push(`/${teamName.value}/foodboard`);
+
+    // 성공 후 Pinia store 초기화
+    mapStore.resetLocationData();
+    imageStore.resetImageData();
   } catch (error) {
     console.log("맛집 게시물 등록 실패", error);
   }
@@ -97,6 +135,9 @@ const submitRestaurantPost = async () => {
 const cancelRestaurantPost = () => {
   modalmessage.value = messageList[0];
   isModalVisible.value = true;
+
+  // 취소 시 Pinia store 초기화
+  mapStore.resetLocationData(); // 데이터 초기화
 };
 
 const cancelModalWindow = () => {
@@ -115,7 +156,6 @@ const toolbarOptions = [
   [{ align: [] }],
 ];
 </script>
-
 <template>
   <Modal
     v-if="isModalVisible"
@@ -141,45 +181,55 @@ const toolbarOptions = [
       class="flex flex-col gap-[30px] mb-[142px] w-full"
     >
       <MapSelectAndView />
-      <div>
+      <div class="border border-white02 w-full">
         <QuillEditor
           v-model:content="content"
           contentType="html"
           :placeholder="'맛집을 마구 공유해주세요!\n맛집 사진은 최대 3개까지 업로드할 수 있습니다.'"
           theme="snow"
           :toolbar="toolbarOptions"
-          class="w-full text-center"
         />
       </div>
       <PhotoUpload />
-      <TagsSelect @update:selectedTag="handleTagUpdate" />
+      <div id="tags-select" class="flex flex-col gap-[20px]">
+        <div class="flex gap-[10px] items-center">
+          <img :src="Baseball" class="w-[18px] h-[18px]" />
+          <p :class="tagErrorClass" class="text-[14px] text-gray03">
+            {{ tagErrorMessage }}
+          </p>
+        </div>
+        <TagsSelect @update:selectedTag="handleTagUpdate" />
+      </div>
     </section>
   </section>
 </template>
 
 <style scoped>
-/* placeholder 가운데 정렬 */
-::v-deep(.ql-editor::before) {
-  text-align: center;
-  width: 100%;
-  height: 100px;
-  display: block;
-  color: #b1b1b1;
-  font-size: 18px;
-  white-space: pre-wrap !important;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+/* 반짝임 효과 */
+.error {
+  color: red;
+  animation: blink 1s linear 0s 3; /* 3번 반복 */
 }
 
+@keyframes blink {
+  0% {
+    opacity: 0.8;
+  }
+  50% {
+    opacity: 0.2;
+  }
+  100% {
+    opacity: 0.8;
+  }
+}
 ::v-deep(.ql-editor) {
   width: 100%;
-  height: 100px;
+  height: auto; /* 콘텐츠에 맞게 높이가 자동으로 늘어남 */
   text-align: center;
   color: #0a0a0a;
   font-size: 18px;
   white-space: normal;
   position: relative;
+  overflow-y: hidden; /* 스크롤바 숨김 */
 }
 </style>

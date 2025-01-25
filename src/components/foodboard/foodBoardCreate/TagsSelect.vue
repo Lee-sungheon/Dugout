@@ -1,6 +1,5 @@
 <script setup>
 import { ref } from "vue";
-import Baseball from "@/assets/icons/baseball.svg";
 import DeleteBtn from "@/assets/icons/delete-btn.svg";
 import { foodBoardTag } from "@/constants/index";
 const selectedTag = ref([]);
@@ -21,10 +20,6 @@ const removeTag = (tag) => {
 
 <template>
   <div class="flex flex-col gap-[20px]">
-    <div class="flex gap-[10px] items-center">
-      <img :src="Baseball" class="w-[18px] h-[18px]" />
-      <p class="text-[14px] text-gray03">태그를 1개 이상 선택해주세요</p>
-    </div>
     <div class="min-h-[39px] overflow-x-auto scrollbar-hide">
       <div class="flex items-center gap-x-[10px] w-max flex-nowrap">
         <button

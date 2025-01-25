@@ -89,7 +89,10 @@ onMounted(() => {
             >
               {{ parsedContent }}
             </div> -->
-            <div class="w-full h-full py-5" v-html="postDetails.content"></div>
+            <div
+              v-html="postDetails.content"
+              class="prose ql-editor max-w-none"
+            ></div>
           </div>
 
           <!-- 이미지 목록 -->
