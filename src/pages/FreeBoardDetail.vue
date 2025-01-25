@@ -52,7 +52,7 @@ onMounted(() => {
       />
       <!-- 게시물 내용 -->
       <div class="border-b border-gray01 pb-[50px]">
-        <div v-html="post.content" class="ql-editor"></div>
+        <div v-html="post.content" class="prose ql-editor max-w-none"></div>
       </div>
 
       <!-- 코멘트 부분 -->
