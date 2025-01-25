@@ -1,6 +1,6 @@
 import { supabase } from "@/supabase";
 
-// 게시물 작성 
+// 게시물 작성
 export const createRestaurantPost = async (
   memberId,
   content,
@@ -31,14 +31,51 @@ export const createRestaurantPost = async (
   return postData;
 };
 
-// 특정 클럽id/ 클럽id + 태그로  맛집 게시물 조회 (SQL로 처리) 
+export const createRestaurantLocation = async (
+  postId,
+  name,
+  address,
+  category,
+  latitude,
+  longitude,
+  contact,
+  url
+) => {
+  const { data, error } = await supabase
+    .from("restaurant_post_location")
+    .insert([
+      {
+        post_id: postId,
+        name,
+        address,
+        category,
+        latitude,
+        longitude,
+        contact,
+        url,
+      },
+    ])
+    .select();
+
+  if (error) {
+    console.error("Error creating restaurant location:", error);
+    return null;
+  }
+
+  return data;
+};
+
+// 특정 클럽id/ 클럽id + 태그로  맛집 게시물 조회 (SQL로 처리)
 // tagName 매개변수가 없으면 알아서 null로 처리되며 클럽으로만 필터링
 export const getRestaurantPostsByTagAndClub = async (clubId, tagName) => {
   try {
-    const { data, error } = await supabase.rpc("get_restaurant_posts_by_tag_and_club", {
-      input_club_id: clubId,
-      input_tag_name: tagName,
-    });
+    const { data, error } = await supabase.rpc(
+      "get_restaurant_posts_by_tag_and_club",
+      {
+        input_club_id: clubId,
+        input_tag_name: tagName,
+      }
+    );
 
     if (error) {
       throw error;
@@ -51,7 +88,7 @@ export const getRestaurantPostsByTagAndClub = async (clubId, tagName) => {
   }
 };
 
-// 게시물의 세부 정보를 가져오는 함수  
+// 게시물의 세부 정보를 가져오는 함수
 export const getRestaurantPostDetailsById = async (postId) => {
   try {
     // Supabase에서 RPC 함수 호출
@@ -66,14 +103,14 @@ export const getRestaurantPostDetailsById = async (postId) => {
       throw error;
     }
 
-    return data; 
+    return data;
   } catch (error) {
     console.error("Error fetching post details:", error.message);
-    throw error; 
+    throw error;
   }
 };
 
-// 맛집 게시물 수정 
+// 맛집 게시물 수정
 export const updateRestaurantPost = async (
   postId,
   content,
@@ -95,7 +132,7 @@ export const updateRestaurantPost = async (
   return postData;
 };
 
-// 특정 게시물의 tags 수정 
+// 특정 게시물의 tags 수정
 export const updateRestaurantPostTags = async (postId, newTags) => {
   const { data, error } = await supabase
     .from("restaurant_post")
@@ -110,7 +147,7 @@ export const updateRestaurantPostTags = async (postId, newTags) => {
   return data;
 };
 
-// 맛집 게시물 삭제 
+// 맛집 게시물 삭제
 export const deleteRestaurantPost = async (postId) => {
   const { error: tagRecordError } = await supabase
     .from("viewing_restaurant_tag_record")
