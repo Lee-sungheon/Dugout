@@ -2,25 +2,23 @@
 import { ref } from "vue";
 import Baseball from "@/assets/icons/baseball.svg";
 import DeleteBtn from "@/assets/icons/delete-btn.svg";
-
+import { foodBoardTag } from "@/constants/index";
 const selectedTag = ref([]);
+const emit = defineEmits(["update:selectedTag"]);
 
-const foodBoardTag = [
-  "# 야구장 내부 맛집",
-  "# 야구장 주변 맛집",
-  "# 야구 볼 수 있는 식당",
-];
-
-// 태그 선택 및 제거
 const selectTag = (tag) => {
   if (!selectedTag.value.includes(tag)) {
     selectedTag.value.push(tag);
+    emit("update:selectedTag", selectedTag.value);
   }
 };
+
 const removeTag = (tag) => {
   selectedTag.value = selectedTag.value.filter((t) => t !== tag);
+  emit("update:selectedTag", selectedTag.value);
 };
 </script>
+
 <template>
   <div class="flex flex-col gap-[20px]">
     <div class="flex gap-[10px] items-center">
@@ -51,4 +49,3 @@ const removeTag = (tag) => {
     </div>
   </div>
 </template>
-<style scoped></style>

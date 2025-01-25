@@ -99,3 +99,9 @@ export const teamID = {
   samsung: 9,
   kt: 10,
 };
+
+export const foodBoardTag = [
+  "# 야구장 내부 맛집",
+  "# 야구장 주변 맛집",
+  "# 야구 볼 수 있는 식당",
+];
