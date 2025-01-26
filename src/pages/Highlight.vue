@@ -31,6 +31,7 @@ const CHANNEL_ID = import.meta.env.VITE_TVINGSPORTS_CHANNEL_ID;
 
 const selectedTeam = ref([]);
 const videos = ref([]);
+const allVideos = ref([]);
 const activeVideoId = ref(null);
 
 //채널 프로필 이미지 가져오기
@@ -121,34 +122,35 @@ const searchVideos = async (searchQuery) => {
   }
 };
 
-// 해시태그버튼 따라 필터링 - kbo, 하이라이트만 필수쿼리로 지정하면 농구, 쇼츠 등이 걸러지지 않음.
-const fetchFilteredVideos = async () => {
+const fetchVideosOnmount = async () => {
   const requiredKeywords = ["kbo", "하이라이트"];
   const excludeKeywords = ["프로농구", "kbl", "shorts"];
   const excludeQuery = excludeKeywords.map((word) => `-${word}`).join(" ");
 
-  if (selectedTeam.value.length === 0) {
-    const searchQuery = `"${requiredKeywords.join('" "')} " ${excludeQuery}`;
-    let result = await searchVideos(searchQuery);
+  const searchQuery = `"${requiredKeywords.join('" "')} " ${excludeQuery}`;
+  let result = await searchVideos(searchQuery);
 
-    videos.value = result.filter(
-      (video) =>
-        requiredKeywords.some((keyword) => video.title.includes(keyword)) &&
-        !excludeKeywords.some((exclude) => video.title.includes(exclude))
-    );
+  // 원본 데이터 저장 (API에서 가져온 전체 데이터)
+  allVideos.value = result;
+
+  // 처음 로드 시 기본 필터 적용
+  videos.value = result.filter(
+    (video) =>
+      requiredKeywords.some((keyword) => video.title.includes(keyword)) &&
+      !excludeKeywords.some((exclude) => video.title.includes(exclude))
+  );
+};
+
+// 해시태그버튼 따라 필터링 - kbo, 하이라이트만 필수쿼리로 지정하면 농구, 쇼츠 등이 걸러지지 않음.
+const filterVideos = async () => {
+  if (selectedTeam.value.length === 0) {
+    videos.value = allVideos.value; // 모든 데이터 표시
     return;
   }
 
   const filterKeywords = selectedTeam.value.flatMap((team) => team.searchTitle);
-  const searchQuery = `"${filterKeywords.join(" | ")} ${requiredKeywords.join(
-    " "
-  )}" ${excludeQuery}`;
-
-  let result = await searchVideos(searchQuery);
-  videos.value = result.filter(
-    (video) =>
-      filterKeywords.some((keyword) => video.title.includes(keyword)) &&
-      !excludeKeywords.some((exclude) => video.title.includes(exclude))
+  videos.value = allVideos.value.filter((video) =>
+    filterKeywords.some((keyword) => video.title.includes(keyword))
   );
 };
 
@@ -158,18 +160,16 @@ const openModal = (videoId) => {
 
 watch(
   selectedTeam,
-  (newVal, oldVal) => {
-    console.log("📌 selectedTeam 변경됨");
-    console.log("이전 값:", oldVal);
-    console.log("현재 값:", newVal);
-    fetchFilteredVideos();
+  () => {
+    console.log("📌 selectedTeam 변경됨:", selectedTeam.value);
+    filterVideos(); // API 호출 없이 기존 데이터에서 필터링
   },
   { deep: true }
 );
 
 onMounted(() => {
   console.log("🚀 초기 selectedTeam 값:", selectedTeam.value);
-  fetchFilteredVideos();
+  fetchVideosOnmount(); // 처음 한 번만 API 호출
 });
 </script>
 <template>

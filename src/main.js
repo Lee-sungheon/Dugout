@@ -21,6 +21,5 @@ app.component("QuillEditor", QuillEditor);
 app.use(createPinia());
 app.use(router);
 app.use(VCalendar, {});
-app.use(setupCalendar, {});
 
 app.mount("#app");

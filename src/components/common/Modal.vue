@@ -1,26 +1,13 @@
 <script setup>
-import { defineProps } from "vue";
-// 메시지와 닫기/취소 함수를 props로 전달하면 됩니다.
-// 메시지는 자동 줄바꿈 됨. 형식 예시: "삭제 후에는 복구할 수 없습니다\n삭제하시겠습니까?"
-defineProps({
-  message: {
-    type: String,
-    required: true,
-  },
-  onCancel: {
-    type: Function,
-    required: true,
-  },
-  onConfirm: {
-    type: Function,
-    required: true,
-  },
-});
+import { useModalStore } from "@/stores/useModalStore";
+
+const modalStore = useModalStore();
 </script>
 
 <template>
   <!-- 모달 -->
   <div
+    v-if="modalStore.isVisible"
     class="fixed inset-0 z-50 bg-black bg-opacity-50 flex justify-center items-center"
   >
     <div
@@ -30,12 +17,35 @@ defineProps({
         <div
           class="self-stretch text-center text-black text-xl font-semibold font-['Pretendard'] leading-loose message"
         >
-          {{ message }}
+          {{ modalStore.modalProps.message }}
         </div>
-        <div class="justify-start items-center gap-2.5 inline-flex">
+        <!-- 버튼 1개짜리일 때  -->
+        <div
+          v-if="modalStore.modalProps.type === 'oneBtn'"
+          class="justify-start items-center gap-2.5 inline-flex"
+        >
+          <div
+            @click="
+              modalStore.modalProps.onConfirm
+                ? modalStore.modalProps.onConfirm()
+                : modalStore.closeModal()
+            "
+            class="w-24 h-12 px-8 py-3.5 bg-zinc-400 rounded-lg justify-center items-center gap-2.5 flex cursor-pointer"
+          >
+            <div class="text-black text-lg font-normal font-['Pretendard']">
+              확인
+            </div>
+          </div>
+        </div>
+        <!-- 버튼 2개짜리일 때  -->
+        <div v-else class="justify-start items-center gap-2.5 inline-flex">
           <!-- 취소 버튼 -->
           <div
-            @click="onCancel"
+            @click="
+              modalStore.modalProps.onCancel
+                ? modalStore.modalProps.onCancel()
+                : modalStore.closeModal()
+            "
             class="w-24 h-12 px-8 py-3.5 bg-zinc-100 rounded-lg justify-center items-center gap-2.5 flex cursor-pointer"
           >
             <div class="text-black text-lg font-normal font-['Pretendard']">
@@ -44,7 +54,11 @@ defineProps({
           </div>
           <!-- 확인 버튼 -->
           <div
-            @click="onConfirm"
+            @click="
+              modalStore.modalProps.onConfirm
+                ? modalStore.modalProps.onConfirm()
+                : modalStore.closeModal()
+            "
             class="w-24 h-12 px-3.5 py-3.5 bg-zinc-400 rounded-lg justify-center items-center gap-2.5 flex cursor-pointer"
           >
             <div class="text-black text-lg font-normal font-['Pretendard']">

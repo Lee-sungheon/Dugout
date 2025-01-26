@@ -1,5 +1,6 @@
 <script setup>
 import RecruitmentStatus from "./RecruitmentStatus.vue";
+import { useModalStore } from "@/stores/useModalStore";
 const props = defineProps({
   crewBoard: {
     type: Boolean,

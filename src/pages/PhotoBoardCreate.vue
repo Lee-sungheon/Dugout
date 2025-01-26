@@ -10,6 +10,7 @@ import { teamID } from "@/constants";
 import { useRoute, useRouter } from "vue-router";
 import { DatePicker } from "v-calendar";
 import CalendarIcon from "@/assets/icons/calendar.svg";
+import Modal from "@/components/common/Modal.vue";
 
 const router = useRouter();
 
@@ -22,6 +23,15 @@ const isDatePickerOpen = ref(false);
 const route = useRoute();
 const teamName = ref(route.params.team);
 const clubId = ref(teamID[teamName.value]);
+const isModalOpen = ref(true);
+
+const openModal = () => {
+  isModalOpen.value = true;
+};
+
+const closeModal = () => {
+  isModalOpen.value = false;
+};
 
 const handleFileChange = async (event) => {
   const file = event.target.files[0];
@@ -150,13 +160,10 @@ const handleCancel = () => {
   clubId.value = "";
   uploadedImageUrl.value = "";
   console.log("등록 취소");
-  alert("등록이 취소되었습니다");
   router.push(`/${teamName.value}/photoboard`);
 };
 
-watch(uploadedImageUrl, (newUrl) => {
-  console.log("업로드된 이미지 변경됨:", newUrl);
-});
+watch(uploadedImageUrl, (newUrl) => {});
 
 const maxLength = 500;
 
@@ -245,6 +252,12 @@ const handleInput = (event) => {
             placeholder="인증 사진은 단 하나만 업로드할 수 있으며,
 인증 글은 최대 500자까지만 작성 가능합니다!"
             @input="handleInput"
+          />
+          <Modal
+            v-if="isModalOpen"
+            :message="`이미 지나간 경기일입니다`"
+            type="oneBtn"
+            :onConfirm="closeModal"
           />
         </div>
       </div>
