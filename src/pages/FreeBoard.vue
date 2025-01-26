@@ -1,10 +1,10 @@
 <script setup>
-import FreeBoardPost from "@/components/freeboard/FreeBoardPost.vue";
-import PostArrow from "@/assets/icons/post_arrow.svg";
-import { useRoute } from "vue-router";
-import { onMounted, ref, watch } from "vue";
 import { getFreePostsByClub } from "@/api/supabase-api/freePost";
+import PostArrow from "@/assets/icons/post_arrow.svg";
+import FreeBoardPost from "@/components/freeboard/FreeBoardPost.vue";
 import { teamID } from "@/constants";
+import { onMounted, ref, watch } from "vue";
+import { useRoute } from "vue-router";
 
 const route = useRoute();
 const teamName = ref(route.params.team); // url 팀 이름 불러오기

@@ -1,8 +1,8 @@
 <script setup>
-import { computed } from "vue";
-import { KakaoMap, KakaoMapMarker } from "vue3-kakao-maps";
 import LocationIcon from "@/assets/icons/location_icon.svg";
 import { useMapStore } from "@/stores/mapStore";
+import { computed } from "vue";
+import { KakaoMap, KakaoMapMarker } from "vue3-kakao-maps";
 
 const mapStore = useMapStore();
 const finalSelectedLocation = computed(() => mapStore.finalSelectedLocation);
