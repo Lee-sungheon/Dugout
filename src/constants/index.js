@@ -105,3 +105,10 @@ export const foodBoardTag = [
   "# 야구장 주변 맛집",
   "# 야구 볼 수 있는 식당",
 ];
+
+export const boardToCommentTableMapping = {
+  freeboard: "free_post_comment",
+  crewboard: "crew_recruitment_post_comment",
+  photoboard: "viewing_certification_post_comment",
+  foodboard: "restaurant_post_comment",
+};

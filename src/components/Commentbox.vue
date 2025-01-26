@@ -1,4 +1,18 @@
-<script setup></script>
+<script setup>
+defineProps({
+  comment: {
+    type: Object,
+  },
+});
+
+// day.js
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
+import "dayjs/locale/ko"; // 한국어 로케일 가져오기
+import { useRoute } from "vue-router";
+dayjs.extend(relativeTime); // relativeTime 플러그인 활성화
+dayjs.locale("ko"); // 한국어 로케일 설정
+</script>
 <template>
   <div class="pb-5 border-b border-white02">
     <div class="flex items-center justify-between">
@@ -9,7 +23,9 @@
           class="w-[35px] h-[35px] rounded-full"
         />
         <span class="text-sm font-bold text-gray03">닉네임</span>
-        <span class="text-xs text-gray02">1분 전</span>
+        <span class="text-xs text-gray02">{{
+          dayjs(comment.created_at).fromNow()
+        }}</span>
       </div>
       <div class="flex text-xs text-gray02 gap-[4px] border border-blue-500">
         <button class="hover:text-gray03">수정</button>
@@ -18,7 +34,7 @@
       </div>
     </div>
     <div class="pl-[45px]">
-      <span class="text-[#515151]">댓글 테스트 중입니다.</span>
+      <span class="text-[#515151]">{{ comment.content }}</span>
     </div>
   </div>
 </template>
