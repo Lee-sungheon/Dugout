@@ -57,9 +57,7 @@ onMounted(() => {
 });
 </script>
 <template>
-  <div
-    class="px-[50px] py-[30px] border-2 border-red-500 items-center flex flex-col"
-  >
+  <div class="px-[50px] py-[30px] items-center flex flex-col">
     <!-- 뒤로가기 버튼 -->
     <div class="mb-[50px] flex w-full">
       <button @click="router.go(-1)">
@@ -68,7 +66,7 @@ onMounted(() => {
     </div>
 
     <!-- 게시물 상세 페이지 -->
-    <div class="flex flex-col gap-[50px] w-[990px] border-2 border-blue-500">
+    <div class="flex flex-col gap-[50px] w-[990px]">
       <!-- 헤더 정보 -->
       <PostHeader
         v-if="postDetails"

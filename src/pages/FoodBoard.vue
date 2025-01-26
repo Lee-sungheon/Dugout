@@ -78,9 +78,7 @@ const removeDuplicatePosts = (posts) => {
 </script>
 
 <template>
-  <div
-    class="flex flex-col px-[50px] py-[30px] border-2 border-red-500 items-center"
-  >
+  <div class="flex flex-col px-[50px] py-[30px] items-center">
     <div class="w-[990px] gap-[50px] flex flex-col">
       <RouterLink
         :to="`/${teamName}/foodboard/create`"
