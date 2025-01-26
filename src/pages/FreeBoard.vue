@@ -41,15 +41,14 @@ watch(
   <div class="flex flex-col px-[50px] py-[30px] items-center">
     <div class="w-[990px] gap-[50px] flex flex-col">
       <!-- 글쓰기 버튼 -->
-      <div>
-        <RouterLink
-          class="flex items-center justify-center w-full font-medium bg-white02 py-[10px] rounded-[10px] gap-[10px]"
-          :to="`/${teamName}/freeboard/create`"
-        >
-          자유 게시판에 글 쓰러 가기
-          <img :src="PostArrow" class="w-[14px] h-[8px]" />
-        </RouterLink>
-      </div>
+
+      <RouterLink
+        class="flex items-center justify-center w-full font-medium bg-white02 py-[10px] rounded-[10px] gap-[10px]"
+        :to="`/${teamName}/freeboard/create`"
+      >
+        자유 게시판에 글 쓰러 가기
+        <img :src="PostArrow" class="w-[14px] h-[8px]" />
+      </RouterLink>
 
       <!-- 목록 -->
       <div class="flex flex-col w-full h-full gap-[20px] items-center">
