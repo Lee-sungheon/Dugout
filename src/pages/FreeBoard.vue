@@ -41,7 +41,6 @@ watch(
   <div class="flex flex-col px-[50px] py-[30px] items-center">
     <div class="w-[990px] gap-[50px] flex flex-col">
       <!-- 글쓰기 버튼 -->
-
       <RouterLink
         class="flex items-center justify-center w-full font-medium bg-white02 py-[10px] rounded-[10px] gap-[10px]"
         :to="`/${teamName}/freeboard/create`"
