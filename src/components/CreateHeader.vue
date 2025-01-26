@@ -14,6 +14,7 @@ const props = defineProps({
 const modalStore = useModalStore();
 
 const confirmCancel = () => {
+  console.log("📌 모달 열기 시도");
   modalStore.openModal({
     message: "작성했던 모든 내용은 저장되지 않습니다.\n취소하시겠습니까?",
     type: "twoBtn",
