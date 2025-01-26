@@ -157,50 +157,53 @@ const toolbarOptions = [
 ];
 </script>
 <template>
+  <!-- 모달 -->
   <Modal
     v-if="isModalVisible"
     :message="modalmessage"
     :onCancel="cancelModalWindow"
     :onConfirm="backToFoodboard"
   />
-  <section class="flex flex-col px-[50px] gap-[30px]">
-    <CreateHeader
-      :handleRegister="submitRestaurantPost"
-      :handleCancel="cancelRestaurantPost"
-    />
-    <div>
-      <input
-        v-model="title"
-        type="text"
-        placeholder="제목"
-        class="h-[70px] border-b w-full outline-none text-center placeholder:text-[20px]"
+  <section class="flex flex-col items-center">
+    <div class="w-[1090px] flex flex-col">
+      <CreateHeader
+        :handleRegister="submitRestaurantPost"
+        :handleCancel="cancelRestaurantPost"
       />
-    </div>
-    <section
-      id="post_content--input"
-      class="flex flex-col gap-[30px] mb-[142px] w-full"
-    >
-      <MapSelectAndView />
-      <div class="border border-white02 w-full">
-        <QuillEditor
-          v-model:content="content"
-          contentType="html"
-          :placeholder="'맛집을 마구 공유해주세요!\n맛집 사진은 최대 3개까지 업로드할 수 있습니다.'"
-          theme="snow"
-          :toolbar="toolbarOptions"
+      <div>
+        <input
+          v-model="title"
+          type="text"
+          placeholder="제목"
+          class="border-b w-full outline-none text-center py-[15px] text-3xl bg-white01"
         />
       </div>
-      <PhotoUpload />
-      <div id="tags-select" class="flex flex-col gap-[20px]">
-        <div class="flex gap-[10px] items-center">
-          <img :src="Baseball" class="w-[18px] h-[18px]" />
-          <p :class="tagErrorClass" class="text-[14px] text-gray03">
-            {{ tagErrorMessage }}
-          </p>
+      <section
+        id="post_content--input"
+        class="flex flex-col gap-[30px] mb-[142px] w-full"
+      >
+        <MapSelectAndView />
+        <div class="w-full border border-white02">
+          <QuillEditor
+            v-model:content="content"
+            contentType="html"
+            :placeholder="'맛집을 마구 공유해주세요!\n맛집 사진은 최대 3개까지 업로드할 수 있습니다.'"
+            theme="snow"
+            :toolbar="toolbarOptions"
+          />
         </div>
-        <TagsSelect @update:selectedTag="handleTagUpdate" />
-      </div>
-    </section>
+        <PhotoUpload />
+        <div id="tags-select" class="flex flex-col gap-[20px]">
+          <div class="flex gap-[10px] items-center">
+            <img :src="Baseball" class="w-[18px] h-[18px]" />
+            <p :class="tagErrorClass" class="text-[14px] text-gray03">
+              {{ tagErrorMessage }}
+            </p>
+          </div>
+          <TagsSelect @update:selectedTag="handleTagUpdate" />
+        </div>
+      </section>
+    </div>
   </section>
 </template>
 
