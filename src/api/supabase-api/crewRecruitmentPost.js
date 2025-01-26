@@ -45,7 +45,6 @@ export const createCrewRecruitmentPost = async ({
   }
 };
 
-
 // 게시글 댓글 추가 함수
 export const createPostComment = async ({ member_id, post_id, content }) => {
   try {
@@ -77,8 +76,10 @@ export const createPostComment = async ({ member_id, post_id, content }) => {
 // 특정 클럽의 모든 크루 모집 게시물을 가져오기
 export const getCrewRecruitmentPostsByClub = async (clubId) => {
   try {
-    const { data, error } = await supabase
-      .rpc('get_crew_recruitment_posts_by_club', { input_club_id: clubId });
+    const { data, error } = await supabase.rpc(
+      "get_crew_recruitment_posts_by_club",
+      { input_club_id: clubId }
+    );
 
     if (error) throw new Error("특정 클럽의 크루 모집 게시물 조회 실패");
 
@@ -89,12 +90,13 @@ export const getCrewRecruitmentPostsByClub = async (clubId) => {
   }
 };
 
-
 // 특정 크루 모집 게시물의 상세 정보를 불러오는 함수
 export const getCrewRecruitmentPostDetails = async (postId) => {
   try {
-    const { data, error } = await supabase
-      .rpc('get_crew_recruitment_post_details_by_id', { input_post_id: postId });
+    const { data, error } = await supabase.rpc(
+      "get_crew_recruitment_post_details_by_id",
+      { input_post_id: postId }
+    );
 
     if (error) throw new Error("특정 크루 모집 게시물의 상세 정보 조회 실패");
 
@@ -106,7 +108,7 @@ export const getCrewRecruitmentPostDetails = async (postId) => {
 };
 
 // 특정 게시글 댓글 조회 함수
-export const getPostComments = async (postId) => {
+export const getCrewRecruitmentPostComments = async (postId) => {
   try {
     const { data, error } = await supabase
       .from("crew_recruitment_post_comment")
@@ -164,7 +166,6 @@ export const updatePostComment = async (commentId) => {
     return null;
   }
 };
-
 
 // 특정 크루 모집 게시글 삭제 함수
 export const deleteCrewRecruitmentPost = async (postId) => {
