@@ -75,23 +75,22 @@ const route = useRoute();
 const teamName = ref(route.params.team);
 </script>
 <template>
-  <div
-    class="flex border border-red-500 gap-[30px] flex-col px-[50px] py-[30px]"
-  >
-    <!-- 글쓰기 버튼 -->
-    <div class="cursor-pointer">
+  <div class="flex gap-[30px] flex-col px-[50px] py-[30px] items-center">
+    <div class="w-[990px] gap-[50px] flex flex-col">
+      <!-- 글쓰기 버튼 -->
       <RouterLink
         :to="`/${teamName}/photoboard/create`"
-        class="flex items-center justify-center w-full font-medium bg-white02 py-[10px] rounded-[10px] gap-[10px]"
+        class="flex items-center justify-center w-full font-medium bg-white02 py-[10px] rounded-[10px] gap-[10px] cursor-pointer"
       >
         직관 인증 포토 올리러 가기
         <img :src="PostArrow" class="w-[14px] h-[8px]" />
       </RouterLink>
-    </div>
-    <!-- 목록 -->
-    <div class="w-full h-auto border border-red-500 mb-[100px]">
-      <div class="grid grid-cols-3 gap-[30px] w-full">
-        <PhotoboardCard v-for="post in posts" :key="post.id" :post="post" />
+
+      <!-- 목록 -->
+      <div class="w-full h-auto mb-[100px]">
+        <div class="grid grid-cols-3 gap-[30px] w-full">
+          <PhotoboardCard v-for="post in posts" :key="post.id" :post="post" />
+        </div>
       </div>
     </div>
   </div>
