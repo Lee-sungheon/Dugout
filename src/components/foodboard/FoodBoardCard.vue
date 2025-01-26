@@ -1,61 +1,121 @@
 <script setup>
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
+import "dayjs/locale/ko"; // 한국어 로케일 가져오기
+dayjs.extend(relativeTime); // relativeTime 플러그인 활성화
+dayjs.locale("ko"); // 한국어 로케일 설정
 import likeIcon from "@/assets/icons/like.svg";
 import commentIcon from "@/assets/icons/comment.svg";
+import { computed } from "vue";
+import { teamID } from "@/constants";
+import { KakaoMap, KakaoMapMarker } from "vue3-kakao-maps";
+
+const props = defineProps({
+  restaurantPostData: {
+    type: Object,
+    required: true,
+  },
+  teamName: {
+    type: String,
+    required: true,
+  },
+});
+
+console.log(props.teamName, teamID[props.teamName]);
+
+const parsedContent = computed(() => {
+  // HTML 문자열을 DOM 객체로 변환
+  const doc = new DOMParser().parseFromString(
+    props.restaurantPostData.content,
+    "text/html"
+  );
+  // 텍스트만 추출
+  return doc.body.textContent || doc.body.innerText;
+});
+
+const calculatedCreatedAt = computed(() => {
+  return dayjs(props.restaurantPostData.created_at).fromNow();
+});
 </script>
 <template>
   <RouterLink
-    to="/team/foodboard/:id"
-    class="w-full h-auto border border-red-500 cursor-pointer"
+    :to="`/${props.teamName}/foodboard/${props.restaurantPostData.id}`"
+    class="w-full h-auto cursor-pointer"
   >
-    <div class="flex w-full border-b border-white02">
+    <div class="flex w-full h-[200px] border rounded-[10px] overflow-hidden">
       <!-- 왼쪽 이미지 -->
       <div class="w-[350px] h-[200px]">
         <img
-          src="https://user-images.githubusercontent.com/62782245/147930224-2fa3b723-b832-4d57-8fc9-7eaf4094caee.png"
+          v-if="props.restaurantPostData.thumbnail_url"
+          :src="props.restaurantPostData.thumbnail_url"
           alt="게시물 이미지"
           class="w-full h-full object-cover"
         />
+        <KakaoMap
+          v-else-if="
+            props.restaurantPostData.lat && props.restaurantPostData.lng
+          "
+          class="w-full h-full object-cover"
+          :style="{ width: '100%', height: '100%' }"
+          :lat="props.restaurantPostData.lat"
+          :lng="props.restaurantPostData.lng"
+          :draggable="false"
+          :scrollwheel="false"
+          @onLoadKakaoMap="onLoadKakaoMap"
+        >
+          <KakaoMapMarker
+            :lat="props.restaurantPostData.lat"
+            :lng="props.restaurantPostData.lng"
+          />
+        </KakaoMap>
       </div>
       <!-- 오른쪽 게시물 정보 -->
       <div class="flex px-[30px] py-[20px] flex-col justify-between">
         <!-- 제목 / 내용 -->
         <div class="flex flex-col gap-[15px]">
           <div class="gap[10px]">
-            <span class="text-gray02 text-[14px]"># 야구장 주변 맛집</span>
-            <span class="text-gray02 text-[14px]"
-              ># 야구장 볼 수 있는 식당</span
-            >
+            <div class="flex gap-[5px]">
+              <span
+                v-for="(tag, i) in props.restaurantPostData.tags || []"
+                :key="i"
+                class="text-gray02 text-[14px]"
+              >
+                {{ tag }}
+              </span>
+            </div>
           </div>
-          <span class="text-black01 text-[24px] font-bold"
-            >야구장 주변 맛집... 등등 제목 영역</span
-          >
-          <span class="text-gray03 text-[16px] line-clamp-1"
-            >글을 처음부터 주어진 영역을 채울 때까지의 텍스트를 가져와 화면에
-            출력합니다. 글을 처음부터 주어진 영역을 채울 때까지의 텍스트를
-            가져와 화면에 출력합니다.</span
-          >
+          <span class="text-black01 text-[24px] font-bold">{{
+            props.restaurantPostData.title
+          }}</span>
+          <span class="text-gray03 text-[16px] line-clamp-1">{{
+            parsedContent
+          }}</span>
         </div>
         <!-- 닉네임 / 작성일 -->
         <div class="flex items-center w-[280px] bottom-0 justify-between">
           <div class="flex text-[12px] gap-[10px] items-center">
             <div class="w-[25px] h-[25px] rounded-full overflow-hidden">
               <img
-                src="https://news.nateimg.co.kr/orgImg/aj/2024/01/21/20240121132054894779.jpg"
+                :src="props.restaurantPostData.author_image"
                 class="w-full h-full object-cover"
               />
             </div>
-            <span class="text-gray03">닉네임</span>
-            <span class="text-gray02">4시간 전</span>
+            <span class="text-gray03">{{ props.restaurantPostData.name }}</span>
+            <span class="text-gray02">{{ calculatedCreatedAt }}</span>
           </div>
           <!-- 좋아요 / 댓글 -->
           <div class="flex gap-[20px]">
             <div class="flex gap-[10px]">
               <img :src="likeIcon" alt="하트 이미지" />
-              <span class="text-gray02">20</span>
+              <span class="text-gray02">{{
+                props.restaurantPostData.likes
+              }}</span>
             </div>
             <div class="flex gap-[10px]">
               <img :src="commentIcon" alt="말풍선 이미지" />
-              <span class="text-gray02">20</span>
+              <span class="text-gray02">{{
+                props.restaurantPostData.comments
+              }}</span>
             </div>
           </div>
         </div>

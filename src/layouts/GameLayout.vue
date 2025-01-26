@@ -18,18 +18,17 @@ const selectedGame = ref("");
 
 watch(
   () => route.path,
-  (newGameSort) => {
-    const matchedGame = games.value.find((game) => game.path === newGameSort);
+  (newPath) => {
+    const currentPath = newPath.split("/").pop();
+    const matchedGame = games.value.find((game) => game.path === currentPath);
     selectedGame.value = matchedGame ? matchedGame.name : "";
   },
   { immediate: true }
 );
 
 const selectGame = (game) => {
-  if (selectedGame.value !== game.name) {
-    selectedGame.value = game.name;
-    router.push(game.url);
-  }
+  selectedGame.value = game.name;
+  router.push(game.url);
 };
 </script>
 
@@ -38,22 +37,19 @@ const selectGame = (game) => {
     <Header />
     <div class="bg-[#070707] w-full flex-grow pt-[100px] flex flex-col">
       <div
-        class="flex items-center gap-[10px] w-full flex-nowrap px-[30px] py-[17px]"
-      >
+        class="flex items-center gap-[10px] w-full flex-nowrap px-[30px] py-[17px]">
         <button
           v-for="game of games"
           :key="game.name"
           @click="selectGame(game)"
-          class="inline-flex items-center h-[34px] px-[10px] rounded-[10px] whitespace-nowrap gap-[10px] text-[18px] font-semibold"
+          class="active:bg-white01 inline-flex items-center h-[34px] px-[10px] rounded-[10px] whitespace-nowrap gap-[10px] text-[18px] font-semibold"
           :class="{
             'bg-white01 text-black01': selectedGame === game.name,
             'bg-transparent text-white01': selectedGame !== game.name,
-          }"
-        >
+          }">
           <img
             :src="selectedGame === game.name ? game.iconBlack : game.icon"
-            class="w-[20px] h-[18px]"
-          />
+            class="w-[20px] h-[18px]" />
           <p>{{ game.name }}</p>
         </button>
       </div>

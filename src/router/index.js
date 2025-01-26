@@ -1,14 +1,5 @@
 import { createRouter, createWebHistory } from "vue-router";
-import Kia from "../pages/teamPages/Kia.vue";
-import Samsung from "../pages/teamPages/Samsung.vue";
-import LG from "../pages/teamPages/Lg.vue";
-import Doosan from "../pages/teamPages/Doosan.vue";
-import KT from "../pages/teamPages/Kt.vue";
-import SSG from "../pages/teamPages/Ssg.vue";
-import Lotte from "../pages/teamPages/Lotte.vue";
-import Hanwha from "../pages/teamPages/Hanhwa.vue";
-import NC from "../pages/teamPages/Nc.vue";
-import Kiwoom from "../pages/teamPages/Kiwoom.vue";
+
 import News from "@/pages/News.vue";
 import Game from "@/pages/Game.vue";
 import Highlight from "@/pages/Highlight.vue";
@@ -173,17 +164,6 @@ const router = createRouter({
       name: "NotFound",
       component: () => import("@/pages/NotFound.vue"),
     },
-
-    { path: "/kia", name: "kia", component: Kia },
-    { path: "/samsung", name: "samsung", component: Samsung },
-    { path: "/lg", name: "lg", component: LG },
-    { path: "/doosan", name: "doosan", component: Doosan },
-    { path: "/kt", name: "kt", component: KT },
-    { path: "/ssg", name: "ssg", component: SSG },
-    { path: "/lotte", name: "lotte", component: Lotte },
-    { path: "/hanhwa", name: "hanhwa", component: Hanwha },
-    { path: "/nc", name: "nc", component: NC },
-    { path: "/kiwoom", name: "kiwoom", component: Kiwoom },
   ],
 });
 

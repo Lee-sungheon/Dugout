@@ -113,15 +113,14 @@ const handleEmailLogin = async (e) => {
           text="카카오 로그인"
           type="submit"
           @click.prevent="handleKakaoLogin"
-          custom-class="bg-[#FEE500] text-[#000000]"
-        />
+
+          custom-class="bg-[#FEE500] text-[#000000]" />
         <Button
           :logo="GoogleLogo"
           text="Google 로그인"
           type="submit"
           @click.prevent="handleGoogleLogin"
-          custom-class="bg-[#FFFFFF] text-[#1D1C2B]"
-        />
+          custom-class="bg-[#FFF] text-[#1D1C2B]" />
       </form>
     </section>
   </article>
