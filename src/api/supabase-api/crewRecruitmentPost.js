@@ -112,7 +112,7 @@ export const getCrewRecruitmentPostDetails = async (postId) => {
 };
 
 // 특정 게시글 댓글 조회 함수
-export const getPostComments = async (postId) => {
+export const getCrewRecruitmentPostComments = async (postId) => {
   try {
     const { data, error } = await supabase
       .from("crew_recruitment_post_comment")

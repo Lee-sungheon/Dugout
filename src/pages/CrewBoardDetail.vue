@@ -5,6 +5,14 @@ import PostHeader from "@/components/PostHeader.vue";
 import { getCrewRecruitmentPostDetails } from "@/api/supabase-api/crewRecruitmentPost";
 import { onMounted, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
+// day.js
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
+import "dayjs/locale/ko"; // 한국어 로케일 가져오기
+
+// day.js
+dayjs.extend(relativeTime); // relativeTime 플러그인 활성화
+dayjs.locale("ko"); // 한국어 로케일 설정
 
 const route = useRoute();
 const router = useRouter();
@@ -44,7 +52,7 @@ onMounted(() => {
         crewBoard
         :title="post.title"
         :nickname="post.author_name"
-        :time="post.created_at"
+        :time="dayjs(post.created_at).fromNow()"
         :status="post.status"
       />
       <!-- 게시물 내용 -->
