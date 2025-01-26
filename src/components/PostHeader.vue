@@ -26,30 +26,30 @@ const props = defineProps({
   },
   status: {
     type: String,
-    required: true,
+    // required: true,
   },
 });
-// 시간 차이를 계산하는 함수
-const timeAgo = (givenTime) => {
-  const givenDate = new Date(givenTime);
-  const currentDate = new Date();
-  const timeDifference = currentDate - givenDate;
+// // 시간 차이를 계산하는 함수
+// const timeAgo = (givenTime) => {
+//   const givenDate = new Date(givenTime);
+//   const currentDate = new Date();
+//   const timeDifference = currentDate - givenDate;
 
-  if (timeDifference < 60 * 1000) {
-    return "방금 전";
-  } else if (timeDifference < 60 * 60 * 1000) {
-    return `${Math.floor(timeDifference / (60 * 1000))}분 전`;
-  } else if (timeDifference < 24 * 60 * 60 * 1000) {
-    return `${Math.floor(timeDifference / (60 * 60 * 1000))}시간 전`;
-  } else if (timeDifference < 7 * 24 * 60 * 60 * 1000) {
-    return `${Math.floor(timeDifference / (24 * 60 * 60 * 1000))}일 전`;
-  } else {
-    return givenDate.toISOString().split("T")[0]; // 날짜만 출력
-  }
-};
+//   if (timeDifference < 60 * 1000) {
+//     return "방금 전";
+//   } else if (timeDifference < 60 * 60 * 1000) {
+//     return `${Math.floor(timeDifference / (60 * 1000))}분 전`;
+//   } else if (timeDifference < 24 * 60 * 60 * 1000) {
+//     return `${Math.floor(timeDifference / (60 * 60 * 1000))}시간 전`;
+//   } else if (timeDifference < 7 * 24 * 60 * 60 * 1000) {
+//     return `${Math.floor(timeDifference / (24 * 60 * 60 * 1000))}일 전`;
+//   } else {
+//     return givenDate.toISOString().split("T")[0]; // 날짜만 출력
+//   }
+// };
 
-// 계산된 시간 차이
-const formattedTime = computed(() => timeAgo(props.time));
+// // 계산된 시간 차이
+// const formattedTime = computed(() => timeAgo(props.time));
 </script>
 <template>
   <!-- 상세 페이지 정보 -->
@@ -70,7 +70,7 @@ const formattedTime = computed(() => timeAgo(props.time));
           class="w-[25px] h-[25px] rounded-full"
         />
         <span class="text-xs text-gray03">{{ props.nickname }}</span>
-        <span class="text-xs text-gray02">{{ formattedTime }}</span>
+        <span class="text-xs text-gray02">{{ props.time }}</span>
       </div>
       <!-- 수정 삭제 버튼 -->
       <div class="flex text-xs text-gray02 gap-[4px]">
