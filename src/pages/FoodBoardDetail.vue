@@ -42,16 +42,16 @@ onMounted(() => {
 });
 </script>
 <template>
-  <div class="px-[50px] py-[30px]">
+  <div class="px-[50px] py-[30px] items-center flex flex-col">
     <!-- 뒤로가기 버튼 -->
-    <div class="mb-[50px] flex">
+    <div class="mb-[50px] flex w-full">
       <button @click="router.go(-1)">
         <img :src="backIcon" alt="뒤로가기 아이콘" />
       </button>
     </div>
 
     <!-- 게시물 상세 페이지 -->
-    <div class="flex flex-col gap-[50px]">
+    <div class="flex flex-col gap-[50px] w-[990px]">
       <!-- 헤더 정보 -->
       <PostHeader
         v-if="postDetails"

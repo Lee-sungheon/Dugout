@@ -78,69 +78,70 @@ const removeDuplicatePosts = (posts) => {
 </script>
 
 <template>
-  <div class="flex gap-[30px] flex-col px-[50px] py-[30px]">
-    <div class="cursor-pointer">
+  <div class="flex flex-col px-[50px] py-[30px] items-center">
+    <div class="w-[990px] gap-[50px] flex flex-col">
       <RouterLink
         :to="`/${teamName}/foodboard/create`"
-        class="flex items-center justify-center w-full font-medium bg-white02 py-[10px] rounded-[10px] gap-[10px]"
+        class="flex items-center justify-center w-full font-medium bg-white02 py-[10px] rounded-[10px] gap-[10px] cursor-pointer"
       >
         직관 맛집 공유하기
         <img :src="PostArrow" class="w-[14px] h-[8px]" />
       </RouterLink>
-    </div>
-    <div class="min-h-[39px] overflow-x-auto scrollbar-hide">
-      <div class="flex items-center gap-x-[10px] w-max flex-nowrap">
-        <!-- 태그 버튼 -->
-        <button
-          v-for="(tag, index) of foodBoardTag"
+
+      <div class="min-h-[39px] overflow-x-auto scrollbar-hide">
+        <div class="flex items-center gap-x-[10px] w-max flex-nowrap">
+          <!-- 태그 버튼 -->
+          <button
+            v-for="(tag, index) of foodBoardTag"
+            :key="index"
+            @click="selectTag(tag)"
+            class="inline-flex items-center h-[39px] px-[15px] rounded-[10px] whitespace-nowrap"
+            :class="{
+              'bg-gray02 text-white01 gap-[10px]': selectedTag === tag,
+              'bg-white02 text-black01': selectedTag !== tag,
+            }"
+          >
+            <p>{{ tag }}</p>
+            <img
+              v-if="selectedTag === tag"
+              @click.stop="selectTag(tag)"
+              :src="deleteBtn"
+              class="cursor-pointer"
+            />
+          </button>
+        </div>
+      </div>
+      <section class="flex flex-col gap-[30px]">
+        <!-- 게시물 필터링 후 출력 -->
+        <div
+          v-if="
+            restaurantPosts.length === 0 ||
+            restaurantPosts.filter(
+              (post) =>
+                selectedTag === null ||
+                post.tags.some((tag) => tag === selectedTag) // 태그명으로 필터링
+            ).length === 0
+          "
+        >
+          <section
+            class="flex items-center justify-center w-full h-screen bg-white02 border border-white02 rounded-[10px]"
+          >
+            <h1>게시물이 없습니다</h1>
+          </section>
+        </div>
+        <FoodBoardCard
+          v-for="(restaurantPost, index) in removeDuplicatePosts(
+            restaurantPosts.filter(
+              (post) =>
+                selectedTag === null ||
+                post.tags.some((tag) => tag === selectedTag) // 태그명으로 필터링
+            )
+          )"
           :key="index"
-          @click="selectTag(tag)"
-          class="inline-flex items-center h-[39px] px-[15px] rounded-[10px] whitespace-nowrap"
-          :class="{
-            'bg-gray02 text-white01 gap-[10px]': selectedTag === tag,
-            'bg-white02 text-black01': selectedTag !== tag,
-          }"
-        >
-          <p>{{ tag }}</p>
-          <img
-            v-if="selectedTag === tag"
-            @click.stop="selectTag(tag)"
-            :src="deleteBtn"
-            class="cursor-pointer"
-          />
-        </button>
-      </div>
+          :restaurantPostData="restaurantPost"
+          :teamName
+        />
+      </section>
     </div>
-    <section class="flex flex-col gap-[30px]">
-      <!-- 게시물 필터링 후 출력 -->
-      <div
-        v-if="
-          restaurantPosts.length === 0 ||
-          restaurantPosts.filter(
-            (post) =>
-              selectedTag === null ||
-              post.tags.some((tag) => tag === selectedTag) // 태그명으로 필터링
-          ).length === 0
-        "
-      >
-        <section
-          class="flex items-center justify-center w-full h-screen bg-white02 border border-white02 rounded-[10px]"
-        >
-          <h1>게시물이 없습니다</h1>
-        </section>
-      </div>
-      <FoodBoardCard
-        v-for="(restaurantPost, index) in removeDuplicatePosts(
-          restaurantPosts.filter(
-            (post) =>
-              selectedTag === null ||
-              post.tags.some((tag) => tag === selectedTag) // 태그명으로 필터링
-          )
-        )"
-        :key="index"
-        :restaurantPostData="restaurantPost"
-        :teamName
-      />
-    </section>
   </div>
 </template>
