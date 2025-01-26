@@ -4,7 +4,6 @@ import { createApp } from "vue";
 import { createPinia } from "pinia";
 import { useKakao } from "vue3-kakao-maps/@utils";
 import { QuillEditor } from "@vueup/vue-quill";
-import { setupCalendar } from "v-calendar";
 import VCalendar from "v-calendar";
 import "v-calendar/style.css";
 import { setupCalendar, DatePicker } from "v-calendar";
