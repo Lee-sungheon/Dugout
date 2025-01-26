@@ -10,6 +10,7 @@ import { teamID } from "@/constants";
 import { useRoute, useRouter } from "vue-router";
 import { DatePicker } from "v-calendar";
 import CalendarIcon from "@/assets/icons/calendar.svg";
+import Modal from "@/components/common/Modal.vue";
 
 const router = useRouter();
 
@@ -174,6 +175,7 @@ const handleInput = (event) => {
         :handleRegister="handleRegister"
         :handleCancel="handleCancel"
       />
+      <Modal />
       <div>
         <input
           v-model="title"
