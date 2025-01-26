@@ -11,8 +11,10 @@ import { useRoute, useRouter } from "vue-router";
 import { DatePicker } from "v-calendar";
 import CalendarIcon from "@/assets/icons/calendar.svg";
 import Modal from "@/components/common/Modal.vue";
+import { useModalStore } from "@/stores/useModalStore";
 
 const router = useRouter();
+const modalStore = useModalStore();
 
 const title = ref("");
 const content = ref("");
@@ -82,6 +84,24 @@ watch(gameDate, (newDate) => {
   isDatePickerOpen.value = false;
 });
 
+const confirmBlank = () => {
+  console.log("📌 모달 열기 시도");
+  modalStore.openModal({
+    message: "작성하지 않은 항목이 있습니다 \n 확인 후 입력해주세요",
+    type: "oneBtn",
+    onConfirm: modalStore.closeModal(),
+  });
+};
+
+const confirmGameDate = () => {
+  console.log("📌 모달 열기 시도");
+  modalStore.openModal({
+    message: "이미 지나간 경기일입니다",
+    type: "oneBtn",
+    onConfirm: modalStore.closeModal(),
+  });
+};
+
 const selectDate = (newDate) => {
   if (!newDate || isNaN(new Date(newDate).getTime())) {
     console.error("날짜가 선택되지 않았습니다.");
@@ -93,7 +113,7 @@ const selectDate = (newDate) => {
   thisDate.setHours(0, 0, 0, 0);
 
   if (selectedDate < thisDate) {
-    alert("이미 지나간 경기일입니다");
+    confirmGameDate();
     return;
   }
   gameDate.value = newDate;
@@ -108,15 +128,9 @@ const handleRegister = async () => {
     !title.value ||
     !content.value ||
     !gameDate.value ||
-    !clubId.value ||
     !uploadedImageUrl.value
   ) {
-    alert("모든 필드를 입력해주세요");
-    console.log(uploadedImageUrl.value);
-    console.log(title.value);
-    console.log(content.value);
-    console.log(clubId.value);
-    console.log(gameDate.value);
+    confirmBlank();
     return;
   }
 
@@ -130,7 +144,6 @@ const handleRegister = async () => {
     );
 
     if (result) {
-      alert("게시물이 성공적으로 생성되었습니다!");
       title.value = "";
       content.value = "";
       gameDate.value = null;
@@ -159,11 +172,19 @@ watch(uploadedImageUrl, (newUrl) => {
   console.log("업로드된 이미지 변경됨:", newUrl);
 });
 
+const confirmMaxLength = () => {
+  modalStore.openModal({
+    message: "인증 글은 최대 500자까지만 작성 가능합니다!",
+    type: "oneBtn",
+    onConfirm: modalStore.closeModal(),
+  });
+};
+
 const maxLength = 500;
 
 const handleInput = (event) => {
   if (content.value.length > maxLength) {
-    alert("인증 글은 최대 500자까지만 작성 가능합니다!");
+    confirmMaxLength();
     content.value = content.value.slice(0, maxLength);
   }
 };
