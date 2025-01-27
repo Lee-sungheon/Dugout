@@ -42,7 +42,7 @@ const selectOption = (option) => {
       "
     >
       {{ props.selectedOption }}
-      <img :src="toggleIconSrc" class="w-[18px] h-[10.28px]" />
+      <img :src="ToggleDropdown" class="w-[18px] h-[10.28px]" />
     </button>
     <div
       v-if="isOpen"
