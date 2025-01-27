@@ -37,6 +37,14 @@ export const signInWithKakao = async () => {
 // 이메일 로그인
 export const signInWithEmail = async (email, password) => {
   try {
+    const { data: beforeLoginInfo } = await supabase
+      .from("user_info")
+      .select("*")
+      .eq("email", email)
+      .single();
+
+    console.log("로그인 전 user_info 데이터:", beforeLoginInfo);
+
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
@@ -48,7 +56,41 @@ export const signInWithEmail = async (email, password) => {
     }
 
     if (data?.user) {
-      return { success: true, user: data.user };
+      const { data: userInfo, error: userInfoError } = await supabase
+        .from("user_info")
+        .select("*")
+        .eq("id", data.user.id)
+        .single();
+
+      console.log("로그인 후 user_info 데이터:", userInfo);
+
+      if (userInfoError) {
+        console.error("사용자 정보 조회 실패:", userInfoError);
+        return { success: false, error: userInfoError.message };
+      }
+
+      // 4. name이 null로 변경되었다면 원래 값으로 복구
+      if (!userInfo.name && beforeLoginInfo?.name) {
+        const { error: updateError } = await supabase
+          .from("user_info")
+          .update({ name: beforeLoginInfo.name })
+          .eq("id", data.user.id);
+
+        if (updateError) {
+          console.error("이름 복구 실패:", updateError);
+        } else {
+          console.log("이름 복구됨:", beforeLoginInfo.name);
+          userInfo.name = beforeLoginInfo.name;
+        }
+      }
+
+      return {
+        success: true,
+        user: {
+          ...data.user,
+          name: userInfo.name,
+        },
+      };
     }
 
     return { success: false, error: "로그인 실패" };
