@@ -26,6 +26,39 @@ const route = useRoute();
 const teamName = ref(route.params.team);
 const clubId = ref(teamID[teamName.value]);
 
+const gameDate = ref(null);
+const formattedGameDate = ref("날짜를 선택하세요");
+
+const maxLength = 500;
+
+//모달
+const confirmMaxLength = () => {
+  modalStore.openModal({
+    message: "인증 글은 최대 500자까지만 작성 가능합니다!",
+    type: "oneBtn",
+    onConfirm: modalStore.closeModal(),
+  });
+};
+
+const confirmBlank = () => {
+  console.log("📌 모달 열기 시도");
+  modalStore.openModal({
+    message: "작성하지 않은 항목이 있습니다 \n 확인 후 입력해주세요",
+    type: "oneBtn",
+    onConfirm: modalStore.closeModal(),
+  });
+};
+
+const confirmGameDate = () => {
+  console.log("📌 모달 열기 시도");
+  modalStore.openModal({
+    message: "이미 지나간 경기일입니다",
+    type: "oneBtn",
+    onConfirm: modalStore.closeModal(),
+  });
+};
+
+//함수
 const handleFileChange = async (event) => {
   const file = event.target.files[0];
   if (!file) return;
@@ -54,9 +87,6 @@ const triggerFileInput = () => {
   document.getElementById("imageUpload").click();
 };
 
-// 초기값을 null로 설정
-const gameDate = ref(null);
-
 const formatDate = (date) => {
   if (!date) return "";
   const year = date.getFullYear();
@@ -77,31 +107,6 @@ const formatDateForDB = (date) => {
   return `${year}-${month}-${day}`;
 };
 
-const formattedGameDate = ref("날짜를 선택하세요");
-
-watch(gameDate, (newDate) => {
-  formattedGameDate.value = formatDate(newDate);
-  isDatePickerOpen.value = false;
-});
-
-const confirmBlank = () => {
-  console.log("📌 모달 열기 시도");
-  modalStore.openModal({
-    message: "작성하지 않은 항목이 있습니다 \n 확인 후 입력해주세요",
-    type: "oneBtn",
-    onConfirm: modalStore.closeModal(),
-  });
-};
-
-const confirmGameDate = () => {
-  console.log("📌 모달 열기 시도");
-  modalStore.openModal({
-    message: "이미 지나간 경기일입니다",
-    type: "oneBtn",
-    onConfirm: modalStore.closeModal(),
-  });
-};
-
 const selectDate = (newDate) => {
   if (!newDate || isNaN(new Date(newDate).getTime())) {
     console.error("날짜가 선택되지 않았습니다.");
@@ -118,6 +123,16 @@ const selectDate = (newDate) => {
   }
   gameDate.value = newDate;
   isDatePickerOpen.value = false;
+};
+
+const handleSave = async () => {
+  return {
+    content: content.value, // ✅ 줄바꿈(\n) 포함해서 저장
+    imageUrl: uploadedImageUrl.value,
+    gameDate: formatDateForDB(gameDate.value),
+    clubId: clubId.value,
+    title: title.value,
+  };
 };
 
 // 작성글 등록 함수
@@ -146,12 +161,14 @@ const handleRegister = async () => {
   }
 
   try {
+    const postData = await handleSave();
+
     const result = await createCertificationPost(
-      content.value,
-      uploadedImageUrl.value,
-      formatDateForDB(gameDate.value),
-      clubId.value,
-      title.value
+      postData.content,
+      postData.imageUrl,
+      postData.gameDate,
+      postData.clubId,
+      postData.title
     );
 
     if (result) {
@@ -179,26 +196,17 @@ const handleCancel = () => {
   router.push(`/${teamName.value}/photoboard`);
 };
 
-watch(uploadedImageUrl.value, (newUrl) => {
-  console.log("업로드된 이미지 변경됨:", newUrl);
-});
-
-const confirmMaxLength = () => {
-  modalStore.openModal({
-    message: "인증 글은 최대 500자까지만 작성 가능합니다!",
-    type: "oneBtn",
-    onConfirm: modalStore.closeModal(),
-  });
-};
-
-const maxLength = 500;
-
 const handleInput = (event) => {
   if (content.value.length > maxLength) {
     confirmMaxLength();
     content.value = content.value.slice(0, maxLength);
   }
 };
+
+watch(gameDate, (newDate) => {
+  formattedGameDate.value = formatDate(newDate);
+  isDatePickerOpen.value = false;
+});
 </script>
 <template>
   <div class="flex flex-col items-center">
@@ -276,7 +284,7 @@ const handleInput = (event) => {
             <textarea
               type="text"
               v-model="content"
-              class="w-full p-0 outline-none resize-none text-4 bg-white01 placeholder-gray01 placeholder-4"
+              class="w-full p-0 outline-none resize-none text-4 bg-white01 placeholder-gray01 placeholder-4 white-space:pre-line;"
               placeholder="인증 사진은 단 하나만 업로드할 수 있으며,&#10;인증 글은 최대 500자까지만 작성 가능합니다!"
               @input="handleInput"
             />

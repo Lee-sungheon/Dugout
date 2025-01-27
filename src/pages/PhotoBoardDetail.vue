@@ -6,7 +6,7 @@ import {
 import backIcon from "@/assets/icons/back.svg";
 import CommentSection from "@/components/CommentSection.vue";
 import PostHeader from "@/components/PostHeader.vue";
-import { onMounted, ref, watch } from "vue";
+import { computed, onMounted, ref, watch, watchEffect } from "vue";
 import { useRoute, useRouter } from "vue-router";
 // day.js
 import dayjs from "dayjs";
@@ -22,6 +22,7 @@ const postId = ref(route.params.id);
 
 const post = ref({});
 const modalStore = useModalStore();
+const title = ref("");
 
 // day.js
 dayjs.extend(relativeTime); // relativeTime 플러그인 활성화
@@ -46,6 +47,29 @@ const fetchPhotoboardDetail = async (postId) => {
     console.error("데이터를 가져오지 못함", error);
   }
 };
+
+const formattedContent = computed(() => {
+  return post.value.content ? post.value.content.replace(/\n/g, "<br>") : "";
+});
+
+const titleGameDate = (gameDate) => {
+  if (!gameDate || typeof gameDate !== "string") return "";
+  if (gameDate.split("-").length < 3) return "";
+  const year = gameDate.split("-")[0].slice(2);
+  const month = gameDate.split("-")[1];
+  const day = gameDate.split("-")[2];
+
+  return `[${year}${month}${day}]`;
+};
+
+watchEffect(() => {
+  if (post.value && post.value.game_date) {
+    console.log("📌 post 업데이트됨:", post.value);
+    const postGameDate = titleGameDate(post.value.game_date);
+    title.value = `${postGameDate} ${post.value.title || ""}`;
+    console.log("📌 업데이트된 title:", title.value);
+  }
+});
 
 onMounted(() => {
   console.log("🚀 onMounted 실행, postId 확인:", postId.value);
@@ -93,12 +117,15 @@ const confirmDelete = () => {
     <div class="flex flex-col gap-[50px] w-[990px]">
       <!-- 상세 페이지 정보 -->
       <PostHeader
-        :title="post.title"
-        :nickname="post.name"
-        :post-id="post.id"
-        :profileImage="post.author_image"
+        :title="title"
+        :nickname="post.name || '익명'"
+        :post-id="String(post.id)"
+        :profileImage="
+          post.author_image ||
+          'https://cdn.pixabay.com/photo/2016/10/29/21/11/sign-1781609_1280.jpg'
+        "
         :time="dayjs(post.created_at).fromNow()"
-        :memberId="post.member_id"
+        :memberId="post.member_id || ''"
         :confirm-delete="confirmDelete"
       />
       <Modal />
@@ -110,9 +137,10 @@ const confirmDelete = () => {
           <img :src="post.image" alt="" class="object-cover w-full h-full" />
         </div>
         <div class="flex-1">
-          <p class="w-full h-full py-5 text-[18px] text-black01">
-            {{ post.content }}
-          </p>
+          <p
+            class="w-full h-full py-5 text-[18px] text-black01"
+            v-html="formattedContent"
+          ></p>
         </div>
       </div>
 
