@@ -29,7 +29,7 @@ const fectCreateComment = async (comment) => {
   try {
     const data = await createComment(
       boardToCommentTableMapping[boardName],
-      "d9ac20dc-af86-42e8-9d63-5f1e35b20547", // member ID,
+      "101c1d9d-62be-4505-82d9-6b2ee1861275", // member ID,
       post_id.value,
       comment
     );
