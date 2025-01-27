@@ -133,7 +133,6 @@ const router = createRouter({
           path: "crewboard/create",
           name: "crewboardCreate",
           component: () => import("@/pages/CrewBoardCreate.vue"),
-          beforeEnter: requireCreateAccess,
         },
         {
           path: "photoboard",
