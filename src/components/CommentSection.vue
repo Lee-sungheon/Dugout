@@ -3,8 +3,22 @@ import Commentbox from "./Commentbox.vue";
 import likeIcon from "@/assets/icons/like.svg";
 import commentIcon from "@/assets/icons/comment.svg";
 import commentBtnIcon from "@/assets/icons/comment_btn.svg";
+import { onMounted, ref } from "vue";
+import { useRoute } from "vue-router";
+import {
+  createFreePostComment,
+  getFreePostComments,
+} from "@/api/supabase-api/freePost";
+import {
+  createPostComment,
+  getCrewRecruitmentPostComments,
+} from "@/api/supabase-api/crewRecruitmentPost";
+import { getCertificationPostComments } from "@/api/supabase-api/viewingCertificationPostComment";
+import { createRestaurantPostComment } from "@/api/supabase-api/restaurantComment";
+import { createComment, getComments } from "@/api/supabase-api/common";
+import { boardToCommentTableMapping } from "@/constants";
 
-const props = defineProps({
+defineProps({
   likeLength: {
     type: Number,
     default() {
@@ -18,6 +32,62 @@ const props = defineProps({
     },
   },
 });
+
+const route = useRoute();
+const post_id = ref(route.params.id);
+const boardName = route.path.split("/")[2]; // 게시판 이름
+
+const text = ref("");
+const comments = ref([]);
+
+// 어떤 댓글 생성하는 함수를 사용할지에 대한 함수
+const getCommentCreationFunction = () => {
+  const boardName = route.path.split("/")[2];
+  if (boardName === "freeboard") {
+    return createFreePostComment;
+  } else if (boardName === "crewboard") {
+    return createPostComment;
+  } else if (boardName === "photoboard") {
+    return getCertificationPostComments;
+  }
+  // foodboard
+  else {
+    return createRestaurantPostComment;
+  }
+};
+
+// // 댓글 생성하는 함수
+const FectCreateComment = async (comment) => {
+  try {
+    const data = await createComment(
+      boardToCommentTableMapping[boardName],
+      "d9ac20dc-af86-42e8-9d63-5f1e35b20547", // member ID,
+      post_id.value,
+      comment
+    );
+    console.log(data);
+  } catch (error) {
+    console.error("댓글 작성중 오류가 생겼습니다.");
+  }
+};
+
+// 댓글 정보 가져오는 함수
+const fetchGetComments = async () => {
+  try {
+    const data = await getComments(
+      boardToCommentTableMapping[boardName],
+      post_id.value
+    );
+    console.log(data);
+    comments.value = data;
+  } catch (error) {
+    console.error("댓글 정보를 가져오는 중에 오류가 발생했습니다.");
+  }
+};
+
+onMounted(() => {
+  fetchGetComments();
+});
 </script>
 <template>
   <div class="px-[30px] flex flex-col gap-[30px]">
@@ -25,11 +95,11 @@ const props = defineProps({
     <div class="flex gap-[20px]">
       <div class="flex gap-[10px]">
         <img :src="likeIcon" alt="좋아요 아이콘" class="w-[21px] h-18px" />
-        <span class="text-gray02">{{ props.likeLength }}</span>
+        <span class="text-gray02">{{ likeLength }}</span>
       </div>
       <div class="flex gap-[10px]">
         <img :src="commentIcon" alt="댓글 아이콘" class="w-[21px] h-18px" />
-        <span class="text-gray02">{{ props.commentLength }}</span>
+        <span class="text-gray02">{{ commentLength }}</span>
       </div>
     </div>
 
@@ -41,16 +111,20 @@ const props = defineProps({
         type="text"
         placeholder="댓글을 입력해주세요"
         class="w-full outline-none bg-white01"
+        v-model="text"
       />
-      <img :src="commentBtnIcon" alt="댓글 전송 버튼" />
-    </div>
 
+      <button @click="FectCreateComment(text)">
+        <img
+          :src="commentBtnIcon"
+          alt="댓글 전송 버튼"
+          class="w-[24px] h-[24px]"
+        />
+      </button>
+    </div>
     <!-- 댓글리스트 -->
     <div class="flex flex-col gap-5">
-      <Commentbox />
-      <Commentbox />
-      <Commentbox />
-      <Commentbox />
+      <Commentbox v-for="comment of comments" :comment />
     </div>
   </div>
 </template>

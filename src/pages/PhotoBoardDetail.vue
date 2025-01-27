@@ -8,15 +8,15 @@ const router = useRouter();
 </script>
 
 <template>
-  <div class="px-[50px] py-[30px]">
+  <div class="px-[50px] py-[30px] flex flex-col items-center">
     <!-- 뒤로가기 -->
-    <div class="border-2 border-green-500 mb-[50px] flex">
+    <div class="mb-[50px] flex w-full">
       <button @click="router.go(-1)">
         <img :src="backIcon" alt="뒤로가기 아이콘" />
       </button>
     </div>
     <!-- 상세페이지 -->
-    <div class="flex flex-col gap-[50px]">
+    <div class="flex flex-col gap-[50px] w-[990px]">
       <!-- 상세 페이지 정보 -->
       <PostHeader
         title="[240719] 위팍 워페 직관 인증!"

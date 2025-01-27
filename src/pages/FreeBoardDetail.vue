@@ -4,6 +4,11 @@ import backIcon from "@/assets/icons/back.svg";
 import CommentSection from "@/components/CommentSection.vue";
 import PostHeader from "@/components/PostHeader.vue";
 import { onMounted, ref } from "vue";
+import { useRoute } from "vue-router";
+// day.js
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
+import "dayjs/locale/ko"; // 한국어 로케일 가져오기
 
 const post = ref({}); // 게시물 상세 정보를 담을 변수
 
@@ -11,10 +16,6 @@ const route = useRoute();
 const post_id = ref(route.params.id);
 
 // day.js
-import dayjs from "dayjs";
-import relativeTime from "dayjs/plugin/relativeTime";
-import "dayjs/locale/ko"; // 한국어 로케일 가져오기
-import { useRoute } from "vue-router";
 dayjs.extend(relativeTime); // relativeTime 플러그인 활성화
 dayjs.locale("ko"); // 한국어 로케일 설정
 

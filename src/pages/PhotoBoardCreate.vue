@@ -10,8 +10,11 @@ import { teamID } from "@/constants";
 import { useRoute, useRouter } from "vue-router";
 import { DatePicker } from "v-calendar";
 import CalendarIcon from "@/assets/icons/calendar.svg";
+import Modal from "@/components/common/Modal.vue";
+import { useModalStore } from "@/stores/useModalStore";
 
 const router = useRouter();
+const modalStore = useModalStore();
 
 const title = ref("");
 const content = ref("");
@@ -81,6 +84,24 @@ watch(gameDate, (newDate) => {
   isDatePickerOpen.value = false;
 });
 
+const confirmBlank = () => {
+  console.log("📌 모달 열기 시도");
+  modalStore.openModal({
+    message: "작성하지 않은 항목이 있습니다 \n 확인 후 입력해주세요",
+    type: "oneBtn",
+    onConfirm: modalStore.closeModal(),
+  });
+};
+
+const confirmGameDate = () => {
+  console.log("📌 모달 열기 시도");
+  modalStore.openModal({
+    message: "이미 지나간 경기일입니다",
+    type: "oneBtn",
+    onConfirm: modalStore.closeModal(),
+  });
+};
+
 const selectDate = (newDate) => {
   if (!newDate || isNaN(new Date(newDate).getTime())) {
     console.error("날짜가 선택되지 않았습니다.");
@@ -92,7 +113,7 @@ const selectDate = (newDate) => {
   thisDate.setHours(0, 0, 0, 0);
 
   if (selectedDate < thisDate) {
-    alert("이미 지나간 경기일입니다");
+    confirmGameDate();
     return;
   }
   gameDate.value = newDate;
@@ -107,15 +128,9 @@ const handleRegister = async () => {
     !title.value ||
     !content.value ||
     !gameDate.value ||
-    !clubId.value ||
     !uploadedImageUrl.value
   ) {
-    alert("모든 필드를 입력해주세요");
-    console.log(uploadedImageUrl.value);
-    console.log(title.value);
-    console.log(content.value);
-    console.log(clubId.value);
-    console.log(gameDate.value);
+    confirmBlank();
     return;
   }
 
@@ -129,7 +144,6 @@ const handleRegister = async () => {
     );
 
     if (result) {
-      alert("게시물이 성공적으로 생성되었습니다!");
       title.value = "";
       content.value = "";
       gameDate.value = null;
@@ -158,94 +172,105 @@ watch(uploadedImageUrl, (newUrl) => {
   console.log("업로드된 이미지 변경됨:", newUrl);
 });
 
+const confirmMaxLength = () => {
+  modalStore.openModal({
+    message: "인증 글은 최대 500자까지만 작성 가능합니다!",
+    type: "oneBtn",
+    onConfirm: modalStore.closeModal(),
+  });
+};
+
 const maxLength = 500;
 
 const handleInput = (event) => {
   if (content.value.length > maxLength) {
-    alert("인증 글은 최대 500자까지만 작성 가능합니다!");
+    confirmMaxLength();
     content.value = content.value.slice(0, maxLength);
   }
 };
 </script>
 <template>
-  <div class="px-[50px]">
-    <CreateHeader
-      :handleRegister="handleRegister"
-      :handleCancel="handleCancel"
-    />
-    <div class="gap-[50px]">
-      <div class="mt-[40px] mb-[85px]">
-        <div class="flex flex-col gap-[30px]">
-          <div class="w-full pb-[30px] border-b-gray01 border-b-[1px]">
-            <input
-              type="text"
-              v-model="title"
-              class="w-full text-[30px] placeholder-gray01 bg-white01 placeholder-[30px] text-center outline-none"
-              placeholder="제목"
-            />
-          </div>
-          <div class="flex justify-between">
-            <div
-              class="flex justify-between items-center h-[40px] w-[425px] gap-2 px-[20px] mb-[30px]"
-            >
-              <div class="“w-[100px]“">
-                <span
-                  class="text-black01 text-bold text-[18px] whitespace-nowrap"
-                  >경기일</span
-                >
-              </div>
-              <div class="relative flex w-full">
-                <button
-                  @click="isDatePickerOpen = !isDatePickerOpen"
-                  class="flex items-center justify-between w-full h-[40px] px-[15px] bg-white02 text-black01 text-[18px] rounded-[8px] border"
-                >
-                  <span>{{ formattedGameDate || "날짜를 선택하세요" }}</span>
-                  <img :src="CalendarIcon" class="w-[18px] h-[18px]" />
-                </button>
-                <div
-                  v-if="isDatePickerOpen"
-                  class="absolute left-0 top-full w-full z-10"
-                >
-                  <DatePicker
-                    v-model="gameDate"
-                    mode="single"
-                    expanded
-                    @update:modelValue="selectDate"
-                  />
+  <div class="flex flex-col items-center">
+    <div class="w-[1090px] flex flex-col">
+      <CreateHeader
+        :handleRegister="handleRegister"
+        :handleCancel="handleCancel"
+      />
+      <Modal />
+      <div>
+        <input
+          v-model="title"
+          type="text"
+          placeholder="제목"
+          class="py-[15px] border-b border-white02 w-full outline-none text-3xl text-center bg-white01"
+        />
+      </div>
+      <div class="gap-[50px]">
+        <div class="mt-[40px] mb-[85px]">
+          <div class="flex flex-col gap-[30px]">
+            <div class="flex justify-between">
+              <div
+                class="flex justify-between items-center h-[40px] w-[425px] gap-2 px-[20px] mb-[30px]"
+              >
+                <div class="“w-[100px]“">
+                  <span
+                    class="text-black01 text-bold text-[18px] whitespace-nowrap"
+                    >경기일</span
+                  >
+                </div>
+                <div class="relative flex w-full">
+                  <button
+                    @click="isDatePickerOpen = !isDatePickerOpen"
+                    class="flex items-center justify-between w-full h-[40px] px-[15px] bg-white02 text-black01 text-[18px] rounded-[8px] border"
+                  >
+                    <span>{{ formattedGameDate || "날짜를 선택하세요" }}</span>
+                    <img :src="CalendarIcon" class="w-[18px] h-[18px]" />
+                  </button>
+                  <div
+                    v-if="isDatePickerOpen"
+                    class="absolute left-0 z-10 w-full top-full"
+                  >
+                    <DatePicker
+                      v-model="gameDate"
+                      mode="single"
+                      expanded
+                      @update:modelValue="selectDate"
+                    />
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-        <div class="flex px-[20px] gap-[30px]">
-          <div class="relative w-full rounded-[10px]">
-            <input
-              type="file"
-              id="imageUpload"
-              class="hidden"
-              accept="image/*"
-              @change="handleFileChange"
-            />
-            <div
-              class="aspect-square w-full rounded-[10px] bg-white02 flex justify-center items-center cursor-pointer"
-              @click="triggerFileInput"
-            >
-              <img
-                v-if="selectedImage"
-                :src="selectedImage"
-                class="w-full h-full object-cover rounded-[10px]"
+          <div class="flex px-[20px] gap-[30px]">
+            <div class="relative w-full rounded-[10px]">
+              <input
+                type="file"
+                id="imageUpload"
+                class="hidden"
+                accept="image/*"
+                @change="handleFileChange"
               />
-              <img v-else :src="Camera" />
+              <div
+                class="aspect-square w-full rounded-[10px] bg-white02 flex justify-center items-center cursor-pointer"
+                @click="triggerFileInput"
+              >
+                <img
+                  v-if="selectedImage"
+                  :src="selectedImage"
+                  class="w-full h-full object-cover rounded-[10px]"
+                />
+                <img v-else :src="Camera" />
+              </div>
             </div>
+            <textarea
+              type="text"
+              v-model="content"
+              class="w-full p-0 outline-none resize-none text-4 bg-white01 placeholder-gray01 placeholder-4"
+              placeholder="인증 사진은 단 하나만 업로드할 수 있으며,
+  인증 글은 최대 500자까지만 작성 가능합니다!"
+              @input="handleInput"
+            />
           </div>
-          <textarea
-            type="text"
-            v-model="content"
-            class="w-full p-0 outline-none resize-none text-4 bg-white01 placeholder-gray01 placeholder-4"
-            placeholder="인증 사진은 단 하나만 업로드할 수 있으며,
-인증 글은 최대 500자까지만 작성 가능합니다!"
-            @input="handleInput"
-          />
         </div>
       </div>
     </div>
