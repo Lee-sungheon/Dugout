@@ -1,78 +1,42 @@
 <script setup>
+import { supabase } from "@/supabase";
+import { getViewingCertificationPostsByClub } from "@/api/supabase-api/viewingCertificationPost";
 import PostArrow from "@/assets/icons/post_arrow.svg";
 import PhotoboardCard from "@/components/photoboard/PhotoboardCard.vue";
-import { ref } from "vue";
+import { teamID } from "@/constants";
+import { onMounted, ref, watch } from "vue";
 import { useRoute } from "vue-router";
-
-const posts = [
-  {
-    id: "1",
-    photo:
-      "https://cdn.pixabay.com/photo/2023/05/11/03/34/baseball-7985433_1280.jpg",
-    profile:
-      "https://news.nateimg.co.kr/orgImg/aj/2024/01/21/20240121132054894779.jpg",
-    name: "닉네임",
-    likes: "20",
-    comments: "4",
-  },
-  {
-    id: "2",
-    photo:
-      "https://cdn.pixabay.com/photo/2023/05/11/03/34/baseball-7985433_1280.jpg",
-    profile:
-      "https://news.nateimg.co.kr/orgImg/aj/2024/01/21/20240121132054894779.jpg",
-    name: "닉네임",
-    likes: "20",
-    comments: "4",
-  },
-  {
-    id: "3",
-    photo:
-      "https://cdn.pixabay.com/photo/2023/05/11/03/34/baseball-7985433_1280.jpg",
-    profile:
-      "https://news.nateimg.co.kr/orgImg/aj/2024/01/21/20240121132054894779.jpg",
-    name: "닉네임",
-    likes: "20",
-    comments: "4",
-  },
-  {
-    id: "4",
-    photo:
-      "https://cdn.pixabay.com/photo/2023/05/11/03/34/baseball-7985433_1280.jpg",
-    profile:
-      "https://news.nateimg.co.kr/orgImg/aj/2024/01/21/20240121132054894779.jpg",
-    name: "닉네임",
-    likes: "20",
-    comments: "4",
-  },
-  {
-    id: "5",
-    photo:
-      "https://cdn.pixabay.com/photo/2023/05/11/03/34/baseball-7985433_1280.jpg",
-    profile:
-      "https://news.nateimg.co.kr/orgImg/aj/2024/01/21/20240121132054894779.jpg",
-    name: "닉네임",
-    likes: "20",
-    comments: "4",
-  },
-  {
-    id: "6",
-    photo:
-      "https://cdn.pixabay.com/photo/2023/05/11/03/34/baseball-7985433_1280.jpg",
-    profile:
-      "https://news.nateimg.co.kr/orgImg/aj/2024/01/21/20240121132054894779.jpg",
-    name: "닉네임",
-    likes: "20",
-    comments: "4",
-  },
-];
-
-const props = defineProps({
-  posts: Array,
-});
 
 const route = useRoute();
 const teamName = ref(route.params.team);
+const clubId = ref(teamID[teamName.value]);
+
+const photoboardList = ref([]);
+
+const fetchPhotoboardList = async () => {
+  try {
+    const data = await getViewingCertificationPostsByClub(clubId.value);
+    console.log(" photoboardList 데이터 확인:", data);
+
+    photoboardList.value = data || [];
+  } catch (error) {
+    console.error("직관인증포토 포스트를 불러오지 못했습니다");
+  }
+};
+
+onMounted(() => {
+  fetchPhotoboardList();
+});
+
+watch(
+  () => route.params.team,
+  (newTeamName, _) => {
+    teamName.value = newTeamName;
+
+    clubId.value = teamID[teamName.value];
+    fetchPhotoboardList();
+  }
+);
 </script>
 <template>
   <div class="flex gap-[30px] flex-col px-[50px] py-[30px] items-center">
@@ -89,7 +53,11 @@ const teamName = ref(route.params.team);
       <!-- 목록 -->
       <div class="w-full h-auto mb-[100px]">
         <div class="grid grid-cols-3 gap-[30px] w-full">
-          <PhotoboardCard v-for="post in posts" :key="post.id" :post="post" />
+          <PhotoboardCard
+            v-for="post in photoboardList"
+            :key="post.id"
+            :post="post"
+          />
         </div>
       </div>
     </div>
