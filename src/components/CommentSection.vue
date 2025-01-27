@@ -5,27 +5,11 @@ import commentIcon from "@/assets/icons/comment.svg";
 import commentBtnIcon from "@/assets/icons/comment_btn.svg";
 import { onMounted, ref } from "vue";
 import { useRoute } from "vue-router";
-import {
-  createFreePostComment,
-  getFreePostComments,
-} from "@/api/supabase-api/freePost";
-import {
-  createPostComment,
-  getCrewRecruitmentPostComments,
-} from "@/api/supabase-api/crewRecruitmentPost";
-import { getCertificationPostComments } from "@/api/supabase-api/viewingCertificationPostComment";
-import { createRestaurantPostComment } from "@/api/supabase-api/restaurantComment";
 import { createComment, getComments } from "@/api/supabase-api/common";
 import { boardToCommentTableMapping } from "@/constants";
 
 defineProps({
   likeLength: {
-    type: Number,
-    default() {
-      return 0;
-    },
-  },
-  commentLength: {
     type: Number,
     default() {
       return 0;
@@ -40,24 +24,8 @@ const boardName = route.path.split("/")[2]; // 게시판 이름
 const text = ref("");
 const comments = ref([]);
 
-// 어떤 댓글 생성하는 함수를 사용할지에 대한 함수
-const getCommentCreationFunction = () => {
-  const boardName = route.path.split("/")[2];
-  if (boardName === "freeboard") {
-    return createFreePostComment;
-  } else if (boardName === "crewboard") {
-    return createPostComment;
-  } else if (boardName === "photoboard") {
-    return getCertificationPostComments;
-  }
-  // foodboard
-  else {
-    return createRestaurantPostComment;
-  }
-};
-
 // // 댓글 생성하는 함수
-const FectCreateComment = async (comment) => {
+const fectCreateComment = async (comment) => {
   try {
     const data = await createComment(
       boardToCommentTableMapping[boardName],
@@ -65,7 +33,11 @@ const FectCreateComment = async (comment) => {
       post_id.value,
       comment
     );
-    console.log(data);
+    // 낙관적 업데이트
+    if (data) {
+      comments.value = [...comments.value, ...data]; // 게시물 목록 추가
+    }
+    console.log("생성데이터", data);
   } catch (error) {
     console.error("댓글 작성중 오류가 생겼습니다.");
   }
@@ -85,6 +57,11 @@ const fetchGetComments = async () => {
   }
 };
 
+// 코멘트 목록 업데이트하는 함수
+const updateComments = (newComments) => {
+  comments.value = newComments;
+};
+
 onMounted(() => {
   fetchGetComments();
 });
@@ -99,7 +76,7 @@ onMounted(() => {
       </div>
       <div class="flex gap-[10px]">
         <img :src="commentIcon" alt="댓글 아이콘" class="w-[21px] h-18px" />
-        <span class="text-gray02">{{ commentLength }}</span>
+        <span class="text-gray02">{{ comments.length }}</span>
       </div>
     </div>
 
@@ -114,7 +91,7 @@ onMounted(() => {
         v-model="text"
       />
 
-      <button @click="FectCreateComment(text)">
+      <button @click="fectCreateComment(text)">
         <img
           :src="commentBtnIcon"
           alt="댓글 전송 버튼"
@@ -124,7 +101,13 @@ onMounted(() => {
     </div>
     <!-- 댓글리스트 -->
     <div class="flex flex-col gap-5">
-      <Commentbox v-for="comment of comments" :comment />
+      <Commentbox
+        v-for="comment of comments"
+        :comment
+        :key="comment.id"
+        :comments
+        @update-comments="updateComments"
+      />
     </div>
   </div>
 </template>
