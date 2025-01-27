@@ -117,7 +117,6 @@ const router = createRouter({
           path: "freeboard/create",
           name: "freeboardCreate",
           component: () => import("@/pages/FreeBoardCreate.vue"),
-          beforeEnter: requireCreateAccess,
         },
 
         {
@@ -134,7 +133,6 @@ const router = createRouter({
           path: "crewboard/create",
           name: "crewboardCreate",
           component: () => import("@/pages/CrewBoardCreate.vue"),
-          beforeEnter: requireCreateAccess,
         },
         {
           path: "photoboard",
