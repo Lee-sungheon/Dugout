@@ -1,5 +1,5 @@
 <script setup>
-import doosanEmblem from "@/assets/images/logo_doosan.svg";
+import doosanEmblem from "@/assets/images/doosan_emblem.svg";
 import hanhwaEmblem from "@/assets/images/logo_hanhwa.svg";
 import kiaEmblem from "@/assets/images/logo_kia.svg";
 import kiwoomEmblem from "@/assets/images/logo_kiwoom.svg";
@@ -44,7 +44,7 @@ onMounted(() => {
       {
         opacity: 1,
         backgroundColor:
-          "linear-gradient(135deg, rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0.2))", 
+          "linear-gradient(135deg, rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0.2))",
         duration: totalDuration * 0.3,
         ease: "power3.out",
       }
