@@ -7,6 +7,7 @@ import { useRouter } from "vue-router";
 import { getCurrentUser } from "../api/supabase-api/userInfo";
 import { getUserInfoEnCapsulation } from "@/api/supabase-api/userInfo";
 import { getBaseballGame } from "@/api/supabase-api/baseballGame";
+import { useAuthStore } from "@/stores/auth";
 
 const marquee = ref(null);
 const marquee2 = ref(null);
@@ -14,14 +15,13 @@ const user = ref(null);
 const errorMessage = ref("");
 const combinedRecords = ref([]);
 const router = useRouter();
+const auth = useAuthStore();
 
 // 사용자 정보 가져오기
 const fetchCurrenthUser = async () => {
   try {
-    const currentUser = await getCurrentUser();
-    if (currentUser) {
-      user.value = currentUser;
-    } else {
+    await auth.fetchCurrentUser();
+    if (!auth.user) {
       errorMessage.value = "로그인된 사용자가 없습니다.";
     }
   } catch (error) {
@@ -64,8 +64,7 @@ const fetchGameRanking = async () => {
 };
 
 const handleRouting = async () => {
-  await fetchCurrenthUser();
-  if (user.value) router.push("./game");
+  if (auth.isAuthenticated()) router.push("./game");
   else router.push("./signin");
 };
 
@@ -124,7 +123,13 @@ onMounted(async () => {
     </div>
     <div class="text-black02 text-center my-[50px]">
       <div class="text-[24px] font-bold">
-        응원하는 구단의 게시판을 구경해보세요!
+        <template v-if="auth.user">
+          <p>{{ auth.user.name }}님, 반갑습니다!</p>
+          <p>응원하는 구단의 게시판의 새로운 소식을 확인해보세요!</p>
+        </template>
+        <template v-else
+          >로그인하고 응원하는 구단의 게시판을 구경해보세요!</template
+        >
       </div>
       <div>자유게시판</div>
       <div>직관 크루 모집</div>
