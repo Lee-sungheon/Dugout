@@ -98,7 +98,13 @@ onMounted(() => {
     </div>
     <!-- 댓글리스트 -->
     <div class="flex flex-col gap-5">
-      <Commentbox v-for="comment of comments" :comment :key="comment.id" />
+      <Commentbox
+        v-for="comment of comments"
+        :comment
+        :key="comment.id"
+        :comments
+        @update:comments="(newComments) => (comments = newComments)"
+      />
     </div>
   </div>
 </template>
