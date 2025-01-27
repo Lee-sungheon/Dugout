@@ -95,6 +95,7 @@ const confirmDelete = () => {
       <PostHeader
         :title="post.title"
         :nickname="post.name"
+        :post-id="post.id"
         :profileImage="post.author_image"
         :time="dayjs(post.created_at).fromNow()"
         :memberId="post.member_id"

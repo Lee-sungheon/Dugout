@@ -1,28 +1,28 @@
 <script setup>
-import { ref, computed } from "vue";
-import { useRoute, useRouter } from "vue-router";
-import { QuillEditor } from "@vueup/vue-quill";
-import { useImageStore } from "@/stores/useImageStore";
-import { useMapStore } from "@/stores/mapStore";
+import { createRestaurantPostImage } from "@/api/supabase-api/restaurantImage";
 import {
-  createRestaurantPost,
   createRestaurantLocation,
+  createRestaurantPost,
 } from "@/api/supabase-api/restaurantPost";
 import { getCurrentUser } from "@/api/supabase-api/userInfo";
-import { createRestaurantPostImage } from "@/api/supabase-api/restaurantImage";
+import Baseball from "@/assets/icons/baseball.svg";
+import Modal from "@/components/common/Modal.vue";
 import CreateHeader from "@/components/CreateHeader.vue";
 import MapSelectAndView from "@/components/foodboard/foodBoardCreate/MapSelectAndView.vue";
 import PhotoUpload from "@/components/foodboard/foodBoardCreate/PhotoUpload.vue";
 import TagsSelect from "@/components/foodboard/foodBoardCreate/TagsSelect.vue";
-import Modal from "@/components/common/Modal.vue";
 import { teamID } from "@/constants/index";
-import Baseball from "@/assets/icons/baseball.svg";
+import { useMapStore } from "@/stores/mapStore";
+import { useImageStore } from "@/stores/useImageStore";
+import { QuillEditor } from "@vueup/vue-quill";
+import { computed, ref } from "vue";
+import { useRoute, useRouter } from "vue-router";
 
 const imageStore = useImageStore();
-const mapStore = useMapStore(); // Pinia store instance
+const mapStore = useMapStore();
 const router = useRouter();
 const route = useRoute();
-const teamName = ref(route.params.team); // URL에서 팀 이름 가져오기
+const teamName = ref(route.params.team);
 const clubId = ref(teamID[teamName.value]);
 
 const modalmessage = ref("");
@@ -37,14 +37,13 @@ const messageList = [
 
 const finalSelectedLocation = computed(() => mapStore.finalSelectedLocation);
 
-const tagErrorClass = ref(""); // 에러 클래스 초기화
-const tagErrorMessage = ref("태그를 1개 이상 선택해주세요"); // 기존 메시지 그대로 유지
+const tagErrorClass = ref("");
+const tagErrorMessage = ref("태그를 1개 이상 선택해주세요");
 
 const handleTagUpdate = (tags) => {
   selectedTags.value = tags;
-  // 태그 선택이 완료되면 에러 상태 초기화
   if (selectedTags.value.length > 0) {
-    tagErrorClass.value = ""; // 에러 스타일 제거
+    tagErrorClass.value = "";
   }
 };
 
@@ -53,14 +52,12 @@ const submitRestaurantPost = async () => {
   const userData = await getCurrentUser();
 
   if (!title.value.trim()) {
-    // 포커스 이동
     const titleElement = document.querySelector('input[type="text"]');
     titleElement.focus();
     return;
   }
 
   if (!content.value.trim()) {
-    // 포커스 이동
     const contentElement = document.querySelector(".ql-editor");
     contentElement.focus();
     contentElement.scrollIntoView({ behavior: "smooth" });
@@ -73,24 +70,22 @@ const submitRestaurantPost = async () => {
     tagSelectElement.scrollIntoView({ behavior: "smooth" });
 
     setTimeout(() => {
-      tagErrorClass.value = ""; // 애러 후 스타일 초기화
+      tagErrorClass.value = "";
     }, 3000);
 
     return;
   }
   try {
-    // 게시물 등록
     const data = await createRestaurantPost(
       userData.id,
       content.value,
       title.value,
-      filteredImg[0], // 첫 번째 이미지를 메인 이미지로 저장
+      filteredImg[0],
       selectedTags.value,
       clubId.value
     );
     console.log("포스팅된 전체 데이터를 확인합니다", data);
 
-    // 위치 데이터 등록
     const locationData = await createRestaurantLocation(
       data[0].id,
       finalSelectedLocation.value.place_name,
@@ -102,7 +97,6 @@ const submitRestaurantPost = async () => {
       finalSelectedLocation.value.place_url
     );
 
-    // 나머지 이미지 등록 (첫 번째 이미지는 이미 등록됨)
     const imagesData = [];
     for (const [i, image] of filteredImg.entries()) {
       try {
@@ -120,11 +114,9 @@ const submitRestaurantPost = async () => {
       }
     }
 
-    // 결과 출력
     console.log("맛집 게시물 등록 성공", data, locationData, imagesData);
     router.push(`/${teamName.value}/foodboard`);
 
-    // 성공 후 Pinia store 초기화
     mapStore.resetLocationData();
     imageStore.resetImageData();
   } catch (error) {
@@ -136,8 +128,7 @@ const cancelRestaurantPost = () => {
   modalmessage.value = messageList[0];
   isModalVisible.value = true;
 
-  // 취소 시 Pinia store 초기화
-  mapStore.resetLocationData(); // 데이터 초기화
+  mapStore.resetLocationData();
 };
 
 const cancelModalWindow = () => {
@@ -225,9 +216,10 @@ const toolbarOptions = [
     opacity: 0.8;
   }
 }
+
 ::v-deep(.ql-editor) {
   width: 100%;
-  height: auto; /* 콘텐츠에 맞게 높이가 자동으로 늘어남 */
+  height: auto;
   text-align: center;
   color: #0a0a0a;
   font-size: 18px;

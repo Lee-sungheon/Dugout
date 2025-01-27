@@ -130,6 +130,17 @@ const handleRegister = async () => {
     !gameDate.value ||
     !uploadedImageUrl.value
   ) {
+    console.log(
+      "현재 데이터",
+      "타이틀",
+      title.value,
+      "내용",
+      content.value,
+      "날짜",
+      gameDate.value,
+      "이미지 주소",
+      uploadedImageUrl.value
+    );
     confirmBlank();
     return;
   }
@@ -150,7 +161,7 @@ const handleRegister = async () => {
       clubId.value = "";
       uploadedImageUrl.value = "";
     }
-    router.push(`/${teamName.value}/photoboard`);
+    router.replace(`/${teamName.value}/photoboard`);
   } catch (error) {
     console.error("게시물 생성 실패:", error);
     alert("게시물 생성에 실패했습니다.");
@@ -168,7 +179,7 @@ const handleCancel = () => {
   router.push(`/${teamName.value}/photoboard`);
 };
 
-watch(uploadedImageUrl, (newUrl) => {
+watch(uploadedImageUrl.value, (newUrl) => {
   console.log("업로드된 이미지 변경됨:", newUrl);
 });
 

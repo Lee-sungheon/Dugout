@@ -18,7 +18,6 @@ export const useMapStore = defineStore("map", () => {
     isSelectedLocationVisable.value = isVisible;
   }
 
-  // 데이터 초기화 함수 추가
   function resetLocationData() {
     finalSelectedLocation.value = null;
     tempSelectedLocation.value = null;
@@ -32,6 +31,6 @@ export const useMapStore = defineStore("map", () => {
     setFinalSelectedLocation,
     setTempSelectedLocation,
     setIsSelectedLocationVisable,
-    resetLocationData, // 초기화 함수 반환
+    resetLocationData,
   };
 });

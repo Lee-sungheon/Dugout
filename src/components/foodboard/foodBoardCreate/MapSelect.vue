@@ -1,8 +1,8 @@
 <script setup>
-import { computed, ref } from "vue";
-import { useMapStore } from "@/stores/mapStore";
-import { KakaoMap, KakaoMapMarker } from "vue3-kakao-maps";
 import DeleteBtn from "@/assets/icons/map_close.svg";
+import { useMapStore } from "@/stores/mapStore";
+import { computed, ref } from "vue";
+import { KakaoMap, KakaoMapMarker } from "vue3-kakao-maps";
 import MapSearchBar from "./MapSearchBar.vue";
 
 const mapStore = useMapStore();
