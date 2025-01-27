@@ -123,7 +123,13 @@ onMounted(async () => {
     </div>
     <div class="text-black02 text-center my-[50px]">
       <div class="text-[24px] font-bold">
-        응원하는 구단의 게시판을 구경해보세요!
+        <template v-if="auth.user">
+          <p>{{ auth.user.name }}님, 반갑습니다!</p>
+          <p>응원하는 구단의 게시판의 새로운 소식을 확인해보세요!</p>
+        </template>
+        <template v-else
+          >로그인하고 응원하는 구단의 게시판을 구경해보세요!</template
+        >
       </div>
       <div>자유게시판</div>
       <div>직관 크루 모집</div>
