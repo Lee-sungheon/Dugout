@@ -101,15 +101,24 @@ const router = createRouter({
           component: () => import("@/pages/FreeBoard.vue"),
         },
         {
-          path: "freeboard/:id",
+          path: "freeboard/:post_id/edit",
+          name: "freeboardEdit",
+          component: () => import("@/pages/FreeBoardEdit.vue"),
+          props: true,
+        },
+        {
+          path: "freeboard/:post_id",
           name: "freeboardDetail",
           component: () => import("@/pages/FreeBoardDetail.vue"),
+          props: true,
         },
+
         {
           path: "freeboard/create",
           name: "freeboardCreate",
           component: () => import("@/pages/FreeBoardCreate.vue"),
         },
+
         {
           path: "crewboard",
           name: "crewboard",
