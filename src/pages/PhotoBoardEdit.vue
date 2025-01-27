@@ -170,7 +170,7 @@ const handleRegister = async () => {
 
     if (updatedPost) {
       alert("게시물이 수정되었습니다.");
-      router.push(`/${route.params.team}/photoboard`);
+      router.replace(`/${route.params.team}/photoboard`);
     }
   } catch (error) {
     console.error("게시물 생성 실패:", error);

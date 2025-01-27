@@ -150,7 +150,7 @@ const handleRegister = async () => {
       clubId.value = "";
       uploadedImageUrl.value = "";
     }
-    router.push(`/${teamName.value}/photoboard`);
+    router.replace(`/${teamName.value}/photoboard`);
   } catch (error) {
     console.error("게시물 생성 실패:", error);
     alert("게시물 생성에 실패했습니다.");
