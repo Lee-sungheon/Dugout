@@ -9,29 +9,6 @@ import MyPage from "@/pages/MyPage.vue";
 import Main from "@/pages/Main.vue";
 import { teamList, gameList } from "@/constants";
 
-// 접근 제한 함수 추가
-const requireCreateAccess = (to, from, next) => {
-  const canAccess = sessionStorage.getItem("canAccessCreate");
-  if (canAccess === "true") {
-    sessionStorage.removeItem("canAccessCreate"); // 접근 후 제한
-    next();
-  } else {
-    alert("잘못된 접근입니다.");
-    next(`/${to.params.team}/photoboard`);
-  }
-};
-
-const requireEditAccess = (to, from, next) => {
-  const canAccess = sessionStorage.getItem("canAccessEdit");
-  if (canAccess === "true") {
-    sessionStorage.removeItem("canAccessEdit"); // 접근 후 제한
-    next();
-  } else {
-    alert("잘못된 접근입니다.");
-    next(`/${to.params.team}/photoboard`);
-  }
-};
-
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -140,7 +117,6 @@ const router = createRouter({
           path: "freeboard/create",
           name: "freeboardCreate",
           component: () => import("@/pages/FreeBoardCreate.vue"),
-          beforeEnter: requireCreateAccess,
         },
 
         {
@@ -157,7 +133,6 @@ const router = createRouter({
           path: "crewboard/create",
           name: "crewboardCreate",
           component: () => import("@/pages/CrewBoardCreate.vue"),
-          beforeEnter: requireCreateAccess,
         },
         {
           path: "photoboard",
@@ -173,13 +148,11 @@ const router = createRouter({
           path: "photoboard/create",
           name: "photoboardCreate",
           component: () => import("@/pages/PhotoBoardCreate.vue"),
-          beforeEnter: requireCreateAccess,
         },
         {
           path: "photoboard/:id/edit",
           name: "photoboardEdit",
           component: () => import("@/pages/PhotoBoardEdit.vue"),
-          beforeEnter: requireEditAccess,
         },
         {
           path: "foodboard",
@@ -195,7 +168,6 @@ const router = createRouter({
           path: "foodboard/create",
           name: "foodboardCreate",
           component: () => import("@/pages/FoodBoardCreate.vue"),
-          beforeEnter: requireCreateAccess,
         },
       ],
     },
