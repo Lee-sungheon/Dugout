@@ -30,19 +30,6 @@ const fetchCurrenthUser = async () => {
   }
 };
 
-// 전체 사용자 정보 가져오기 (랭킹 표시용)
-const fetchAllUserInfo = async () => {
-  try {
-    const data = await getUserInfoEnCapsulation("user_info");
-    if (data) {
-      userInfos.value = data;
-      console.log("전체 사용자 정보:", userInfos.value);
-    }
-  } catch (error) {
-    console.error("전체 사용자 정보를 가져오는 중 오류 발생:", error);
-  }
-};
-
 const fetchGameRanking = async () => {
   try {
     const gameRecords = await getBaseballGame();
