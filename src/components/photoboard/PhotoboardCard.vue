@@ -8,19 +8,21 @@ const route = useRoute();
 const props = defineProps({
   post: Object,
 });
+
+console.log("📌 이미지 URL 확인:", props.post.image);
 </script>
 <template>
   <RouterLink
-    :to="`/${route.params.team}/photoboard/${props.post.post_id}`"
+    :to="`/${route.params.team}/photoboard/${props.post.id}`"
     class="flex flex-col justify-between bg-white02 rounded-[10px] pt-[10px] px-[10px] pb-[15px] h-[335px] cursor-pointer"
   >
     <div class="w-full flex-grow overflow-hidden mb-[15px] rounded-[10px]">
-      <img :src="props.post.photo" class="w-full h-full object-cover" />
+      <img :src="props.post.image" class="w-full h-full object-cover" />
     </div>
     <div class="flex items-center justify-between">
       <div class="flex items-center gap-[10px]">
         <img
-          :src="props.post.profile"
+          :src="props.post.author_image"
           class="w-[25px] h-[25px] object-cover rounded-full flex-nowrap"
         />
         <p>{{ props.post.name }}</p>

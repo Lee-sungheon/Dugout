@@ -3,12 +3,43 @@ import { supabase } from "@/supabase";
 // 현재 로그인 사용자 정보 불러오기
 export const getCurrentUser = async () => {
   try {
-    const { data, error } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error,
+    } = await supabase.auth.getUser();
+
     if (error) {
       console.error("사용자 정보를 가져오는 중 오류 발생:", error);
       return null;
     }
-    return data.user;
+
+    if (user) {
+      // user_info 테이블에서 추가 정보 가져오기
+      const { data: userInfo, error: userInfoError } = await supabase
+        .from("user_info")
+        .select("*")
+        .eq("id", user.id)
+        .single();
+
+      if (userInfoError) {
+        console.error(
+          "사용자 추가 정보를 가져오는 중 오류 발생:",
+          userInfoError
+        );
+        return user; // 기본 user 정보만 반환
+      }
+
+      // auth 정보와 user_info 정보 합치기
+      return {
+        ...user,
+        name: userInfo.name,
+        description: userInfo.description,
+        image: userInfo.image,
+        baseball_club_id: userInfo.baseball_club_id,
+      };
+    }
+
+    return null;
   } catch (err) {
     console.error("알 수 없는 오류 발생:", err);
     return null;
