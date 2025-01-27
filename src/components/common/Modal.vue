@@ -16,6 +16,17 @@ defineProps({
     required: true,
   },
 });
+
+// onCancel. + ESC 키로도 모달을 닫을 수 있습니다.
+onMounted(() => {
+  window.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+      onCancel();
+    }
+  });
+});
+
+// message에 따라 다른 
 </script>
 
 <template>

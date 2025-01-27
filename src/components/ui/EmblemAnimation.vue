@@ -9,15 +9,11 @@ import lotteEmblem from "@/assets/images/logo_lotte.svg";
 import ncEmblem from "@/assets/images/logo_nc.svg";
 import samsungEmblem from "@/assets/images/logo_samsung.svg";
 import ssgEmblem from "@/assets/images/logo_ssg.svg";
-import { gsap } from "gsap";
-import { onMounted } from "vue";
+import { useTeamStore } from "@/stores/teamStore";
+import gsap from "gsap";
+import { computed, onMounted } from "vue";
 
-const props = defineProps({
-  selectedTeam: {
-    type: String,
-    required: true,
-  },
-});
+const teamStore = useTeamStore();
 
 const emblem = {
   히어로즈: kiwoomEmblem,
@@ -32,11 +28,37 @@ const emblem = {
   베어스: doosanEmblem,
 };
 
+const selectedEmblem = computed(() => emblem[teamStore.selectedTeam]);
+
 onMounted(() => {
   const timeline = gsap.timeline();
+  const totalDuration = 2.5;
 
-  // 빛의 링과 앰블럼이 동시에 커지는 효과
   timeline
+    .fromTo(
+      ".overlay-background",
+      {
+        opacity: 0.75,
+        backgroundColor: "rgba(0, 0, 0, 0.75)",
+      },
+      {
+        opacity: 1,
+        backgroundColor:
+          "linear-gradient(135deg, rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0.2))", 
+        duration: totalDuration * 0.3,
+        ease: "power3.out",
+      }
+    )
+    .fromTo(
+      ".emblem-container",
+      { scale: 0.5, opacity: 0 },
+      {
+        scale: 1.2,
+        opacity: 1,
+        duration: totalDuration * 0.15,
+        ease: "power3.out",
+      }
+    )
     .fromTo(
       ".emblem-ring",
       {
@@ -46,48 +68,34 @@ onMounted(() => {
       },
       {
         opacity: 1,
-        scale: 2.5,
-        boxShadow: "0 0 100px 30px rgba(255, 255, 255, 0.8)",
-        duration: 0.5,
+        scale: 3,
+        boxShadow: "0 0 100px 40px rgba(255, 255, 255, 0.9)",
+        duration: totalDuration * 0.5,
         yoyo: true,
         ease: "sine.inOut",
       }
     )
-    .fromTo(
-      ".emblem-container",
-      { scale: 0.5, opacity: 0 },
-      {
-        scale: 1.2,
-        opacity: 1,
-        duration: 0.5, // 한번에 커지도록 설정
-        ease: "power3.out",
-      }
-    );
+    .to(".emblem-container", {
+      opacity: 0,
+      duration: totalDuration * 0.2,
+      ease: "power3.in",
+    })
+    .to(".overlay-background", {
+      opacity: 0,
+      duration: totalDuration * 0.2,
+      ease: "power3.in",
+    });
 });
 </script>
 
 <template>
   <div
-    class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-75 z-50"
+    class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-75 z-50 overlay-background"
   >
-    <!-- Emblem Container -->
-    <div
-      class="emblem-container relative flex items-center justify-center opacity-0"
-    >
-      <!-- 빛의 링 1 -->
-      <div
-        class="emblem-ring absolute w-[300px] h-[300px] rounded-full border-[5px] border-white opacity-50"
-      ></div>
-
-      <!-- 빛의 링 2 (시간차로 퍼짐) -->
-      <div
-        class="emblem-ring2 absolute w-[300px] h-[300px] rounded-full border-[5px] border-white opacity-50"
-      ></div>
-
-      <!-- Emblem 이미지 -->
+    <div class="emblem-container relative flex items-center justify-center">
       <img
-        :src="emblem[selectedTeam]"
-        class="relative w-[350px] h-[200px] emblem-img"
+        :src="selectedEmblem"
+        class="relative w-[350px] h-[200px] emblem-img rotate-animation"
         alt="엠블럼"
       />
     </div>
@@ -97,53 +105,79 @@ onMounted(() => {
 <style scoped>
 .emblem-container {
   transform-origin: center;
-  transition: transform 0.2s ease-out;
   position: relative;
   width: 350px;
   height: 200px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+.emblem-container::before {
+  content: "";
+  position: absolute;
+  width: 450px;
+  height: 450px;
+  border-radius: 50%;
+  box-shadow: 0 0 20px 10px rgba(255, 255, 255, 0.8),
+    0 0 30px 20px rgba(0, 190, 255, 0.6); /* 더 밝은 빛 */
+  filter: blur(10px);
+  animation: pulse-ring 1.5s ease-in-out infinite; /* 링 애니메이션 */
 }
 
-/* 빛나는 링 효과 */
-.emblem-ring {
-  animation: pulse-ring 0.6s infinite alternate ease-in-out;
-  filter: blur(5px);
-}
-
-.emblem-ring2 {
-  animation: pulse-ring 0.6s infinite alternate ease-in-out;
-  animation-delay: 0.2s; /* 두 번째 링이 0.2초 뒤에 시작되도록 설정 */
-  filter: blur(5px);
-}
-
-/* 빛나는 링 애니메이션 */
 @keyframes pulse-ring {
-  from {
-    transform: scale(0.8);
-    opacity: 0.1;
-    box-shadow: 0 0 0px 0px rgba(255, 255, 255, 0.4);
-  }
-  to {
-    transform: scale(2.5);
-    opacity: 0.1;
-    box-shadow: 0 0 60px 30px rgba(255, 255, 255, 0.8);
-  }
-}
-
-/* 글래스 반짝임 효과 */
-@keyframes glass-shine {
   0% {
-    filter: brightness(0.7);
+    transform: scale(1);
+    opacity: 0.8;
   }
   50% {
-    filter: brightness(1.5);
+    transform: scale(1.3);
+    opacity: 1;
   }
   100% {
-    filter: brightness(0.7);
+    transform: scale(1);
+    opacity: 0.8;
   }
 }
 
-/* 이미지에 반짝임 효과 적용 */
+@keyframes glass-shine {
+  0% {
+    filter: brightness(0.6);
+  }
+  50% {
+    filter: brightness(1.8);
+  }
+  100% {
+    filter: brightness(0.6);
+  }
+}
+
 .emblem-img {
-  animation: glass-shine 2s infinite ease-in-out;
+  animation: glass-shine 0.8s ease-in-out infinite;
+  filter: brightness(1);
+}
+
+@keyframes glow {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.6;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.overlay-background {
+  background-color: rgba(0, 0, 0, 0.75);
+  background-image: linear-gradient(
+    135deg,
+    rgba(0, 0, 0, 0.75),
+    rgba(0, 0, 0, 0.5)
+  );
 }
 </style>

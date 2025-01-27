@@ -3,20 +3,11 @@ import headsetIcon from "@/assets/icons/audio_headset.svg";
 import searchIcon from "@/assets/icons/search.svg";
 import themeToggleIcon from "@/assets/icons/theme_toggle.svg";
 import logoImg from "@/assets/images/logo.svg";
-import { defineProps, onMounted, ref } from "vue";
+import { useTeamStore } from "@/stores/teamStore";
+import { ref } from "vue";
 import { RouterLink } from "vue-router";
 
-// props로 selectedTeam과 triggerEmblemEffect를 받음
-const props = defineProps({
-  selectedTeam: {
-    type: Object,
-    required: true, // selectedTeam을 ref로 받음
-  },
-  selectTeam: {
-    type: Function,
-    required: true,
-  },
-});
+const teamStore = useTeamStore();
 
 const teams = [
   "히어로즈",
@@ -32,13 +23,6 @@ const teams = [
 ];
 
 const isDropdownOpen = ref(false);
-
-onMounted(() => {
-  const storedState = localStorage.getItem("dropdownState");
-  if (storedState === "true") {
-    isDropdownOpen.value = true;
-  }
-});
 
 const toggleDropdown = () => {
   isDropdownOpen.value = !isDropdownOpen.value;
@@ -114,7 +98,7 @@ const toggleDropdown = () => {
           @click="toggleDropdown"
         >
           <span class="text-gray02 truncate w-full"
-            >{{ props.selectedTeam }} 테마</span
+            >{{ teamStore.selectedTeam }} 테마</span
           >
           <img
             :src="themeToggleIcon"
@@ -124,6 +108,7 @@ const toggleDropdown = () => {
           <!-- 드롭다운 -->
           <ul
             v-if="isDropdownOpen"
+            @click.stop="toggleDropdown"
             class="absolute top-[40px] left-0 w-full bg-white rounded-[10px] border border-gray01 shadow-lg z-50"
           >
             <li
@@ -131,7 +116,7 @@ const toggleDropdown = () => {
               :key="team"
               class="px-4 py-2 text-sm text-gray03 hover:bg-gray01 hover:text-white cursor-pointer"
               @click.stop="
-                props.selectTeam(team);
+                teamStore.selectTeam(team);
                 toggleDropdown();
               "
             >
@@ -145,14 +130,12 @@ const toggleDropdown = () => {
 </template>
 
 <style scoped>
-/* 드롭다운 스타일 */
 ul {
   list-style-type: none;
   padding: 0;
   margin: 0;
 }
 
-/* 텍스트 넘침 방지 및 토글 버튼 위치 고정 */
 span {
   white-space: nowrap; /* 텍스트가 넘치지 않도록 */
   overflow: hidden; /* 넘치는 부분 숨기기 */

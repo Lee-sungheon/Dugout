@@ -1,18 +1,24 @@
 <script setup>
+import teamToggleIcon from "@/assets/icons/team_toggle.svg";
 import { teamList } from "@/constants";
+import { useTeamStore } from "@/stores/teamStore";
 import { twMerge } from "tailwind-merge";
 import { ref } from "vue";
 import { useRouter } from "vue-router";
-import teamToggleIcon from "../../assets/icons/team_toggle.svg";
 
 const router = useRouter();
-const isOpen = ref(false);
+const isOpen = ref(false); 
+const teamStore = useTeamStore();
+
 const toggleTeam = () => {
-  isOpen.value = !isOpen.value;
+  isOpen.value = !isOpen.value; 
 };
 
-const navigateTo = (path) => {
-  router.push(path);
+const navigationAndAnimation = async (team) => {
+  await teamStore.triggerEnteringAnimation(team);
+  setTimeout(() => {
+    router.push(team.path); 
+  }, 1500);
 };
 </script>
 
@@ -25,7 +31,7 @@ const navigateTo = (path) => {
       v-for="(team, index) in teamList"
       :key="index"
       class="flex-shrink-0"
-      @click="navigateTo(team.path)"
+      @click="navigationAndAnimation(team)"
     >
       <img :src="team.logo" class="w-[40px] h-auto" />
     </button>

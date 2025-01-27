@@ -1,6 +1,5 @@
 <script setup>
 import RecruitmentStatus from "./RecruitmentStatus.vue";
-import { computed } from "vue";
 
 const props = defineProps({
   crewBoard: {
@@ -73,7 +72,7 @@ const props = defineProps({
         <span class="text-xs text-gray02">{{ props.time }}</span>
       </div>
       <!-- 수정 삭제 버튼 -->
-      <div class="flex text-xs text-gray02 gap-[4px]">
+      <div v-if="props.status='owner'" class="flex text-xs text-gray02 gap-[4px]">
         <button class="hover:text-gray03">수정</button>
         <span>|</span>
         <button class="hover:text-gray03">삭제</button>
