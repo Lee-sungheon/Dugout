@@ -8,7 +8,6 @@ import { createCrewRecruitmentPost } from "@/api/supabase-api/crewRecruitmentPos
 import { useRouter } from "vue-router";
 
 const router = useRouter();
-const title = ref("");
 const content = ref("");
 const recruitStatus = ref("");
 const recruitOptions = ["모집 중", "모집 완료"];
@@ -47,7 +46,6 @@ const stadiumOptions = [
   "마산 야구장",
 ];
 
-// 레인지 명 / 데이터 널
 const myGender = ref("");
 const myGenderOptions = ["여자", "남자", "비공개"];
 const myAge = ref("");
@@ -56,6 +54,17 @@ const crewGender = ref("");
 const crewGenderOptions = ["여자", "남자", "무관", "비공개"];
 const crewAge = ref("");
 const crewAgeOptions = ["20대", "30대", "50대", "60대"];
+const isCrewGenderDisabled = ref(false);
+
+// 작성자 성별 변경 감지: "비공개"일 때 크루 성별을 비공개로 설정하고 선택 비활성화
+watch(myGender, (newGender) => {
+  if (newGender === "비공개") {
+    crewGender.value = "비공개"; // 크루 성별을 "비공개"로 설정
+    isCrewGenderDisabled.value = true; // 크루 성별 선택 비활성화
+  } else {
+    isCrewGenderDisabled.value = false; // 크루 성별 선택 활성화
+  }
+});
 
 // 날짜를 포맷팅하는 함수
 const formatDate = (date) => {
@@ -112,7 +121,7 @@ const handleCancel = () => {
         <div>
           <div class="w-full pb-[30px] border-b-gray01 border-b-[1px]">
             <p class="w-full text-[30px] text-center outline-none">
-              직관 크루 조건을 설정해주세요
+              직관 크루 조건을 설정해주세요.
             </p>
           </div>
           <div class="pt-[30px]">
@@ -285,6 +294,7 @@ const handleCancel = () => {
               <DropdownSelect
                 v-model:selectedOption="crewGender"
                 :options="crewGenderOptions"
+                :disabled="isCrewGenderDisabled"
                 part="크루 성별"
               />
             </div>

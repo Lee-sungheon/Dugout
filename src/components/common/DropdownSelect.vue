@@ -7,6 +7,7 @@ import { DatePicker } from "v-calendar";
 import "v-calendar/style.css";
 
 const props = defineProps({
+  disabled: Boolean,
   part: String,
   selectedOption: String,
   options: Array,
@@ -32,6 +33,7 @@ const selectOption = (option) => {
 <template>
   <div class="relative w-full">
     <button
+      :disabled="props.disabled"
       @click="toggleDropdown"
       :class="
         twMerge(
