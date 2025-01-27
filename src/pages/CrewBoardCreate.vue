@@ -1,12 +1,14 @@
 <script setup>
 import DropdownSelect from "@/components/common/DropdownSelect.vue";
 import CreateHeader from "@/components/CreateHeader.vue";
-import { ref, watch } from "vue";
+import { onMounted, ref, watch } from "vue";
 import Baseball from "@/assets/icons/baseball.svg";
 import Calendar from "@/assets/icons/calendar.svg";
 import { createCrewRecruitmentPost } from "@/api/supabase-api/crewRecruitmentPost";
 import { useRouter } from "vue-router";
+import { getCurrentUser } from "@/api/supabase-api/userInfo";
 
+const currentUser = ref(null);
 const router = useRouter();
 const content = ref("");
 const recruitStatus = ref("");
@@ -128,11 +130,21 @@ watch(gameDateStatus, (newDate) => {
   isDatePickerOpen.value = false;
 });
 
+// 현재 로그인 사용자 정보 불러오기
+const getUserInfo = async () => {
+  const userData = await getCurrentUser();
+  if (userData) {
+    currentUser.value = userData; // 로그인된 사용자 정보 저장
+  } else {
+    currentUser.value = null; // 비로그인 상태
+  }
+};
+
 // 크루 모집 게시글 등록 함수
 const handleRegister = () => {
   if (!validateInputs()) return;
   createCrewRecruitmentPost({
-    member_id: "20a1a866-596b-4c54-b99a-792efcda8aef",
+    member_id: currentUser.value.id,
     status: recruitStatus.value,
     game_date: formattedGameDate.value,
     author_sex: myGender.value,
@@ -158,6 +170,12 @@ const handleCancel = () => {
     return;
   }
 };
+
+onMounted(async () => {
+  await getUserInfo();
+});
+
+
 </script>
 <template>
   <div class="px-[50px]">

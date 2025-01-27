@@ -27,6 +27,10 @@ const props = defineProps({
   status: {
     type: String,
   },
+  isVisible: {
+    type: Boolean,
+    required: true,
+  },
 });
 </script>
 <template>
@@ -50,8 +54,8 @@ const props = defineProps({
         <span class="text-xs text-gray03">{{ props.nickname }}</span>
         <span class="text-xs text-gray02">{{ props.time }}</span>
       </div>
-      <!-- 수정 삭제 버튼 -->
-      <div class="flex text-xs text-gray02 gap-[4px]">
+  
+      <div v-if="props.isVisible" class="flex text-xs text-gray02 gap-[4px]">
         <button class="hover:text-gray03">수정</button>
         <span>|</span>
         <button class="hover:text-gray03">삭제</button>

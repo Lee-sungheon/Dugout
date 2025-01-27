@@ -9,15 +9,18 @@ import { useRoute, useRouter } from "vue-router";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import "dayjs/locale/ko"; // 한국어 로케일 가져오기
+import { getCurrentUser } from "@/api/supabase-api/userInfo";
 
 // day.js
 dayjs.extend(relativeTime); // relativeTime 플러그인 활성화
 dayjs.locale("ko"); // 한국어 로케일 설정
 
+const currentUser = ref(null);
 const route = useRoute();
 const router = useRouter();
 const post = ref(null);
 const currentTeam = router.currentRoute.value.params.team;
+const isVisible = ref(true);
 
 const fetchPostDetails = async () => {
   const postId = route.params.id;
@@ -29,13 +32,35 @@ const fetchPostDetails = async () => {
   }
 };
 
+// 현재 로그인 사용자 정보 불러오기
+const getUserInfo = async () => {
+  const userData = await getCurrentUser();
+  if (userData) {
+    currentUser.value = userData; // 로그인된 사용자 정보 저장
+  } else {
+    currentUser.value = null; // 비로그인 상태
+  }
+};
+
 const handleBack = () => {
   router.push(`/${currentTeam}/crewboard/`);
 };
-onMounted(() => {
-  fetchPostDetails();
-  console.log(post.value);
+
+const checkVisibility = () => {
+  if (currentUser.value && post.value) {
+    // 로그인된 사용자 ID와 게시물 작성자 ID 비교
+    isVisible.value = currentUser.value.id === post.value.member_id;
+  } else {
+    isVisible.value = true;
+  }
+};
+
+onMounted(async () => {
+  await fetchPostDetails();
+  await getUserInfo();
+  checkVisibility();
 });
+console.log(currentUser.value);
 </script>
 <template>
   <div v-if="post" class="px-[50px] py-[30px]">
@@ -54,6 +79,7 @@ onMounted(() => {
         :nickname="post.author_name"
         :time="dayjs(post.created_at).fromNow()"
         :status="post.status"
+        :isVisible="isVisible"
       />
       <!-- 게시물 내용 -->
       <div class="pb-[50px] border-b border-gray01 flex flex-col gap-[50px]">
