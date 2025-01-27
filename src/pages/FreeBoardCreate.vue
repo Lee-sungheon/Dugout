@@ -1,7 +1,7 @@
 <script setup>
-import { computed, ref } from "vue";
+import { ref } from "vue";
 import CreateHeader from "@/components/CreateHeader.vue";
-import { useRoute, useRouter } from "vue-router";
+import { useRouter } from "vue-router";
 import { teamID } from "@/constants";
 import { createFreePost } from "@/api/supabase-api/freePost";
 import { useAuthStore } from "@/stores/auth";
