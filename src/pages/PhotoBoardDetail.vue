@@ -1,10 +1,84 @@
 <script setup>
+import {
+  deleteCertificationPost,
+  getCertificationPostDetailsById,
+} from "@/api/supabase-api/viewingCertificationPost";
 import backIcon from "@/assets/icons/back.svg";
 import CommentSection from "@/components/CommentSection.vue";
 import PostHeader from "@/components/PostHeader.vue";
-import { useRouter } from "vue-router";
+import { onMounted, ref, watch } from "vue";
+import { useRoute, useRouter } from "vue-router";
+// day.js
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
+import "dayjs/locale/ko"; // 한국어 로케일 가져오기
+import { useModalStore } from "@/stores/useModalStore";
+import Modal from "@/components/common/Modal.vue";
 
 const router = useRouter();
+
+const route = useRoute();
+const postId = ref(route.params.id);
+
+const post = ref({});
+const modalStore = useModalStore();
+
+// day.js
+dayjs.extend(relativeTime); // relativeTime 플러그인 활성화
+dayjs.locale("ko"); // 한국어 로케일 설정
+
+const fetchPhotoboardDetail = async (postId) => {
+  if (!postId) {
+    console.warn("postId가 존재하지 않음.");
+    return;
+  }
+
+  try {
+    const data = await getCertificationPostDetailsById(postId);
+    console.log("API 응답 데이터:", data);
+    if (data) {
+      post.value = data;
+    } else {
+      console.warn("데이터가 존재하지 않음");
+      post.value = {};
+    }
+  } catch (error) {
+    console.error("데이터를 가져오지 못함", error);
+  }
+};
+
+onMounted(() => {
+  console.log("🚀 onMounted 실행, postId 확인:", postId.value);
+  if (!postId.value) {
+    console.warn("route.params.id가 존재하지 않음.");
+    return;
+  }
+  fetchPhotoboardDetail(postId.value);
+});
+
+watch(
+  () => route.params.id,
+  (newId) => {
+    if (newId) {
+      postId.value = newId;
+      fetchPhotoboardDetail(newId);
+    }
+  }
+);
+
+const confirmDelete = () => {
+  console.log("📌 모달 열기 시도");
+  modalStore.openModal({
+    message: "삭제 후에는 복구할 수 없습니다 \n삭제하시겠습니까?",
+    type: "twoBtn",
+    onConfirm: async () => {
+      await deleteCertificationPost(postId.value);
+      modalStore.closeModal();
+      router.push(`/${route.params.team}/photoboard`); // ✅ 삭제 후 이동
+    },
+    onCancel: modalStore.closeModal(),
+  });
+};
 </script>
 
 <template>
@@ -19,27 +93,24 @@ const router = useRouter();
     <div class="flex flex-col gap-[50px] w-[990px]">
       <!-- 상세 페이지 정보 -->
       <PostHeader
-        title="[240719] 위팍 워페 직관 인증!"
-        nickname="닉네임"
-        time="4시간 전"
+        :title="post.title"
+        :nickname="post.name"
+        :profileImage="post.author_image"
+        :time="dayjs(post.created_at).fromNow()"
+        :memberId="post.member_id"
+        :confirm-delete="confirmDelete"
       />
+      <Modal />
       <!-- 게시물 내용 -->
       <div class="pt-[50px] pb-[50px] gap-[30px] flex border-b border-b-gray01">
-        <div class="aspect-square rounded-[10px] overflow-hidden">
-          <img
-            src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQDr6SB_fokX3TJBAFcrIisQ_YGwVVO0F8PCw&s"
-            alt=""
-            class="object-cover w-full h-full"
-          />
+        <div
+          class="aspect-square w-[450px] h-[450px] rounded-[10px] overflow-hidden"
+        >
+          <img :src="post.image" alt="" class="object-cover w-full h-full" />
         </div>
         <div class="flex-1">
           <p class="w-full h-full py-5 text-[18px] text-black01">
-            오늘 위즈 파크 워터 페스티벌을 다녀왔다!
-            <br />
-            처음엔 물을 많이 안 뿌려줘서 좀 실망할 뻔 했는데 3회인가 4회인가부터
-            <br />갑자기 선수들이 미친듯이 방망이질을 해서 영원히 물을
-            뿌려줬다... <br />다음에 또 가고싶드아아악!!! <br />내년엔
-            연간회원권 사서 더 자주 가야지 ⚾️
+            {{ post.content }}
           </p>
         </div>
       </div>
