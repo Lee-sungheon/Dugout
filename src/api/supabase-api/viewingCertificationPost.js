@@ -152,7 +152,7 @@ export const updateCertificationPost = async (
   title
 ) => {
   try {
-    const user = await getUser();
+    const user = await getCurrentUser();
     if (!user) console.log("로그인을 하지 않았습니다");
 
     // 게시물의 작성자(member_id)가 현재 사용자와 일치하는지 확인
