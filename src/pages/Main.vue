@@ -7,6 +7,7 @@ import { useRouter } from "vue-router";
 import { getCurrentUser } from "../api/supabase-api/userInfo";
 import { getUserInfoEnCapsulation } from "@/api/supabase-api/userInfo";
 import { getBaseballGame } from "@/api/supabase-api/baseballGame";
+import { useAuthStore } from "@/stores/auth";
 
 const marquee = ref(null);
 const marquee2 = ref(null);
@@ -14,14 +15,13 @@ const user = ref(null);
 const errorMessage = ref("");
 const combinedRecords = ref([]);
 const router = useRouter();
+const auth = useAuthStore();
 
 // 사용자 정보 가져오기
 const fetchCurrenthUser = async () => {
   try {
-    const currentUser = await getCurrentUser();
-    if (currentUser) {
-      user.value = currentUser;
-    } else {
+    await auth.fetchCurrentUser();
+    if (!auth.user) {
       errorMessage.value = "로그인된 사용자가 없습니다.";
     }
   } catch (error) {
@@ -64,8 +64,7 @@ const fetchGameRanking = async () => {
 };
 
 const handleRouting = async () => {
-  await fetchCurrenthUser();
-  if (user.value) router.push("./game");
+  if (auth.isAuthenticated()) router.push("./game");
   else router.push("./signin");
 };
 

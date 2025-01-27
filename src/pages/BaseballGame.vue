@@ -14,6 +14,7 @@ import {
   updateBaseballGame,
 } from "@/api/supabase-api/baseballGame";
 import { supabase } from "@/supabase";
+import { useAuthStore } from "@/stores/auth";
 
 const isGameStarted = ref(false);
 const attempts = ref(0);
@@ -24,6 +25,7 @@ const gameMessages = ref([]); // 게임 메시지 기록
 const isGameOver = ref(false);
 const isWin = ref(false);
 const chatContainer = ref(null); // 채팅 영역 자동 스크롤
+const auth = useAuthStore();
 
 // 메시지가 추가될 때마다 스크롤을 최하단으로 이동
 const scrollToBottom = () => {
@@ -56,16 +58,15 @@ const startGame = async () => {
   gameMessages.value = [];
 
   // 게임 시작 시 기록 확인 및 생성
-  const user = await getCurrentUser();
-  if (user) {
+  if (auth.user) {
     const { data } = await supabase
       .from("baseball_game_record")
       .select()
-      .eq("member_id", user.id)
+      .eq("member_id", auth.user.id)
       .single();
 
     if (!data) {
-      await createBaseballGame({ member_id: user.id });
+      await createBaseballGame({ member_id: auth.user.id });
     }
   }
 
@@ -170,11 +171,8 @@ const submitGuess = async () => {
     isWin.value = strikes === 4;
 
     // 승리한 경우 기록 업데이트
-    if (isWin.value) {
-      const user = await getCurrentUser();
-      if (user) {
-        await updateBaseballGame(user.id);
-      }
+    if (isWin.value && auth.user) {
+      await updateBaseballGame(auth.user.id);
     }
   }
 };

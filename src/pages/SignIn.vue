@@ -11,30 +11,30 @@ import {
   signInWithKakao,
   signInWithEmail,
 } from "../api/supabase-api/signIn";
+import { useAuthStore } from "@/stores/auth";
 
 const email = ref("");
 const password = ref("");
 const loginError = ref(false);
 const router = useRouter();
+const auth = useAuthStore();
 
 // 구글 로그인
 const handleGoogleLogin = async () => {
-  const { success, user, error } = await signInWithGoogle();
-  if (success) {
-    console.log(`구글 로그인 성공: ${user}`);
+  try {
+    await auth.loginWithGoogle();
     router.push("/");
-  } else {
-    console.error(`구글 로그인 실패: ${error}`);
+  } catch (error) {
+    console.error(`구글 로그인 실패:`, error);
   }
 };
 
 // 카카오 로그인
 const handleKakaoLogin = async () => {
-  const { success, user, error } = await signInWithKakao();
-  if (success) {
-    console.log("카카오 로그인 성공:", user);
+  try {
+    await auth.loginWithKakao();
     router.push("/");
-  } else {
+  } catch (error) {
     console.error("카카오 로그인 에러:", error);
   }
 };
@@ -44,21 +44,12 @@ const handleEmailLogin = async () => {
   if (!email.value || !password.value) return;
 
   try {
-    const { success, error } = await signInWithEmail(
-      email.value,
-      password.value
-    );
-
-    if (success) {
-      loginError.value = false;
-      router.push("/"); // 로그인 성공 시 메인 페이지로 이동
-    } else {
-      loginError.value = true;
-      console.error("로그인 실패:", error);
-    }
+    await auth.loginWithEmail(email.value, password.value);
+    loginError.value = false;
+    router.push("/");
   } catch (error) {
     loginError.value = true;
-    console.error("로그인 처리 중 오류 발생:", error);
+    console.error("로그인 실패:", error);
   }
 };
 </script>
