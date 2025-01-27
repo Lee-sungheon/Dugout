@@ -111,12 +111,9 @@ const handleCancel = () => {
       <div class="mt-[40px] mb-[85px] gap-[30px]">
         <div>
           <div class="w-full pb-[30px] border-b-gray01 border-b-[1px]">
-            <input
-              type="text"
-              v-model="title"
-              class="w-full text-[30px] placeholder-gray01 placeholder-[30px] text-center outline-none"
-              placeholder="직관 크루 조건을 설정해주세요"
-            />
+            <p class="w-full text-[30px] text-center outline-none">
+              직관 크루 조건을 설정해주세요
+            </p>
           </div>
           <div class="pt-[30px]">
             <textarea
