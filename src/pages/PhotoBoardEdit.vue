@@ -1,10 +1,11 @@
 <script setup>
 import CreateHeader from "@/components/CreateHeader.vue";
 import Camera from "@/assets/icons/camera.svg";
-import { ref, watch } from "vue";
+import { onMounted, ref, watch } from "vue";
 import {
   uploadImageToSupabase,
-  createCertificationPost,
+  getCertificationPostDetailsById,
+  updateCertificationPost,
 } from "@/api/supabase-api/viewingCertificationPost";
 import { teamID } from "@/constants";
 import { useRoute, useRouter } from "vue-router";
@@ -21,10 +22,36 @@ const content = ref("");
 const selectedImage = ref(null);
 const uploadedImageUrl = ref("");
 const isDatePickerOpen = ref(false);
+const gameDate = ref(null);
 
 const route = useRoute();
 const teamName = ref(route.params.team);
 const clubId = ref(teamID[teamName.value]);
+
+const postId = route.params.id;
+
+const fetchPostData = async () => {
+  if (!postId) {
+    console.error("postId가 없습니다. 올바른 경로에서 접근해주세요.");
+    return;
+  }
+  try {
+    const data = await getCertificationPostDetailsById(postId);
+    if (data) {
+      console.log("기존 게시물 데이터", data);
+      title.value = data.title;
+      content.value = data.content;
+      uploadedImageUrl.value = data.image;
+
+      if (data.game_date) {
+        gameDate.value = new Date(data.game_date);
+        formattedGameDate.value = formatDate(gameDate.value);
+      }
+    }
+  } catch (error) {
+    console.error("게시물 데이터를 불러오지 못했습니다:", error);
+  }
+};
 
 const handleFileChange = async (event) => {
   const file = event.target.files[0];
@@ -53,9 +80,6 @@ const handleFileChange = async (event) => {
 const triggerFileInput = () => {
   document.getElementById("imageUpload").click();
 };
-
-// 초기값을 null로 설정
-const gameDate = ref(null);
 
 const formatDate = (date) => {
   if (!date) return "";
@@ -135,7 +159,8 @@ const handleRegister = async () => {
   }
 
   try {
-    const result = await createCertificationPost(
+    const updatedPost = await updateCertificationPost(
+      postId,
       content.value,
       uploadedImageUrl.value,
       formatDateForDB(gameDate.value),
@@ -143,14 +168,10 @@ const handleRegister = async () => {
       title.value
     );
 
-    if (result) {
-      title.value = "";
-      content.value = "";
-      gameDate.value = null;
-      clubId.value = "";
-      uploadedImageUrl.value = "";
+    if (updatedPost) {
+      alert("게시물이 수정되었습니다.");
+      router.push(`/${route.params.team}/photoboard`);
     }
-    router.push(`/${teamName.value}/photoboard`);
   } catch (error) {
     console.error("게시물 생성 실패:", error);
     alert("게시물 생성에 실패했습니다.");
@@ -158,14 +179,9 @@ const handleRegister = async () => {
 };
 
 const handleCancel = () => {
-  title.value = "";
-  content.value = "";
-  gameDate.value = null;
-  clubId.value = "";
-  uploadedImageUrl.value = "";
   console.log("등록 취소");
   alert("등록이 취소되었습니다");
-  router.push(`/${teamName.value}/photoboard`);
+  router.push(`/${route.params.team}/photoboard/${postId}`);
 };
 
 watch(uploadedImageUrl, (newUrl) => {
@@ -188,6 +204,8 @@ const handleInput = (event) => {
     content.value = content.value.slice(0, maxLength);
   }
 };
+
+onMounted(fetchPostData);
 </script>
 <template>
   <div><h1>수정페이지</h1></div>
@@ -256,8 +274,8 @@ const handleInput = (event) => {
                 @click="triggerFileInput"
               >
                 <img
-                  v-if="selectedImage"
-                  :src="selectedImage"
+                  v-if="selectedImage || uploadedImageUrl"
+                  :src="selectedImage || uploadedImageUrl"
                   class="w-full h-full object-cover rounded-[10px]"
                 />
                 <img v-else :src="Camera" />
