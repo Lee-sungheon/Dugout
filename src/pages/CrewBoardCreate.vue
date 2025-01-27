@@ -16,8 +16,8 @@ const formattedGameDate = ref(null);
 const isDatePickerOpen = ref(false);
 const peopleNum = ref("");
 const peopleNumOptions = ["1", "2", "3", "4"];
-const peopleNum2 = ref("");
-const peopleNum2Options = ["이상", "이하", "명"];
+const peopleStatus = ref("");
+const peopleStatusOptions = ["이상", "이하", "명"];
 const myTeam = ref("");
 const myTeamOptions = [
   "LG 트윈스",
@@ -45,7 +45,6 @@ const stadiumOptions = [
   "포항 야구장",
   "마산 야구장",
 ];
-
 const myGender = ref("");
 const myGenderOptions = ["여자", "남자", "비공개"];
 const myAge = ref("");
@@ -56,13 +55,62 @@ const crewAge = ref("");
 const crewAgeOptions = ["20대", "30대", "50대", "60대"];
 const isCrewGenderDisabled = ref(false);
 
+// 필수 입력값 검증 함수
+const validateInputs = () => {
+  if (!recruitStatus.value) {
+    alert("모집 상태를 선택해주세요.");
+    return false;
+  }
+  if (!formattedGameDate.value) {
+    alert("경기일을 선택해주세요.");
+    return false;
+  }
+  if (!content.value) {
+    alert("모집글을 작성해주세요.");
+    return false;
+  }
+  if (!peopleNum.value) {
+    alert("인원을 선택해주세요.");
+    return false;
+  }
+  if (!peopleStatus.value) {
+    alert("인원 상태를 작성해주세요.");
+    return false;
+  }
+  if (!myTeam.value) {
+    alert("응원팀을 선택해주세요.");
+    return false;
+  }
+  if (!stadium.value) {
+    alert("경기장소를 선택해주세요.");
+    return false;
+  }
+  if (!myAge.value) {
+    alert("작성자 성별을 선택해주세요.");
+    return false;
+  }
+  if (!myAge.value) {
+    alert("작성자 연령을 선택해주세요.");
+    return false;
+  }
+  if (!crewGender.value) {
+    alert("크루 성별을 선택해주세요.");
+    return false;
+  }
+  if (!crewAge.value) {
+    alert("크루 연령을 선택해주세요.");
+    return false;
+  }
+  return true;
+};
+
 // 작성자 성별 변경 감지: "비공개"일 때 크루 성별을 비공개로 설정하고 선택 비활성화
 watch(myGender, (newGender) => {
   if (newGender === "비공개") {
-    crewGender.value = "비공개"; // 크루 성별을 "비공개"로 설정
-    isCrewGenderDisabled.value = true; // 크루 성별 선택 비활성화
+    crewGender.value = "비공개";
+    isCrewGenderDisabled.value = true;
   } else {
-    isCrewGenderDisabled.value = false; // 크루 성별 선택 활성화
+    isCrewGenderDisabled.value = false;
   }
 });
 
@@ -82,6 +130,7 @@ watch(gameDateStatus, (newDate) => {
 
 // 크루 모집 게시글 등록 함수
 const handleRegister = () => {
+  if (!validateInputs()) return;
   createCrewRecruitmentPost({
     member_id: "20a1a866-596b-4c54-b99a-792efcda8aef",
     status: recruitStatus.value,
@@ -93,7 +142,7 @@ const handleRegister = () => {
     content: content.value,
     club_id: "1",
     member_number: peopleNum.value,
-    member_range: peopleNum2.value,
+    member_range: peopleStatus.value,
     game_stadium: stadium.value,
   });
   alert("게시글이 성공적으로 등록되었습니다.");
@@ -157,7 +206,7 @@ const handleCancel = () => {
                 >
               </div>
               <div
-                class="flex justify-between items-center h-[40px] w-[425px] gap-2 mt-[20px]"
+                class="flex justify-between items-center h-[40px] w-[425px] gap-2"
               >
                 <div class="relative w-full">
                   <button
@@ -192,8 +241,8 @@ const handleCancel = () => {
                   part="인원"
                 />
                 <DropdownSelect
-                  v-model:selectedOption="peopleNum2"
-                  :options="peopleNum2Options"
+                  v-model:selectedOption="peopleStatus"
+                  :options="peopleStatusOptions"
                   part="인원"
                 />
               </div>
