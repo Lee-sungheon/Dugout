@@ -4,17 +4,18 @@ import { getCurrentUser } from "./userInfo";
 // 특정 클럽의 모든 직관 인증 게시물을 가져오기
 export const getViewingCertificationPostsByClub = async (clubId) => {
   try {
-    const { data, error } = await supabase.rpc(
-      "get_viewing_certification_posts_by_club",
-      {
-        input_club_id: clubId,
-      }
-    );
+    const { data, error } = await supabase
+      .from("viewing_certification_post")
+      .select(
+        "id, content, image, game_date, club_id, title, member_id, name, author_image"
+      )
+      .eq("club_id", clubId)
+      .order("created_at", { ascending: false });
 
-    if (error) {
-      console.error("Error fetching data:", error);
-      return null;
-    }
+    if (error) throw new Error("게시물 조회 실패");
+
+    console.log(" 가져온 데이터 확인:", data);
+
     return data;
   } catch (err) {
     console.error("Unexpected error:", err);
@@ -25,17 +26,16 @@ export const getViewingCertificationPostsByClub = async (clubId) => {
 // 직관 인증 게시물의 상세 정보를 불러오기
 export const getCertificationPostDetailsById = async (postId) => {
   try {
-    const { data, error } = await supabase.rpc(
-      "get_viewing_certification_post_details",
-      {
-        input_post_id: postId,
-      }
-    );
+    const { data, error } = await supabase
+      .from("viewing_certification_post")
+      .select(
+        "id, created_at, member_id, title, content, club_id, image, game_date, name, author_image"
+      )
+      .eq("id", postId)
+      .single();
 
-    if (error) throw new Error(error.message);
-
-    if (!data || data.length === 0) {
-      console.log("게시물을 찾을 수 없습니다.");
+    if (error) {
+      console.error("🚨 데이터 가져오기 실패:", error);
       return null;
     }
 
@@ -56,18 +56,42 @@ export const createCertificationPost = async (
 ) => {
   try {
     const user = await getCurrentUser();
-    if (!user) console.log("로그인을 하지 않았습니다");
+    console.log("✅ 현재 로그인한 유저:", user);
+    if (!user) {
+      console.log("로그인을 하지 않았습니다");
+      return null;
+    }
+
+    // 유저 정보 가져오기
+    const { data: userInfo, error: userError } = await supabase
+      .from("user_info") // 유저 정보 테이블
+      .select("name, image")
+      .eq("id", user.id)
+      .single();
+
+    if (userError) throw new Error("유저 정보를 불러오는 데 실패했습니다.");
+
+    console.log("📌 유저 정보 확인:", userInfo);
 
     const { data, error } = await supabase
       .from("viewing_certification_post")
       .insert([
-        { member_id: user.id, content, image, game_date, club_id, title },
+        {
+          member_id: user.id,
+          name: userInfo.name,
+          author_image: userInfo.image,
+          content,
+          image,
+          game_date,
+          club_id,
+          title,
+        },
       ])
       .select();
 
     if (error) throw new Error(error.message);
 
-    console.log("게시물 생성 성공");
+    console.log("게시물 생성 성공", data);
     return data;
   } catch (error) {
     console.error("게시물 생성 실패: ", error);
@@ -102,7 +126,7 @@ export const uploadImageToSupabase = async (file) => {
 
     // getPublicUrl()을 통해 URL 가져오기
     const { data: publicUrlData } = supabase.storage
-      .from("certification_images")
+      .from("images")
       .getPublicUrl(sanitizedFileName);
 
     if (!publicUrlData) {
@@ -128,7 +152,7 @@ export const updateCertificationPost = async (
   title
 ) => {
   try {
-    const user = await getUser();
+    const user = await getCurrentUser();
     if (!user) console.log("로그인을 하지 않았습니다");
 
     // 게시물의 작성자(member_id)가 현재 사용자와 일치하는지 확인

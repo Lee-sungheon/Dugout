@@ -1,5 +1,8 @@
 <script setup>
+import { getCurrentUser } from "@/api/supabase-api/userInfo";
 import RecruitmentStatus from "./RecruitmentStatus.vue";
+import { computed, onMounted, ref } from "vue";
+import { useRoute, useRouter } from "vue-router";
 
 const props = defineProps({
   crewBoard: {
@@ -27,6 +30,18 @@ const props = defineProps({
     type: String,
     // required: true,
   },
+  memberId: {
+    type: String,
+    required: true, // 게시물 작성자의 ID
+  },
+  postId: {
+    type: String,
+    required: true, // 게시물 ID (수정할 때 필요)
+  },
+  confirmDelete: {
+    type: Function,
+    required: true,
+  },
 });
 // // 시간 차이를 계산하는 함수
 // const timeAgo = (givenTime) => {
@@ -49,6 +64,38 @@ const props = defineProps({
 
 // // 계산된 시간 차이
 // const formattedTime = computed(() => timeAgo(props.time));
+
+const currentUserId = ref(null);
+
+const route = useRoute();
+const router = useRouter();
+
+// 현재 로그인한 유저의 ID 가져오기
+onMounted(async () => {
+  const user = await getCurrentUser();
+  if (user) {
+    currentUserId.value = user.id;
+    console.log("현재 로그인한 유저 ID:", currentUserId.value);
+  }
+});
+
+// 본인 게시물인지 여부 확인
+const isOwner = computed(() => currentUserId.value === props.memberId);
+
+//현재 게시판 종류 가져오기
+const boardType = computed(() => {
+  const boardPath = route.path.split("/");
+  return boardPath[2] || "";
+});
+
+// 수정 페이지 경로 동적으로 생성
+const editPageUrl = computed(() => {
+  return `/${route.params.team}/${boardType.value}/${props.postId}/edit`;
+});
+
+const goToEditPage = () => {
+  router.push(editPageUrl.value);
+};
 </script>
 <template>
   <!-- 상세 페이지 정보 -->
@@ -72,10 +119,10 @@ const props = defineProps({
         <span class="text-xs text-gray02">{{ props.time }}</span>
       </div>
       <!-- 수정 삭제 버튼 -->
-      <div v-if="props.status='owner'" class="flex text-xs text-gray02 gap-[4px]">
+      <div class="flex text-xs text-gray02 gap-[4px]">
         <button class="hover:text-gray03">수정</button>
         <span>|</span>
-        <button class="hover:text-gray03">삭제</button>
+        <button @click="confirmDelete" class="hover:text-gray03">삭제</button>
       </div>
     </div>
   </div>

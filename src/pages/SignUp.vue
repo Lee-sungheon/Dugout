@@ -32,6 +32,29 @@ const isValidPassword = (password) => {
   return passwordRegex.test(password);
 };
 
+// 비밀번호 유효성 검사 함수
+const validatePassword = (value) => {
+  if (!value) {
+    return "비밀번호를 입력해주세요.";
+  } else if (value.length < 8) {
+    return "비밀번호는 8글자 이상이어야 합니다.";
+  } else if (!isValidPassword(value)) {
+    // isValidPassword 함수 사용
+    return "비밀번호는 대문자와 소문자를 모두 포함해야 합니다.";
+  }
+  return "";
+};
+
+// 비밀번호 일치 여부 검사 함수
+const validatePasswordMatch = (password, confirmPassword) => {
+  if (!confirmPassword) {
+    return "비밀번호 확인을 입력해주세요.";
+  } else if (password !== confirmPassword) {
+    return "비밀번호가 일치하지 않습니다.";
+  }
+  return "";
+};
+
 // 실시간 유효성 검사
 watch(email, (newValue) => {
   if (!newValue) {
@@ -52,39 +75,25 @@ watch(name, (newValue) => {
 });
 
 watch(password, (newValue) => {
-  if (!newValue) {
-    errors.value.password = "비밀번호를 입력해주세요.";
-  } else if (newValue.length < 8) {
-    errors.value.password = "비밀번호는 8글자 이상이어야 합니다.";
-  } else if (!isValidPassword(newValue)) {
-    errors.value.password =
-      "비밀번호는 대문자와 소문자를 모두 포함해야 합니다.";
-  } else {
-    errors.value.password = "";
-  }
+  errors.value.password = validatePassword(newValue);
 
-  // 비밀번호 확인 필드 검증도 함께 업데이트
   if (confirmPassword.value) {
-    if (newValue !== confirmPassword.value) {
-      errors.value.confirmPassword = "비밀번호가 일치하지 않습니다.";
-    } else {
-      errors.value.confirmPassword = "";
-    }
+    errors.value.confirmPassword = validatePasswordMatch(
+      newValue,
+      confirmPassword.value
+    );
   }
 });
 
 watch(confirmPassword, (newValue) => {
-  if (!newValue) {
-    errors.value.confirmPassword = "비밀번호 확인을 입력해주세요.";
-  } else if (newValue !== password.value) {
-    errors.value.confirmPassword = "비밀번호가 일치하지 않습니다.";
-  } else {
-    errors.value.confirmPassword = "";
-  }
+  errors.value.confirmPassword = validatePasswordMatch(
+    password.value,
+    newValue
+  );
 });
 
 const signUp = async () => {
-  // 모든 필드가 비어있는지 확인
+  // 모든 필드 확인
   if (
     !email.value ||
     !name.value ||
@@ -108,16 +117,18 @@ const signUp = async () => {
   try {
     duplicateEmailError.value = "";
 
-    duplicateEmailError.value = "";
-
     // 이메일 중복 체크
-    const { data: existingUser } = await supabase
+    const { data: existingUsers, error: checkError } = await supabase
       .from("user_info")
       .select("email")
-      .eq("email", email.value)
-      .single();
+      .eq("email", email.value);
 
-    if (existingUser) {
+    if (checkError) {
+      console.error("이메일 중복 체크 중 오류:", checkError);
+      throw checkError;
+    }
+
+    if (existingUsers && existingUsers.length > 0) {
       duplicateEmailError.value = "이미 존재하는 이메일입니다.";
       return;
     }
@@ -125,53 +136,33 @@ const signUp = async () => {
     // 회원가입
     const {
       data: { user },
-      error,
+      error: signUpError,
     } = await supabase.auth.signUp({
       email: email.value,
       password: password.value,
     });
 
-    if (error) {
-      console.error("회원가입 실패:", error.message);
-      return;
+    if (signUpError) {
+      console.error("회원가입 실패:", signUpError);
+      throw signUpError;
     }
 
     if (user) {
-      // user_info 테이블에 데이터 삽입 전에 해당 ID가 있는지 확인
-      const { data: existingUserInfo } = await supabase
+      console.log("Auth 회원가입 성공:", user);
+
+      const { error: updateError } = await supabase
         .from("user_info")
-        .select("id")
-        .eq("id", user.id)
-        .single();
+        .update({ name: name.value })
+        .eq("id", user.id); // auth의 id와 매칭되는 레코드 찾기
 
-      if (!existingUserInfo) {
-        // 사용자 정보가 없는 경우에만 삽입
-        const { error: insertError } = await supabase.from("user_info").insert([
-          {
-            id: user.id,
-            email: email.value,
-            name: name.value,
-          },
-        ]);
-
-        if (insertError) {
-          console.error("사용자 정보 저장 실패:", insertError.message);
-          return;
-        }
-      } else {
-        // 이미 존재하는 경우 업데이트
-        const { error: updateError } = await supabase
-          .from("user_info")
-          .update({ name: name.value })
-          .eq("id", user.id);
-
-        if (updateError) {
-          console.error("사용자 정보 업데이트 실패:", updateError.message);
-          return;
-        }
+      if (updateError) {
+        console.error("사용자 정보 업데이트 실패:", updateError);
+        throw updateError;
       }
+
+      console.log("user_info 테이블에 이름 업데이트 성공");
+
       await supabase.auth.signOut();
-      console.log("회원가입 성공:", user);
       router.push("/signin");
     }
   } catch (error) {

@@ -8,6 +8,13 @@ import RetryBtn from "@/assets/images/retry_btn.svg";
 import Ball from "@/assets/images/baseball_ball.svg";
 import { nextTick, ref } from "vue";
 import { useGameStart } from "@/utils/useGameStart";
+import { getCurrentUser } from "../api/supabase-api/userInfo";
+import {
+  createBaseballGame,
+  updateBaseballGame,
+} from "@/api/supabase-api/baseballGame";
+import { supabase } from "@/supabase";
+import { useAuthStore } from "@/stores/auth";
 
 const isGameStarted = ref(false);
 const attempts = ref(0);
@@ -18,6 +25,7 @@ const gameMessages = ref([]); // 게임 메시지 기록
 const isGameOver = ref(false);
 const isWin = ref(false);
 const chatContainer = ref(null); // 채팅 영역 자동 스크롤
+const auth = useAuthStore();
 
 // 메시지가 추가될 때마다 스크롤을 최하단으로 이동
 const scrollToBottom = () => {
@@ -41,13 +49,27 @@ const generateRandomNumber = () => {
 };
 
 // 게임 시작
-const startGame = () => {
+const startGame = async () => {
   isGameStarted.value = true;
   isGameOver.value = false;
   isWin.value = false;
   targetNumber.value = generateRandomNumber();
   attempts.value = 0;
   gameMessages.value = [];
+
+  // 게임 시작 시 기록 확인 및 생성
+  if (auth.user) {
+    const { data } = await supabase
+      .from("baseball_game_record")
+      .select()
+      .eq("member_id", auth.user.id)
+      .single();
+
+    if (!data) {
+      await createBaseballGame({ member_id: auth.user.id });
+    }
+  }
+
   console.log("Target number:", targetNumber.value);
 };
 
@@ -114,7 +136,7 @@ const handleKeyDown = (index, event) => {
 };
 
 // 추측 제출
-const submitGuess = () => {
+const submitGuess = async () => {
   const guess = inputs.value.map(Number);
   const { strikes, balls } = calculateResult(guess);
   attempts.value++;
@@ -147,6 +169,11 @@ const submitGuess = () => {
     isGameStarted.value = false;
     isGameOver.value = true;
     isWin.value = strikes === 4;
+
+    // 승리한 경우 기록 업데이트
+    if (isWin.value && auth.user) {
+      await updateBaseballGame(auth.user.id);
+    }
   }
 };
 </script>
