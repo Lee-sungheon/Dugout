@@ -26,16 +26,29 @@ export const getCurrentUser = async () => {
           "사용자 추가 정보를 가져오는 중 오류 발생:",
           userInfoError
         );
-        return user; // 기본 user 정보만 반환
+        // 기존 값 유지를 위해 user_info 테이블 다시 조회
+        const { data: existingInfo } = await supabase
+          .from("user_info")
+          .select("*")
+          .eq("id", user.id)
+          .single();
+
+        return {
+          ...user,
+          name: existingInfo?.name || user.user_metadata?.name || null,
+          description: existingInfo?.description || null,
+          image: existingInfo?.image || null,
+          baseball_club_id: existingInfo?.baseball_club_id || null,
+        };
       }
 
       // auth 정보와 user_info 정보 합치기
       return {
         ...user,
-        name: userInfo.name,
-        description: userInfo.description,
-        image: userInfo.image,
-        baseball_club_id: userInfo.baseball_club_id,
+        name: userInfo.name || user.user_metadata?.name || null,
+        description: userInfo.description || null,
+        image: userInfo.image || null,
+        baseball_club_id: userInfo.baseball_club_id || null,
       };
     }
 
