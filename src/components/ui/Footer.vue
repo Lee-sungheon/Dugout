@@ -1,9 +1,9 @@
 <script setup>
+import { teamList } from "@/constants";
 import { twMerge } from "tailwind-merge";
-import teamToggleIcon from "../../assets/icons/team_toggle.svg";
 import { ref } from "vue";
 import { useRouter } from "vue-router";
-import { teamList } from "@/constants";
+import teamToggleIcon from "../../assets/icons/team_toggle.svg";
 
 const router = useRouter();
 const isOpen = ref(false);
