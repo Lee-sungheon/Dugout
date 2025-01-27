@@ -36,8 +36,6 @@ const fectCreateComment = async (comment) => {
     // 낙관적 업데이트
     if (data) {
       comments.value = [...comments.value, ...data]; // 게시물 목록 추가
-      localCommentLength.value += 1;
-      console.log("추가후 데이터", comments.value);
     }
     console.log("생성데이터", data);
   } catch (error) {
@@ -57,6 +55,11 @@ const fetchGetComments = async () => {
   } catch (error) {
     console.error("댓글 정보를 가져오는 중에 오류가 발생했습니다.");
   }
+};
+
+// 코멘트 목록 업데이트하는 함수
+const updateComments = (newComments) => {
+  comments.value = newComments;
 };
 
 onMounted(() => {
@@ -103,7 +106,7 @@ onMounted(() => {
         :comment
         :key="comment.id"
         :comments
-        @update:comments="(newComments) => (comments = newComments)"
+        @update-comments="updateComments"
       />
     </div>
   </div>
