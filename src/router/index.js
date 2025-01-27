@@ -99,6 +99,7 @@ const router = createRouter({
           path: "freeboard",
           name: "freeboard",
           component: () => import("@/pages/FreeBoard.vue"),
+          props: true,
         },
         {
           path: "freeboard/:post_id/edit",
@@ -117,6 +118,7 @@ const router = createRouter({
           path: "freeboard/create",
           name: "freeboardCreate",
           component: () => import("@/pages/FreeBoardCreate.vue"),
+          props: true,
         },
 
         {
