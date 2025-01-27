@@ -141,6 +141,11 @@ const router = createRouter({
           component: () => import("@/pages/PhotoBoardCreate.vue"),
         },
         {
+          path: "photoboard/:id/edit",
+          name: "photoboardEdit",
+          component: () => import("@/pages/PhotoBoardEdit.vue"),
+        },
+        {
           path: "foodboard",
           name: "foodboard",
           component: () => import("@/pages/FoodBoard.vue"),
