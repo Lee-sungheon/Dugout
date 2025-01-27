@@ -29,10 +29,6 @@ const props = defineProps({
   status: {
     type: String,
   },
-  isVisible: {
-    type: Boolean,
-    required: true,
-  },
   memberId: {
     type: String,
     required: true, // 게시물 작성자의 ID
@@ -46,27 +42,6 @@ const props = defineProps({
     required: true,
   },
 });
-// // 시간 차이를 계산하는 함수
-// const timeAgo = (givenTime) => {
-//   const givenDate = new Date(givenTime);
-//   const currentDate = new Date();
-//   const timeDifference = currentDate - givenDate;
-
-//   if (timeDifference < 60 * 1000) {
-//     return "방금 전";
-//   } else if (timeDifference < 60 * 60 * 1000) {
-//     return `${Math.floor(timeDifference / (60 * 1000))}분 전`;
-//   } else if (timeDifference < 24 * 60 * 60 * 1000) {
-//     return `${Math.floor(timeDifference / (60 * 60 * 1000))}시간 전`;
-//   } else if (timeDifference < 7 * 24 * 60 * 60 * 1000) {
-//     return `${Math.floor(timeDifference / (24 * 60 * 60 * 1000))}일 전`;
-//   } else {
-//     return givenDate.toISOString().split("T")[0]; // 날짜만 출력
-//   }
-// };
-
-// // 계산된 시간 차이
-// const formattedTime = computed(() => timeAgo(props.time));
 
 const currentUserId = ref(null);
 
