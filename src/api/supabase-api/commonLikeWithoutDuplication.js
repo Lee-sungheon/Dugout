@@ -9,7 +9,7 @@ import { supabase } from "@/supabase";
  */
 export const addLike = async (tableName, postId, memberId) => {
   const { data, error } = await supabase.rpc("add_like_to_table", {
-    table_name: tableName,
+    table_name: `${tableName}_like`,
     input_post_id: postId,
     input_member_id: memberId,
   });
@@ -30,7 +30,7 @@ export const addLike = async (tableName, postId, memberId) => {
  */
 export const removeLike = async (tableName, postId, memberId) => {
   const { data, error } = await supabase.rpc("remove_like_from_table", {
-    table_name: tableName,
+    table_name: `${tableName}_like`,
     input_post_id: postId,
     input_member_id: memberId,
   });
@@ -45,28 +45,13 @@ export const removeLike = async (tableName, postId, memberId) => {
 export const getLikes = async (tableName, postId) => {
   try {
     const { data, error } = await supabase
-      .from(tableName)
+      .from(`${tableName}_like`)
       .select()
       .eq("post_id", postId);
     if (error) throw new Error("특정 게시글 좋아요 조회 실패");
     return data;
   } catch (err) {
     console.error(err.message);
-    return null;
+    return [];
   }
 };
-
-export const getLikeByMember = async (tableName, postId, memberId) => {
-  try {
-    const { data, error } = await supabase
-      .from(tableName)
-      .select()
-      .eq("post_id", postId)
-      .eq("member_id", memberId);
-    if (error) throw new Error("특정 게시글 좋아요 조회 실패");
-    return data;
-  } catch (err) {
-    console.error(err.message);
-    return null;
-  }
-}

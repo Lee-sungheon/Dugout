@@ -100,11 +100,7 @@ onMounted(() => {
       </div>
 
       <!-- 댓글 섹션 -->
-      <CommentSection
-        v-if="postDetails"
-        :like-length="postDetails.likes"
-        :comment-length="postDetails.comments"
-      />
+      <CommentSection v-if="postDetails" />
     </div>
   </div>
 </template>

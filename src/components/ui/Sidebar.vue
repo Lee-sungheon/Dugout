@@ -1,12 +1,12 @@
 <script setup>
-import freeBoardIcon from "@/assets/icons/free_board.svg";
 import crewBoardIcon from "@/assets/icons/crew_board.svg";
-import photoBoardIcon from "@/assets/icons/photo_board.svg";
 import foodBoardIcon from "@/assets/icons/food_board.svg";
-import { twMerge } from "tailwind-merge";
-import { useRoute } from "vue-router";
-import { computed, ref, watch } from "vue";
+import freeBoardIcon from "@/assets/icons/free_board.svg";
+import photoBoardIcon from "@/assets/icons/photo_board.svg";
 import { teamList } from "@/constants";
+import { twMerge } from "tailwind-merge";
+import { computed, ref, watch } from "vue";
+import { useRoute } from "vue-router";
 
 const route = useRoute();
 const teamName = ref(route.params.team);
@@ -38,6 +38,7 @@ watch(
       'pt-[30px]',
       'px-[10px]',
       'gap-[50px]',
+      'z-50',
     ]"
   >
     <!-- 구단 이름 -->

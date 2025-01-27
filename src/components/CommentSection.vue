@@ -1,134 +1,160 @@
 <script setup>
-import Commentbox from "./Commentbox.vue";
-import likeIcon from "@/assets/icons/like.svg";
-import likeIconFilled from "@/assets/icons/like_fill.svg"; 
+import { createComment, getComments } from "@/api/supabase-api/commonComment";
+import {
+  addLike,
+  getLikes,
+  removeLike,
+} from "@/api/supabase-api/commonLikeWithoutDuplication";
+import { getCurrentUser } from "@/api/supabase-api/userInfo";
 import commentIcon from "@/assets/icons/comment.svg";
 import commentBtnIcon from "@/assets/icons/comment_btn.svg";
-import { onMounted, ref } from "vue";
+import likeIcon from "@/assets/icons/like.svg";
+import likeIconFilled from "@/assets/icons/like_fill.svg";
+import { boardToTableMapping } from "@/constants";
+import { computed, onMounted, ref } from "vue";
 import { useRoute } from "vue-router";
-import { createComment, getComments } from "@/api/supabase-api/common";
-import { addLike, getLike, getLikeByMember, removeLike } from "@/api/supabase-api/commonLikeWithoutDuplication";
-import { boardToCommentTableMapping } from "@/constants";
-
-defineProps({
-  postId: {
-    type: String,
-    required: true,
-  },
-  tableName: {
-    type: String,
-    required: true,
-  },
-});
+import Commentbox from "./Commentbox.vue";
 
 const route = useRoute();
-const post_id = ref(route.params.id);
-const boardName = route.path.split("/")[2]; // 게시판 이름
-
-const text = ref("");
+const postId = ref(route.params.id);
+const boardName = route.path.split("/")[2];
+const commentText = ref(""); // 댓글 텍스트
 const comments = ref([]);
 const likes = ref([]);
-const liked = ref(false); // 좋아요 상태 관리
+const currentUserId = ref(null);
+const currentUserName = ref(null);
+const currentUserImage = ref(null);
+const liked = computed(() =>
+  likes.value.some((like) => like.member_id === currentUserId.value)
+);
 
-// 좋아요 정보 가져오는 함수
-const fetchLike = async () => {
+const fetchLikes = async () => {
   try {
-    const data = await getLike(props.tableName, props.postId);
+    const data = await getLikes(boardToTableMapping[boardName], postId.value);
     likes.value = data;
   } catch (error) {
-    console.error("좋아요 정보를 가져오는 중에 오류가 발생했습니다.");
+    console.error("좋아요 정보를 가져오는 중 오류 발생:", error.message);
   }
 };
 
-// 좋아요 여부를 가져오는 함수
-const fetchLikeByMember = async () => {
+const toggleLike = async () => {
   try {
-    const data = await getLikeByMember(
-      props.tableName,
-      props.postId,
-      "b04114da-ccb1-4b49-9fc3-57f56e64f964" // member ID
-    );
-    liked.value = data.length > 0; // 이미 좋아요를 눌렀다면 true
-  } catch (error) {
-    console.error("좋아요 정보를 가져오는 중에 오류가 발생했습니다.");
-  }
-};
-
-// 좋아요를 추가하는 함수
-const fetchAddLike = async () => {
-  try {
-    const data = await addLike(
-      props.tableName,
-      props.postId,
-      "b04114da-ccb1-4b49-9fc3-57f56e64f964" // member ID
-    );
-    if (data) {
-      likes.value = [...likes.value, data];
-      liked.value = true;
+    if (liked.value) {
+      likes.value = likes.value.filter(
+        (like) => like.member_id !== currentUserId.value
+      );
+      await removeLike(
+        boardToTableMapping[boardName],
+        postId.value,
+        currentUserId.value
+      );
+    } else {
+      const optimisticLike = { member_id: currentUserId.value };
+      likes.value.push(optimisticLike);
+      const newLike = await addLike(
+        boardToTableMapping[boardName],
+        postId.value,
+        currentUserId.value
+      );
+      if (!newLike) {
+        likes.value = likes.value.filter(
+          (like) => like.member_id !== currentUserId.value
+        );
+      }
     }
   } catch (error) {
-    console.error("좋아요 추가 중에 오류가 발생했습니다.");
-  }
-};
-
-// 좋아요를 삭제하는 함수
-const fetchRemoveLike = async () => {
-  try {
-    const data = await removeLike(
-      props.tableName,
-      props.postId,
-      "b04114da-ccb1-4b49-9fc3-57f56e64f964" // member ID
-    );
-    if (data) {
-      likes.value = likes.value.filter((like) => like.id !== data.id);
-      liked.value = false;
+    console.error("좋아요 상태 변경 중 오류 발생:", error.message);
+    if (liked.value) {
+      const rollbackLike = { member_id: currentUserId.value };
+      likes.value.push(rollbackLike);
+    } else {
+      likes.value = likes.value.filter(
+        (like) => like.member_id !== currentUserId.value
+      );
     }
-  } catch (error) {
-    console.error("좋아요 삭제 중에 오류가 발생했습니다.");
   }
 };
 
-// 댓글 생성하는 함수
-const fectCreateComment = async (comment) => {
-  try {
-    const data = await createComment(
-      boardToCommentTableMapping[boardName],
-      "b04114da-ccb1-4b49-9fc3-57f56e64f964", // member ID
-      post_id.value,
-      comment
-    );
-    // 낙관적 업데이트
-    if (data) {
-      comments.value = [...comments.value, ...data]; // 게시물 목록 추가
-    }
-  } catch (error) {
-    console.error("댓글 작성중 오류가 생겼습니다.");
-  }
-};
-
-// 댓글 정보 가져오는 함수
-const fetchGetComments = async () => {
+const fetchComments = async () => {
   try {
     const data = await getComments(
-      boardToCommentTableMapping[boardName],
-      post_id.value
+      boardToTableMapping[boardName],
+      postId.value
     );
     comments.value = data;
   } catch (error) {
-    console.error("댓글 정보를 가져오는 중에 오류가 발생했습니다.");
+    console.error("댓글 정보를 가져오는 중 오류 발생:", error.message);
   }
 };
 
-// 코멘트 목록 업데이트하는 함수
-const updateComments = (newComments) => {
-  comments.value = newComments;
+const refreshComments = async (updatedComments) => {
+  comments.value = updatedComments;
 };
 
-onMounted(() => {
-  fetchGetComments();
-  fetchLike();
-  fetchLikeByMember();
+const submitComment = async () => {
+  const commentContent = commentText.value; // 댓글 내용
+  // 낙관적 업데이트
+  const optimisticComment = {
+    id: null, // 임시 ID
+    post_id: postId.value,
+    content: commentContent,
+    created_at: new Date().toISOString(), // 임시
+    user_info: {
+      name: currentUserName.value,
+      image: currentUserImage.value,
+    },
+  };
+
+  comments.value.push(optimisticComment);
+
+  try {
+    const newComment = await createComment(
+      boardToTableMapping[boardName],
+      currentUserId.value,
+      postId.value,
+      commentContent
+    );
+
+    commentText.value = "";
+    optimisticComment.id = newComment.id;
+
+    comments.value = comments.value.map((comment) =>
+      comment.id === null ? optimisticComment : comment
+    );
+  } catch (error) {
+    console.error("댓글을 생성하는 중 오류 발생:", error.message);
+    // 오류 발생 시 롤백
+    comments.value = comments.value.filter((comment) => comment.id !== null);
+  }
+};
+
+const fetchCurrentUser = async () => {
+  try {
+    const user = await getCurrentUser();
+    currentUserId.value = user?.id || null;
+    currentUserName.value = user?.name || null;
+    currentUserImage.value = user?.image || null;
+  } catch (error) {
+    console.error("사용자 정보를 가져오는 중 오류 발생:", error.message);
+  }
+};
+
+onMounted(async () => {
+  try {
+    await fetchCurrentUser();
+    await fetchComments();
+    await fetchLikes();
+  } catch (error) {
+    console.error("초기 데이터 로드 중 오류 발생:", error.message);
+  }
 });
+
+const handleKeydown = (event) => {
+  if (event.key === "Enter") {
+    event.preventDefault();
+    submitComment();
+  }
+};
 </script>
 
 <template>
@@ -136,7 +162,7 @@ onMounted(() => {
     <!-- 좋아요 / 댓글수 -->
     <div class="flex gap-[20px]">
       <div class="flex gap-[10px]">
-        <button @click="liked ? fetchRemoveLike() : fetchAddLike()">
+        <button @click="toggleLike">
           <img
             :src="liked ? likeIconFilled : likeIcon"
             alt="좋아요 아이콘"
@@ -159,10 +185,10 @@ onMounted(() => {
         type="text"
         placeholder="댓글을 입력해주세요"
         class="w-full outline-none bg-white01"
-        v-model="text"
+        v-model="commentText"
+        @keydown="handleKeydown"
       />
-
-      <button @click="fectCreateComment(text)">
+      <button @click="submitComment">
         <img
           :src="commentBtnIcon"
           alt="댓글 전송 버튼"
@@ -170,16 +196,19 @@ onMounted(() => {
         />
       </button>
     </div>
-    
+
     <!-- 댓글리스트 -->
     <div class="flex flex-col gap-5">
       <Commentbox
-        v-for="comment in comments"
+        v-for="comment in comments.sort(
+          (a, b) => new Date(b.created_at) - new Date(a.created_at)
+        )"
         :key="comment.id"
+        :comments="comments"
         :comment="comment"
-        @update-comments="updateComments"
+        :currentUserId="currentUserId"
+        @refresh-comments="refreshComments"
       />
     </div>
   </div>
 </template>
-
