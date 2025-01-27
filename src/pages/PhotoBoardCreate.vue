@@ -266,8 +266,7 @@ const handleInput = (event) => {
               type="text"
               v-model="content"
               class="w-full p-0 outline-none resize-none text-4 bg-white01 placeholder-gray01 placeholder-4"
-              placeholder="인증 사진은 단 하나만 업로드할 수 있으며,
-  인증 글은 최대 500자까지만 작성 가능합니다!"
+              placeholder="인증 사진은 단 하나만 업로드할 수 있으며,&#10;인증 글은 최대 500자까지만 작성 가능합니다!"
               @input="handleInput"
             />
           </div>
