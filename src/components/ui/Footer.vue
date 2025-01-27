@@ -5,24 +5,26 @@ import { useTeamStore } from "@/stores/teamStore";
 import { twMerge } from "tailwind-merge";
 import { ref } from "vue";
 import { useRouter } from "vue-router";
+import EnteringComunityAnimation from "./EnteringComunityAnimation.vue";
 
 const router = useRouter();
-const isOpen = ref(false); 
+const isOpen = ref(false);
 const teamStore = useTeamStore();
 
 const toggleTeam = () => {
-  isOpen.value = !isOpen.value; 
+  isOpen.value = !isOpen.value;
 };
 
 const navigationAndAnimation = async (team) => {
   await teamStore.triggerEnteringAnimation(team);
   setTimeout(() => {
-    router.push(team.path); 
+    router.push(team.path);
   }, 1500);
 };
 </script>
 
 <template>
+  <EnteringComunityAnimation v-if="teamStore.isEnterAnimationOn" />
   <div
     v-if="isOpen"
     class="w-[770px] h-[60px] fixed bottom-[40px] left-1/2 -translate-x-1/2 flex items-center justify-center px-[25px] gap-[35px] bg-white drop-shadow-md rounded-[20px]"

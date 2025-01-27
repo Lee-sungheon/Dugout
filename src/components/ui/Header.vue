@@ -6,6 +6,7 @@ import logoImg from "@/assets/images/logo.svg";
 import { useTeamStore } from "@/stores/teamStore";
 import { ref } from "vue";
 import { RouterLink } from "vue-router";
+import EmblemAnimation from "./EmblemAnimation.vue";
 
 const teamStore = useTeamStore();
 
@@ -31,8 +32,9 @@ const toggleDropdown = () => {
 </script>
 
 <template>
+  <EmblemAnimation v-if="teamStore.isEmblemEffectOn" />
   <header
-    class="w-full h-[100px] flex items-center justify-center fixed z-50 border-b border-white02 bg-white01"
+    class="w-full h-[100px] flex items-center justify-center fixed z-40 border-b border-white02 bg-white01"
   >
     <div class="flex px-[30px] py-[22px] w-full justify-between items-center">
       <!-- 왼쪽 영역(로고 / 네비게이션) -->

@@ -1,5 +1,5 @@
 <script setup>
-import doosanEmblem from "@/assets/images/logo_doosan.svg";
+import doosanEmblem from "@/assets/images/doosan_emblem.svg";
 import hanhwaEmblem from "@/assets/images/logo_hanhwa.svg";
 import kiaEmblem from "@/assets/images/logo_kia.svg";
 import kiwoomEmblem from "@/assets/images/logo_kiwoom.svg";
@@ -30,7 +30,7 @@ const emblem = {
 
 onMounted(() => {
   const timeline = gsap.timeline();
-  const totalDuration = 1.5; 
+  const totalDuration = 1.5;
 
   timeline
     .fromTo(
