@@ -8,6 +8,12 @@ import RetryBtn from "@/assets/images/retry_btn.svg";
 import Ball from "@/assets/images/baseball_ball.svg";
 import { nextTick, ref } from "vue";
 import { useGameStart } from "@/utils/useGameStart";
+import { getCurrentUser } from "../api/supabase-api/userInfo";
+import {
+  createBaseballGame,
+  updateBaseballGame,
+} from "@/api/supabase-api/baseballGame";
+import { supabase } from "@/supabase";
 
 const isGameStarted = ref(false);
 const attempts = ref(0);
@@ -41,13 +47,28 @@ const generateRandomNumber = () => {
 };
 
 // 게임 시작
-const startGame = () => {
+const startGame = async () => {
   isGameStarted.value = true;
   isGameOver.value = false;
   isWin.value = false;
   targetNumber.value = generateRandomNumber();
   attempts.value = 0;
   gameMessages.value = [];
+
+  // 게임 시작 시 기록 확인 및 생성
+  const user = await getCurrentUser();
+  if (user) {
+    const { data } = await supabase
+      .from("baseball_game_record")
+      .select()
+      .eq("member_id", user.id)
+      .single();
+
+    if (!data) {
+      await createBaseballGame({ member_id: user.id });
+    }
+  }
+
   console.log("Target number:", targetNumber.value);
 };
 
@@ -114,7 +135,7 @@ const handleKeyDown = (index, event) => {
 };
 
 // 추측 제출
-const submitGuess = () => {
+const submitGuess = async () => {
   const guess = inputs.value.map(Number);
   const { strikes, balls } = calculateResult(guess);
   attempts.value++;
@@ -147,6 +168,14 @@ const submitGuess = () => {
     isGameStarted.value = false;
     isGameOver.value = true;
     isWin.value = strikes === 4;
+
+    // 승리한 경우 기록 업데이트
+    if (isWin.value) {
+      const user = await getCurrentUser();
+      if (user) {
+        await updateBaseballGame(user.id);
+      }
+    }
   }
 };
 </script>
