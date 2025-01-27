@@ -1,7 +1,7 @@
 <script setup>
-import { ref } from "vue";
 import DeleteBtn from "@/assets/icons/delete-btn.svg";
 import { foodBoardTag } from "@/constants/index";
+import { ref } from "vue";
 const selectedTag = ref([]);
 const emit = defineEmits(["update:selectedTag"]);
 

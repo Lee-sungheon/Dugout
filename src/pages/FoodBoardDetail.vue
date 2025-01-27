@@ -1,33 +1,29 @@
 <script setup>
-import { ref, computed, onMounted } from "vue";
-import dayjs from "dayjs";
-import relativeTime from "dayjs/plugin/relativeTime";
-import "dayjs/locale/ko";
-dayjs.extend(relativeTime);
-dayjs.locale("ko");
-
-import { useRouter, useRoute } from "vue-router";
 import { getRestaurantPostDetailsById } from "@/api/supabase-api/restaurantPost";
 import backIcon from "@/assets/icons/back.svg";
 import CommentSection from "@/components/CommentSection.vue";
 import PostHeader from "@/components/PostHeader.vue";
 import LocationViewer from "@/components/foodboard/LocationViewer.vue";
+import dayjs from "dayjs";
+import "dayjs/locale/ko";
+import relativeTime from "dayjs/plugin/relativeTime";
+import { computed, onMounted, ref } from "vue";
+import { useRoute, useRouter } from "vue-router";
+dayjs.extend(relativeTime);
+dayjs.locale("ko");
 
 const router = useRouter();
 const route = useRoute();
 
-// 게시물 데이터 및 상태
 const postDetails = ref(null);
 const postImages = ref([]);
 const post_id = ref(route.params.id);
 
-// 게시물 데이터 가져오기
 const fetchFoodPostDetail = async () => {
   try {
     const data = await getRestaurantPostDetailsById(post_id.value);
     postDetails.value = {
       ...data,
-      // 이미지 배열에서 URL만 추출
       images: data.images.map((img) => img.url),
     };
     postImages.value = postDetails.value.images;
@@ -36,17 +32,6 @@ const fetchFoodPostDetail = async () => {
   }
 };
 
-// 게시물 내용 파싱
-const parsedContent = computed(() => {
-  if (!postDetails.value?.content) return "";
-  const doc = new DOMParser().parseFromString(
-    postDetails.value.content,
-    "text/html"
-  );
-  return doc.body.textContent || doc.body.innerText;
-});
-
-// 생성 시점 계산
 const calculatedCreatedAt = computed(() => {
   if (!postDetails.value?.created_at) return "";
   return dayjs(postDetails.value.created_at).fromNow();
@@ -84,11 +69,6 @@ onMounted(() => {
         <div class="flex flex-col gap-[30px]">
           <LocationViewer :postLocation="postDetails.location" />
           <div>
-            <!-- <div
-              class="w-full h-full py-5 text-[18px] text-black01 text-center"
-            >
-              {{ parsedContent }}
-            </div> -->
             <div
               v-html="postDetails.content"
               class="prose ql-editor max-w-none"

@@ -1,11 +1,11 @@
 <script setup>
-import { onMounted, ref, watch } from "vue";
-import deleteBtn from "../assets/icons/delete-btn.svg";
-import FoodBoardCard from "@/components/foodboard/FoodBoardCard.vue";
-import PostArrow from "@/assets/icons/post_arrow.svg";
-import { foodBoardTag, teamID } from "@/constants";
 import { getRestaurantPostsByTagAndClub } from "@/api/supabase-api/restaurantPost";
+import PostArrow from "@/assets/icons/post_arrow.svg";
+import FoodBoardCard from "@/components/foodboard/FoodBoardCard.vue";
+import { foodBoardTag, teamID } from "@/constants";
+import { onMounted, ref, watch } from "vue";
 import { useRoute } from "vue-router";
+import deleteBtn from "../assets/icons/delete-btn.svg";
 
 const route = useRoute();
 const teamName = ref(route.params.team);

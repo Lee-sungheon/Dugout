@@ -1,14 +1,14 @@
 <script setup>
-import dayjs from "dayjs";
-import relativeTime from "dayjs/plugin/relativeTime";
-import "dayjs/locale/ko"; // 한국어 로케일 가져오기
-dayjs.extend(relativeTime); // relativeTime 플러그인 활성화
-dayjs.locale("ko"); // 한국어 로케일 설정
-import likeIcon from "@/assets/icons/like.svg";
 import commentIcon from "@/assets/icons/comment.svg";
-import { computed } from "vue";
+import likeIcon from "@/assets/icons/like.svg";
 import { teamID } from "@/constants";
+import dayjs from "dayjs";
+import "dayjs/locale/ko";
+import relativeTime from "dayjs/plugin/relativeTime";
+import { computed } from "vue";
 import { KakaoMap, KakaoMapMarker } from "vue3-kakao-maps";
+dayjs.extend(relativeTime);
+dayjs.locale("ko");
 
 const props = defineProps({
   restaurantPostData: {
