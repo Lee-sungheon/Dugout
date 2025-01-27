@@ -24,7 +24,7 @@ const fetchFoodPostDetail = async () => {
     const data = await getRestaurantPostDetailsById(post_id.value);
     postDetails.value = {
       ...data,
-      images: data.images.map((img) => img.url),
+      images: data.images?.map((img) => img.url),
     };
     postImages.value = postDetails.value.images;
   } catch (error) {
@@ -76,11 +76,14 @@ onMounted(() => {
           </div>
 
           <!-- 이미지 목록 -->
-          <div class="flex w-full h-[310px] gap-[30px]">
+          <div
+            v-if="postImages"
+            class="flex h-[310px] gap-[30px] justify-center"
+          >
             <div
               v-for="(imageUrl, index) in postImages"
               :key="index"
-              class="flex-1 aspect-square rounded-[10px] overflow-hidden"
+              class="aspect-square rounded-[10px] overflow-hidden"
             >
               <img :src="imageUrl" class="object-cover w-full h-full" />
             </div>
