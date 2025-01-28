@@ -41,7 +41,6 @@ const confirmMaxLength = () => {
 };
 
 const confirmBlank = () => {
-  console.log("📌 모달 열기 시도");
   modalStore.openModal({
     message: "작성하지 않은 항목이 있습니다 \n 확인 후 입력해주세요",
     type: "oneBtn",
@@ -50,7 +49,6 @@ const confirmBlank = () => {
 };
 
 const confirmGameDate = () => {
-  console.log("📌 모달 열기 시도");
   modalStore.openModal({
     message: "이미 지나간 경기일입니다",
     type: "oneBtn",
@@ -70,11 +68,9 @@ const handleFileChange = async (event) => {
   reader.readAsDataURL(file);
 
   try {
-    console.log("이미지 업로드 시작");
     const imageUrl = await uploadImageToSupabase(file);
     if (imageUrl) {
       uploadedImageUrl.value = imageUrl;
-      console.log("이미지 업로드 성공:", uploadedImageUrl.value);
     } else {
       console.error("이미지 URL을 가져오지 못함");
     }
@@ -125,50 +121,25 @@ const selectDate = (newDate) => {
   isDatePickerOpen.value = false;
 };
 
-const handleSave = async () => {
-  return {
-    content: content.value, // ✅ 줄바꿈(\n) 포함해서 저장
-    imageUrl: uploadedImageUrl.value,
-    gameDate: formatDateForDB(gameDate.value),
-    clubId: clubId.value,
-    title: title.value,
-  };
-};
-
 // 작성글 등록 함수
 const handleRegister = async () => {
-  console.log("등록 버튼 클릭됨");
-  console.log("업로드된 이미지 URL:", uploadedImageUrl.value);
   if (
     !title.value ||
     !content.value ||
     !gameDate.value ||
     !uploadedImageUrl.value
   ) {
-    console.log(
-      "현재 데이터",
-      "타이틀",
-      title.value,
-      "내용",
-      content.value,
-      "날짜",
-      gameDate.value,
-      "이미지 주소",
-      uploadedImageUrl.value
-    );
     confirmBlank();
     return;
   }
 
   try {
-    const postData = await handleSave();
-
     const result = await createCertificationPost(
-      postData.content,
-      postData.imageUrl,
-      postData.gameDate,
-      postData.clubId,
-      postData.title
+      content.value,
+      uploadedImageUrl.value,
+      formatDateForDB(gameDate.value),
+      clubId.value,
+      title.value
     );
 
     if (result) {
@@ -191,8 +162,6 @@ const handleCancel = () => {
   gameDate.value = null;
   clubId.value = "";
   uploadedImageUrl.value = "";
-  console.log("등록 취소");
-  alert("등록이 취소되었습니다");
   router.push(`/${teamName.value}/photoboard`);
 };
 

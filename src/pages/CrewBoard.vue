@@ -1,8 +1,8 @@
 <script setup>
 import CrewCard from "@/components/crewboard/CrewCard.vue";
-import PostArrow from "@/assets/icons/post_arrow.svg";
 import { getCrewRecruitmentPostsByClub } from "@/api/supabase-api/crewRecruitmentPost";
 import { ref, onMounted, watch } from "vue";
+import GoToCreate from "@/components/common/GoToCreate.vue";
 import { useRoute, useRouter } from "vue-router";
 import { getCurrentUser } from "@/api/supabase-api/userInfo";
 import { teamID } from "@/constants";
@@ -66,15 +66,8 @@ watch(
     <div class="flex flex-col gap-[50px] w-[990px]">
       <!-- 글쓰기 버튼 -->
       <div class="cursor-pointer">
-        <div
-          @click="handleButtonClick"
-          class="flex items-center justify-center w-full font-medium bg-white02 py-[10px] rounded-[10px] gap-[10px]"
-        >
-          직관 크루 모집에 글 쓰러 가기
-          <img :src="PostArrow" class="w-[14px] h-[8px]" />
-        </div>
+        <GoToCreate :text="'직관 크루 모집에 글 쓰러 가기'" />
       </div>
-
       <!-- 크루 모집 게시물 리스트 -->
       <div class="grid grid-cols-3 gap-[30px]">
         <template v-if="posts.length">

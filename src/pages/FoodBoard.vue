@@ -1,11 +1,11 @@
 <script setup>
 import { getRestaurantPostsByTagAndClub } from "@/api/supabase-api/restaurantPost";
-import PostArrow from "@/assets/icons/post_arrow.svg";
 import FoodBoardCard from "@/components/foodboard/FoodBoardCard.vue";
 import { foodBoardTag, teamID } from "@/constants";
 import { onMounted, ref, watch } from "vue";
 import { useRoute } from "vue-router";
 import deleteBtn from "../assets/icons/delete-btn.svg";
+import GoToCreate from "@/components/common/GoToCreate.vue";
 
 const route = useRoute();
 const teamName = ref(route.params.team);
@@ -80,14 +80,7 @@ const removeDuplicatePosts = (posts) => {
 <template>
   <div class="flex flex-col px-[50px] py-[30px] items-center">
     <div class="w-[990px] gap-[50px] flex flex-col">
-      <RouterLink
-        :to="`/${teamName}/foodboard/create`"
-        class="flex items-center justify-center w-full font-medium bg-white02 py-[10px] rounded-[10px] gap-[10px] cursor-pointer"
-      >
-        직관 맛집 공유하기
-        <img :src="PostArrow" class="w-[14px] h-[8px]" />
-      </RouterLink>
-
+      <GoToCreate :text="'직관 맛집 공유하기'" />
       <div class="min-h-[39px] overflow-x-auto scrollbar-hide">
         <div class="flex items-center gap-x-[10px] w-max flex-nowrap">
           <!-- 태그 버튼 -->

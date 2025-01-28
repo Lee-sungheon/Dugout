@@ -18,7 +18,6 @@ useKakao("399b05e95de82f5d07a8fd56ca2ecba7", [
 
 const app = createApp(App);
 app.component("QuillEditor", QuillEditor);
-app.component("VDatePicker", DatePicker);
 app.use(createPinia());
 app.use(router);
 app.use(VCalendar, {});

@@ -1,7 +1,7 @@
 <script setup>
 import CreateHeader from "@/components/CreateHeader.vue";
 import Camera from "@/assets/icons/camera.svg";
-import { onMounted, ref, watch } from "vue";
+import { onMounted, ref, watch, watchEffect } from "vue";
 import {
   uploadImageToSupabase,
   getCertificationPostDetailsById,
@@ -30,13 +30,13 @@ const clubId = ref(teamID[teamName.value]);
 
 const postId = route.params.id;
 
-const fetchPostData = async () => {
-  if (!postId) {
-    console.error("postId가 없습니다. 올바른 경로에서 접근해주세요.");
+const fetchPostData = async (id) => {
+  if (!id || isNaN(id)) {
+    console.error("🚨 postId가 유효하지 않습니다:", id);
     return;
   }
   try {
-    const data = await getCertificationPostDetailsById(postId);
+    const data = await getCertificationPostDetailsById(id);
     if (data) {
       console.log("기존 게시물 데이터", data);
       title.value = data.title;
@@ -144,16 +144,6 @@ const selectDate = (newDate) => {
   isDatePickerOpen.value = false;
 };
 
-const handleSave = async () => {
-  return {
-    content: content.value,
-    imageUrl: uploadedImageUrl.value,
-    gameDate: formatDateForDB(gameDate.value),
-    clubId: clubId.value,
-    title: title.value,
-  };
-};
-
 // 작성글 등록 함수
 const handleRegister = async () => {
   console.log("등록 버튼 클릭됨");
@@ -169,13 +159,13 @@ const handleRegister = async () => {
   }
 
   try {
-    const postData = await handleSave();
     const updatedPost = await updateCertificationPost(
-      postData.content,
-      postData.imageUrl,
-      postData.gameDate,
-      postData.clubId,
-      postData.title
+      postId,
+      content.value,
+      uploadedImageUrl.value,
+      formatDateForDB(gameDate.value),
+      clubId.value,
+      title.value
     );
 
     if (updatedPost) {
@@ -215,7 +205,31 @@ const handleInput = (event) => {
   }
 };
 
-onMounted(fetchPostData);
+watchEffect(() => {
+  console.log("✅ route.params.id:", route.params.id); // 디버깅 로그 추가
+  if (route.params.id && !isNaN(route.params.id)) {
+    fetchPostData(route.params.id); // 직접 값 전달
+  } else {
+    console.error(
+      "🚨 잘못된 접근입니다. postId가 존재하지 않음:",
+      route.params.id
+    );
+    router.replace("/error"); // 예외 처리 페이지로 이동
+  }
+});
+
+onMounted(() => {
+  console.log("📌 route.params.id:", route.params.id);
+  if (route.params.id && !isNaN(route.params.id)) {
+    fetchPostData(route.params.id);
+  } else {
+    console.error(
+      "🚨 잘못된 접근입니다. postId가 존재하지 않음:",
+      route.params.id
+    );
+    router.replace("/error");
+  }
+});
 </script>
 <template>
   <div><h1>수정페이지</h1></div>

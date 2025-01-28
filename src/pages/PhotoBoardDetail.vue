@@ -118,14 +118,8 @@ const confirmDelete = () => {
       <!-- 상세 페이지 정보 -->
       <PostHeader
         :title="title"
-        :nickname="post.name || '익명'"
-        :post-id="String(post.id)"
-        :profileImage="
-          post.author_image ||
-          'https://cdn.pixabay.com/photo/2016/10/29/21/11/sign-1781609_1280.jpg'
-        "
+        :post="post"
         :time="dayjs(post.created_at).fromNow()"
-        :memberId="post.member_id || ''"
         :confirm-delete="confirmDelete"
       />
       <Modal />
