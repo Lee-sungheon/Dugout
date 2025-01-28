@@ -64,6 +64,7 @@ onMounted(async () => {
         :status="post.status"
         :confirmDelete="confirmDelete"
         :postId="post.post_id"
+        :memberId="post.member_id"
       />
       <!-- 게시물 내용 -->
       <div class="pb-[50px] border-b border-gray01 flex flex-col gap-[50px]">

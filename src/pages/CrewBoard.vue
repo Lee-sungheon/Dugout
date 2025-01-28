@@ -2,28 +2,29 @@
 import CrewCard from "@/components/crewboard/CrewCard.vue";
 import PostArrow from "@/assets/icons/post_arrow.svg";
 import { getCrewRecruitmentPostsByClub } from "@/api/supabase-api/crewRecruitmentPost";
-import { ref, onMounted } from "vue";
+import { ref, onMounted, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { getCurrentUser } from "@/api/supabase-api/userInfo";
+import { teamID } from "@/constants";
 
 const route = useRoute();
 const router = useRouter();
 const teamName = ref(route.params.team);
+const clubId = ref(teamID[teamName.value]); // 팀 id 가져오기
 const posts = ref([]);
 const currentUser = ref(null);
 
 // 특정 게시물 데이터 가져오기
 const fetchPosts = async () => {
-  const clubId = 1; // 임시 설정
-  const data = await getCrewRecruitmentPostsByClub(clubId);
-
+  const data = await getCrewRecruitmentPostsByClub(clubId.value);
   if (data) {
-    posts.value = data || {};
+    posts.value = data || [];
   } else {
-    alert("특정 게시물 데이터 가져오기 실패!");
+    console.log("특정 게시물 데이터 가져오기 실패!");
   }
 };
-
+console.log(teamName.value);
+console.log(clubId.value);
 // 현재 로그인 사용자 정보 불러오기
 const getUserInfo = async () => {
   const userData = await getCurrentUser();
@@ -48,6 +49,16 @@ onMounted(async () => {
   await fetchPosts();
   await getUserInfo();
 });
+
+// route.params.team이 변경될 때마다 반응
+watch(
+  () => route.params.team,
+  (newTeamName, _) => {
+    // 업데이트
+    clubId.value = teamID[newTeamName];
+    fetchPosts();
+  }
+);
 </script>
 
 <template>
@@ -65,13 +76,18 @@ onMounted(async () => {
       </div>
 
       <!-- 크루 모집 게시물 리스트 -->
-      <div v-if="posts.length" class="grid grid-cols-3 gap-[30px]">
-        <CrewCard
-          v-for="post in posts"
-          :key="post.post_id"
-          :post="post"
-          class="cursor-pointer"
-        />
+      <div class="grid grid-cols-3 gap-[30px]">
+        <template v-if="posts.length">
+          <CrewCard
+            v-for="post in posts"
+            :key="post.post_id"
+            :post="post"
+            class="cursor-pointer"
+          />
+        </template>
+        <template v-else>
+          <h1>데이터가 없습니다.</h1>
+        </template>
       </div>
     </div>
   </div>

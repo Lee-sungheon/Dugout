@@ -7,9 +7,12 @@ import Calendar from "@/assets/icons/calendar.svg";
 import { createCrewRecruitmentPost } from "@/api/supabase-api/crewRecruitmentPost";
 import { useRouter } from "vue-router";
 import { getCurrentUser } from "@/api/supabase-api/userInfo";
+import { teamID } from "@/constants";
 
 const currentUser = ref(null);
 const router = useRouter();
+const currentTeam = router.currentRoute.value.params.team;
+const clubId = ref(teamID[currentTeam]); // 팀 id 가져오기
 const content = ref("");
 const recruitStatus = ref("");
 const recruitOptions = ["모집 중", "모집 완료"];
@@ -152,20 +155,20 @@ const handleRegister = () => {
     crew_sex: crewGender.value,
     crew_age: crewAge.value,
     content: content.value,
-    club_id: "1",
+    club_id: clubId.value,
     member_number: peopleNum.value,
     member_range: peopleStatus.value,
     game_stadium: stadium.value,
   });
   alert("게시글이 성공적으로 등록되었습니다.");
-  router.push("/kia/crewboard");
+  router.push(`/${currentTeam}/crewboard/`);
 };
 
 // 게시글 작성 취소 함수
 const handleCancel = () => {
   const isConfirmed = confirm("정말로 취소 하시겠습니까?");
   if (isConfirmed) {
-    router.push("/kia/crewboard");
+    router.push(`/${currentTeam}/crewboard/`);
   } else {
     return;
   }
@@ -174,8 +177,6 @@ const handleCancel = () => {
 onMounted(async () => {
   await getUserInfo();
 });
-
-
 </script>
 <template>
   <div class="px-[50px]">
