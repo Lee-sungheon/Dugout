@@ -4,13 +4,18 @@ import CreateHeader from "@/components/CreateHeader.vue";
 import { onMounted, ref, watch } from "vue";
 import Baseball from "@/assets/icons/baseball.svg";
 import Calendar from "@/assets/icons/calendar.svg";
-import { createCrewRecruitmentPost } from "@/api/supabase-api/crewRecruitmentPost";
-import { useRouter } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { getCurrentUser } from "@/api/supabase-api/userInfo";
+import {
+  getCrewRecruitmentPostDetails,
+  updateCrewRecruitmentPost,
+} from "@/api/supabase-api/crewRecruitmentPost";
 
-const currentUser = ref(null);
+const post = ref();
+const route = useRoute();
+const teamName = ref(route.params.team);
 const router = useRouter();
-const content = ref("");
+const content = ref(post.content);
 const recruitStatus = ref("");
 const recruitOptions = ["모집 중", "모집 완료"];
 const gameDateStatus = ref(null);
@@ -125,26 +130,40 @@ const formatDate = (date) => {
   return `${year}-${month}-${day}`;
 };
 
-watch(gameDateStatus, (newDate) => {
-  formattedGameDate.value = formatDate(newDate);
-  isDatePickerOpen.value = false;
-});
-
-// 현재 로그인 사용자 정보 불러오기
-const getUserInfo = async () => {
-  const userData = await getCurrentUser();
-  if (userData) {
-    currentUser.value = userData; // 로그인된 사용자 정보 저장
+// 해당 게시글 데이터 갖고오는 함수
+const fetchPostDetails = async () => {
+  const postId = route.params.id;
+  const data = await getCrewRecruitmentPostDetails(postId);
+  if (data) {
+    post.value = data;
+    content.value = post.value.content;
+    recruitStatus.value = post.value.status;
+    formattedGameDate.value = post.value.game_date;
+    myTeam.value = post.value.club_name;
+    stadium.value = post.value.game_stadium;
+    myGender.value = post.value.author_sex;
+    myAge.value = post.value.author_age;
+    crewGender.value = post.value.crew_sex;
+    crewAge.value = post.value.crew_age;
+    // members 데이터 분해
+    const membersData = post.value.members;
+    const [numberPart, statusPart] = membersData.split(" ");
+    peopleNum.value = numberPart;
+    peopleStatus.value = statusPart;
   } else {
-    currentUser.value = null; // 비로그인 상태
+    alert("게시물 정보를 가져오는 데 실패했습니다.");
   }
 };
 
-// 크루 모집 게시글 등록 함수
-const handleRegister = () => {
-  if (!validateInputs()) return;
-  createCrewRecruitmentPost({
-    member_id: currentUser.value.id,
+// 게시글 수정 함수
+const handleUpdate = async () => {
+  const postId = route.params.id;
+  // 입력 데이터 검증
+  // if (!content.value || !recruitStatus.value || !formattedGameDate.value) {
+  //   alert("필수 입력값을 모두 채워주세요.");
+  //   return;
+  // }
+  const updatedData = {
     status: recruitStatus.value,
     game_date: formattedGameDate.value,
     author_sex: myGender.value,
@@ -153,42 +172,50 @@ const handleRegister = () => {
     crew_age: crewAge.value,
     content: content.value,
     club_id: "1",
-    member_number: peopleNum.value,
+    member_number: Number(peopleNum.value),
     member_range: peopleStatus.value,
     game_stadium: stadium.value,
-  });
-  alert("게시글이 성공적으로 등록되었습니다.");
-  router.push("/kia/crewboard");
+  };
+  try {
+    const result = updateCrewRecruitmentPost(postId, updatedData);
+    if (result) {
+      alert("게시글이 성공적으로 수정되었습니다.");
+      router.push(`/kia/crewboard`); // 수정 완료 후 목록으로 이동
+    }
+  } catch (err) {
+    console.error(err.message);
+  }
 };
 
 // 게시글 작성 취소 함수
 const handleCancel = () => {
   const isConfirmed = confirm("정말로 취소 하시겠습니까?");
   if (isConfirmed) {
-    router.push("/kia/crewboard");
+    router.push(`/${teamName.value}/crewboard/`);
   } else {
     return;
   }
 };
 
-onMounted(async () => {
-  await getUserInfo();
+watch(gameDateStatus, (newDate) => {
+  formattedGameDate.value = formatDate(newDate);
+  isDatePickerOpen.value = false;
 });
 
-
+onMounted(() => {
+  // await getUserInfo();
+  fetchPostDetails();
+});
 </script>
 <template>
   <div class="px-[50px]">
-    <CreateHeader
-      :handleRegister="handleRegister"
-      :handleCancel="handleCancel"
-    />
+    <CreateHeader :handleRegister="handleUpdate" :handleCancel="handleCancel" />
     <div class="gap-[50px]">
       <div class="mt-[40px] mb-[85px] gap-[30px]">
         <div>
           <div class="w-full pb-[30px] border-b-gray01 border-b-[1px]">
             <p class="w-full text-[30px] text-center outline-none">
-              직관 크루 조건을 설정해주세요.
+              직관 크루 조건을 수정해주세요.
             </p>
           </div>
           <div class="pt-[30px]">
