@@ -12,7 +12,7 @@ const route = useRoute();
 const teamName = ref(route.params.team);
 
 const teamPage = computed(() =>
-  teamList.find((team) => team.name === teamName.value)
+  teamList.find(() => teamList.find((team) => team.name === route.params.team))
 );
 
 // route.params.team이 변경될 때마다 반응
@@ -47,6 +47,7 @@ watch(
       :class="`text-${teamPage.nickname} text-3xl font-sigmar`"
       >{{ teamPage.nickname }}</span
     >
+    <span v-else class="text-gray-500">팀 정보 없음</span>
     <!-- 네비게이트 -->
     <nav class="flex flex-col items-center w-full gap-[22px]">
       <RouterLink

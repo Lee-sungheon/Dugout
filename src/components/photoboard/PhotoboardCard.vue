@@ -8,8 +8,6 @@ const route = useRoute();
 const props = defineProps({
   post: Object,
 });
-
-console.log("📌 이미지 URL 확인:", props.post.image);
 </script>
 <template>
   <RouterLink
