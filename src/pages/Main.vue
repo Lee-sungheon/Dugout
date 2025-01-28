@@ -294,11 +294,7 @@ onMounted(async () => {
             경기 결과, 선수 소식, 트레이드 루머까지!<br />
             당신이 놓치고 싶지 않은 모든 야구 이야기를 제공합니다
           </p>
-          <RouterLink
-            to="/news"
-            class="px-4 py-2 text-primary hover:text-primary-dark transition-colors">
-            더 많은 뉴스 보기 →
-          </RouterLink>
+          <RouterLink to="/news" class="bg-"> 더 많은 뉴스 보기 </RouterLink>
         </div>
         <div class="flex flex-col">
           <div
