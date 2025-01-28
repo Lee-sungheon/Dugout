@@ -126,22 +126,37 @@ export const getCrewRecruitmentPostComments = async (postId) => {
     return null;
   }
 };
-
 // 특정 크루 모집 게시글 수정 함수
-export const updateCrewRecruitmentPost = async (postId) => {
+export const updateCrewRecruitmentPost = async (postId, updatedData) => {
   try {
+    const {
+      status,
+      game_date,
+      author_sex,
+      author_age,
+      crew_sex,
+      crew_age,
+      content,
+      club_id,
+      member_number,
+      member_range,
+      game_stadium,
+    } = updatedData;
+
     const { error } = await supabase
       .from("crew_recruitment_post")
       .update({
-        status: "status2",
-        game_date: "2025-10-10",
-        members: 10,
-        author_sex: "author_sex",
-        author_age: "author_age",
-        crew_sex: "crew_sex",
-        crew_age: "crew_age",
-        content: "content",
-        club_id: 1,
+        status,
+        game_date,
+        author_sex,
+        author_age,
+        crew_sex,
+        crew_age,
+        content,
+        club_id,
+        member_number,
+        member_range,
+        game_stadium,
       })
       .eq("id", postId);
 
@@ -162,9 +177,9 @@ export const updatePostComment = async (commentId) => {
         content: "저 직관가고시퍼용 진짜수정",
       })
       .eq("id", commentId);
-
     if (error) throw new Error("댓글 수정 실패");
     console.log("댓글 수정 완료");
+    return data;
   } catch (err) {
     console.error(err.message);
     return null;

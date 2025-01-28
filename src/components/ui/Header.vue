@@ -6,8 +6,12 @@ import logoImg from "@/assets/images/logo.svg";
 import { useTeamStore } from "@/stores/teamStore";
 import { ref } from "vue";
 import { RouterLink } from "vue-router";
+import EmblemAnimation from "./EmblemAnimation.vue";
+import { useAuthStore } from "@/stores/auth";
+import defaultImg from "@/assets/images/defaultImg_sm.svg";
 
 const teamStore = useTeamStore();
+const authStore = useAuthStore(); // 유저 정보가 가져오기
 
 const teams = [
   "히어로즈",
@@ -31,8 +35,9 @@ const toggleDropdown = () => {
 </script>
 
 <template>
+  <EmblemAnimation v-if="teamStore.isEmblemEffectOn" />
   <header
-    class="w-full h-[100px] flex items-center justify-center fixed z-50 border-b border-white02 bg-white01"
+    class="w-full h-[100px] flex items-center justify-center fixed z-40 border-b border-white02 bg-white01"
   >
     <div class="flex px-[30px] py-[22px] w-full justify-between items-center">
       <!-- 왼쪽 영역(로고 / 네비게이션) -->
@@ -86,18 +91,20 @@ const toggleDropdown = () => {
           class="flex items-center gap-[15px] cursor-pointer"
         >
           <img
-            src="https://news.nateimg.co.kr/orgImg/aj/2024/01/21/20240121132054894779.jpg"
+            :src="authStore.user?.image || defaultImg"
             alt="유저 프로필"
             class="w-10 h-10 rounded-full"
           />
-          <span class="font-bold text-gray03">닉네임</span>
+          <span class="font-bold text-gray03">{{
+            authStore.user?.name || "비회원"
+          }}</span>
         </RouterLink>
         <!-- 테마 -->
         <div
           class="relative flex items-center border border-gray01 rounded-[10px] px-[10px] py-2 h-[35px] w-[135px] cursor-pointer"
           @click="toggleDropdown"
         >
-          <span class="text-gray02 truncate w-full"
+          <span class="w-full truncate text-gray02"
             >{{ teamStore.selectedTeam }} 테마</span
           >
           <img
@@ -114,7 +121,7 @@ const toggleDropdown = () => {
             <li
               v-for="team in teams"
               :key="team"
-              class="px-4 py-2 text-sm text-gray03 hover:bg-gray01 hover:text-white cursor-pointer"
+              class="px-4 py-2 text-sm cursor-pointer text-gray03 hover:bg-gray01 hover:text-white"
               @click.stop="
                 teamStore.selectTeam(team);
                 toggleDropdown();

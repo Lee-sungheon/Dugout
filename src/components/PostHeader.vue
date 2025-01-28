@@ -11,7 +11,7 @@ const props = defineProps({
   crewBoard: {
     type: Boolean,
     required: false,
-    default: false, // 기본값은 false로 설정
+    default: false,
   },
   status: {
     type: String,

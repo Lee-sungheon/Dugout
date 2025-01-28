@@ -1,17 +1,22 @@
 <script setup>
-import { computed, ref } from "vue";
+import { ref } from "vue";
 import CreateHeader from "@/components/CreateHeader.vue";
-import { useRoute, useRouter } from "vue-router";
+import { useRouter } from "vue-router";
 import { teamID } from "@/constants";
 import { createFreePost } from "@/api/supabase-api/freePost";
+import { useAuthStore } from "@/stores/auth";
+
+const props = defineProps({
+  team: String, // url 팀이름 불러오기
+});
+
+const authStore = useAuthStore(); // 유저 정보가 가져오기
 
 const title = ref("");
 const content = ref("");
 const thumbnailUrl = ref("");
 
-const route = useRoute();
-const teamName = ref(route.params.team); // url 팀 이름 불러오기
-const clubId = ref(teamID[teamName.value]); // 팀 id 가져오기
+const clubId = ref(teamID[props.team]); // 팀 id 가져오기
 
 const router = useRouter();
 
@@ -33,13 +38,13 @@ const handleRegister = async () => {
   findThumbnailImage(); // 썸네일 지정하기
   try {
     const data = await createFreePost(
-      "101c1d9d-62be-4505-82d9-6b2ee1861275", // member ID
+      authStore.user.id, // member ID
       content.value,
       title.value,
       thumbnailUrl.value, //thumbnailUrl
-      1 //clubId
+      clubId.value //clubId
     );
-    router.push(`/${teamName.value}/freeboard`);
+    router.push(`/${props.team}/freeboard`);
   } catch (error) {
     console.error("게시물을 등록하는 도중 오류가 생겼습니다.");
   }

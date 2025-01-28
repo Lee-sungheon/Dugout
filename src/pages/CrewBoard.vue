@@ -2,12 +2,15 @@
 import CrewCard from "@/components/crewboard/CrewCard.vue";
 import { getCrewRecruitmentPostsByClub } from "@/api/supabase-api/crewRecruitmentPost";
 import { ref, onMounted } from "vue";
-import { useRoute } from "vue-router";
 import GoToCreate from "@/components/common/GoToCreate.vue";
+import { useRoute, useRouter } from "vue-router";
+import { getCurrentUser } from "@/api/supabase-api/userInfo";
 
 const route = useRoute();
+const router = useRouter();
 const teamName = ref(route.params.team);
 const posts = ref([]);
+const currentUser = ref(null);
 
 // 특정 게시물 데이터 가져오기
 const fetchPosts = async () => {
@@ -21,10 +24,32 @@ const fetchPosts = async () => {
   }
 };
 
+// 현재 로그인 사용자 정보 불러오기
+const getUserInfo = async () => {
+  const userData = await getCurrentUser();
+  if (userData) {
+    currentUser.value = userData; // 로그인된 사용자 정보 저장
+  } else {
+    currentUser.value = null; // 비로그인 상태
+  }
+};
+
+const handleButtonClick = () => {
+  if (currentUser.value) {
+    router.push(`/${teamName.value}/crewboard/create`);
+  } else {
+    // 비로그인 상태: 알림 및 로그인 페이지로 이동
+    alert("로그인 후 이용 가능합니다.");
+    router.push("/signin"); // 로그인 페이지 경로
+  }
+};
+
 onMounted(async () => {
   await fetchPosts();
+  await getUserInfo();
 });
 </script>
+
 <template>
   <div class="flex flex-col px-[50px] py-[30px] items-center">
     <div class="flex flex-col gap-[50px] w-[990px]">
@@ -34,7 +59,12 @@ onMounted(async () => {
       </div>
       <!-- 크루 모집 게시물 리스트 -->
       <div v-if="posts.length" class="grid grid-cols-3 gap-[30px]">
-        <CrewCard v-for="post in posts" :key="post.post_id" :post="post" />
+        <CrewCard
+          v-for="post in posts"
+          :key="post.post_id"
+          :post="post"
+          class="cursor-pointer"
+        />
       </div>
     </div>
   </div>

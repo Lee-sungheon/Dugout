@@ -99,6 +99,7 @@ const router = createRouter({
           path: "freeboard",
           name: "freeboard",
           component: () => import("@/pages/FreeBoard.vue"),
+          props: true,
         },
         {
           path: "freeboard/:post_id/edit",
@@ -117,6 +118,7 @@ const router = createRouter({
           path: "freeboard/create",
           name: "freeboardCreate",
           component: () => import("@/pages/FreeBoardCreate.vue"),
+          props: true,
         },
 
         {
@@ -134,6 +136,12 @@ const router = createRouter({
           name: "crewboardCreate",
           component: () => import("@/pages/CrewBoardCreate.vue"),
         },
+        {
+          path: "crewboard/:id/edit",
+          name: "crewboardEdit",
+          component: () => import("@/pages/CrewBoardEdit.vue"),
+        },
+
         {
           path: "photoboard",
           name: "photoboard",

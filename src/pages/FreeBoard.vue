@@ -6,9 +6,12 @@ import { teamID } from "@/constants";
 import { onMounted, ref, watch } from "vue";
 import { useRoute } from "vue-router";
 
+const props = defineProps({
+  team: String, // url 팀이름 불러오기
+});
+
 const route = useRoute();
-const teamName = ref(route.params.team); // url 팀 이름 불러오기
-const clubId = ref(teamID[teamName.value]); // 팀 id 가져오기
+const clubId = ref(teamID[props.team]); // 팀 id 가져오기
 
 const freeboardList = ref([]);
 
@@ -16,6 +19,7 @@ const freeboardList = ref([]);
 const fetchFreeboard = async () => {
   try {
     const data = await getFreePostsByClub(clubId.value);
+
     freeboardList.value = data || [];
   } catch (error) {
     console.error("데이터를 불러오는 동안 에러가 발생하였습니다.");
@@ -31,8 +35,7 @@ watch(
   () => route.params.team,
   (newTeamName, _) => {
     // 업데이트
-    teamName.value = newTeamName;
-    clubId.value = teamID[teamName.value];
+    clubId.value = teamID[newTeamName];
     fetchFreeboard();
   }
 );
@@ -42,7 +45,6 @@ watch(
     <div class="w-[990px] gap-[50px] flex flex-col">
       <!-- 글쓰기 버튼 -->
       <GoToCreate :text="'자유 게시판에 글 쓰러 가기'" />
-
       <!-- 목록 -->
       <div class="flex flex-col w-full h-full gap-[20px] items-center">
         <template v-if="freeboardList.length > 0">

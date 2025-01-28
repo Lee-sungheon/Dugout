@@ -3,7 +3,7 @@ import { supabase } from "@/supabase";
 // 게시물 댓글 조회 (유저 정보, 이미지 추가)
 export const getComments = async (table, postId) => {
   const { data, error } = await supabase
-    .from("free_post_comment")
+    .from(`${table}_comment`)
     .select(
       `
     id,
@@ -29,7 +29,7 @@ export const getComments = async (table, postId) => {
 // 게시물에 댓글 추가
 export const createComment = async (table, memberId, postId, content) => {
   const { data, error } = await supabase
-    .from(table)
+    .from(`${table}_comment`)
     .insert([{ member_id: memberId, post_id: postId, content }]).select(`
       id,
       post_id,
@@ -52,7 +52,7 @@ export const createComment = async (table, memberId, postId, content) => {
 // 게시물 댓글 수정
 export const updateComment = async (table, commentId, content) => {
   const { data, error } = await supabase
-    .from(table)
+    .from(`${table}_comment`)
     .update({ content })
     .eq("id", commentId).select(`
       id,
@@ -73,10 +73,10 @@ export const updateComment = async (table, commentId, content) => {
   return data;
 };
 
-// 자유 게시물 댓글 삭제
+// 댓글 삭제
 export const deleteComment = async (table, commentId) => {
   const { data, error } = await supabase
-    .from(table)
+    .from(`${table}_comment`)
     .delete()
     .eq("id", commentId);
 

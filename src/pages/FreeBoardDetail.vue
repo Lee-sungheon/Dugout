@@ -23,7 +23,6 @@ dayjs.locale("ko"); // 한국어 로케일 설정
 const fetchFreeboardDetail = async () => {
   try {
     const data = await getFreePostDetailsById(props.post_id);
-    console.log("데이터 확인", data);
     post.value = data;
   } catch (error) {
     console.error("데이터를 불러오는 도중에 오류가 발생했습니다.");

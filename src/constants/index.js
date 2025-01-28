@@ -1,18 +1,18 @@
-import kiaLogo from "@/assets/images/logo_kia.svg";
-import samsungLogo from "@/assets/images/logo_samsung.svg";
-import lgLogo from "@/assets/images/logo_lg.svg";
 import doosanLogo from "@/assets/images/logo_doosan.svg";
-import ktLogo from "@/assets/images/logo_kt.svg";
-import ssgLogo from "@/assets/images/logo_ssg.svg";
-import lotteLogo from "@/assets/images/logo_lotte.svg";
-import hanhwaLogo from "@/assets/images/logo_hanhwa.svg";
-import ncLogo from "@/assets/images/logo_nc.svg";
-import kiwoomLogo from "@/assets/images/logo_kiwoom.svg";
 import gameIcon from "@/assets/images/baseballgame_logo.svg";
-import quizIcon from "@/assets/images/quiz_logo.svg";
-import tournamentIcon from "@/assets/images/tournament-logo.svg";
 import gameIconBlack from "@/assets/images/baseballgame_logo_black.svg";
+import hanhwaLogo from "@/assets/images/logo_hanhwa.svg";
+import kiaLogo from "@/assets/images/logo_kia.svg";
+import kiwoomLogo from "@/assets/images/logo_kiwoom.svg";
+import ktLogo from "@/assets/images/logo_kt.svg";
+import lgLogo from "@/assets/images/logo_lg.svg";
+import lotteLogo from "@/assets/images/logo_lotte.svg";
+import ncLogo from "@/assets/images/logo_nc.svg";
+import quizIcon from "@/assets/images/quiz_logo.svg";
 import quizIconBlack from "@/assets/images/quiz_logo_black.svg";
+import samsungLogo from "@/assets/images/logo_samsung.svg";
+import ssgLogo from "@/assets/images/logo_ssg.svg";
+import tournamentIcon from "@/assets/images/tournament-logo.svg";
 import tournamentIconBlack from "@/assets/images/tournament_logo_black.svg";
 
 export const teamList = [
@@ -106,9 +106,9 @@ export const foodBoardTag = [
   "# 야구 볼 수 있는 식당",
 ];
 
-export const boardToCommentTableMapping = {
-  freeboard: "free_post_comment",
-  crewboard: "crew_recruitment_post_comment",
-  photoboard: "viewing_certification_post_comment",
-  foodboard: "restaurant_post_comment",
+export const boardToTableMapping = {
+  freeboard: "free_post",
+  crewboard: "crew_recruitment_post",
+  photoboard: "viewing_certification_post",
+  foodboard: "restaurant_post",
 };
