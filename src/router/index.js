@@ -126,6 +126,12 @@ const router = createRouter({
           component: () => import("@/pages/CrewBoardCreate.vue"),
         },
         {
+          path: "crewboard/:id/edit",
+          name: "crewboardEdit",
+          component: () => import("@/pages/CrewBoardEdit.vue"),
+        },
+
+        {
           path: "photoboard",
           name: "photoboard",
           component: () => import("@/pages/PhotoBoard.vue"),
