@@ -91,12 +91,12 @@ const toggleDropdown = () => {
           class="flex items-center gap-[15px] cursor-pointer"
         >
           <img
-            :src="authStore.user.image || defaultImg"
+            :src="authStore.user?.image || defaultImg"
             alt="유저 프로필"
             class="w-10 h-10 rounded-full"
           />
           <span class="font-bold text-gray03">{{
-            authStore.user.name || "비회원"
+            authStore.user?.name || "비회원"
           }}</span>
         </RouterLink>
         <!-- 테마 -->
