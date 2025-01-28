@@ -1,14 +1,14 @@
 <script setup>
 import { getCurrentUser } from "@/api/supabase-api/userInfo";
 import RecruitmentStatus from "./RecruitmentStatus.vue";
-import { computed, onMounted, ref } from "vue";
+import { computed, onMounted, ref, watchEffect } from "vue";
 import { useRoute, useRouter } from "vue-router";
 
 const props = defineProps({
   crewBoard: {
     type: Boolean,
     required: false,
-    default: false, // 기본값은 false로 설정
+    default: false,
   },
   title: {
     type: String,
@@ -28,7 +28,6 @@ const props = defineProps({
   },
   status: {
     type: String,
-    // required: true,
   },
   memberId: {
     type: String,
@@ -43,32 +42,17 @@ const props = defineProps({
     required: true,
   },
 });
-// // 시간 차이를 계산하는 함수
-// const timeAgo = (givenTime) => {
-//   const givenDate = new Date(givenTime);
-//   const currentDate = new Date();
-//   const timeDifference = currentDate - givenDate;
-
-//   if (timeDifference < 60 * 1000) {
-//     return "방금 전";
-//   } else if (timeDifference < 60 * 60 * 1000) {
-//     return `${Math.floor(timeDifference / (60 * 1000))}분 전`;
-//   } else if (timeDifference < 24 * 60 * 60 * 1000) {
-//     return `${Math.floor(timeDifference / (60 * 60 * 1000))}시간 전`;
-//   } else if (timeDifference < 7 * 24 * 60 * 60 * 1000) {
-//     return `${Math.floor(timeDifference / (24 * 60 * 60 * 1000))}일 전`;
-//   } else {
-//     return givenDate.toISOString().split("T")[0]; // 날짜만 출력
-//   }
-// };
-
-// // 계산된 시간 차이
-// const formattedTime = computed(() => timeAgo(props.time));
 
 const currentUserId = ref(null);
 
 const route = useRoute();
 const router = useRouter();
+const reactiveTitle = ref(props.title);
+
+watchEffect(() => {
+  console.log("📌 PostHeader에서 받은 title:", props.title);
+  reactiveTitle.value = props.title;
+});
 
 // 현재 로그인한 유저의 ID 가져오기
 onMounted(async () => {
@@ -102,7 +86,7 @@ const goToEditPage = () => {
   <div class="flex flex-col gap-[10px] pb-5 border-b border-white02">
     <!-- 제목 -->
     <div class="flex items-center gap-[15px]">
-      <span class="text-2xl font-bold">{{ props.title }}</span>
+      <span class="text-2xl font-bold">{{ reactiveTitle }}</span>
       <!-- crew모집 페이지에서만 다음 컴포넌트 출력 -->
       <RecruitmentStatus v-if="props.crewBoard" :status="props.status" />
     </div>
@@ -120,7 +104,7 @@ const goToEditPage = () => {
       </div>
       <!-- 수정 삭제 버튼 -->
       <div class="flex text-xs text-gray02 gap-[4px]">
-        <button class="hover:text-gray03">수정</button>
+        <button @click="goToEditPage" class="hover:text-gray03">수정</button>
         <span>|</span>
         <button @click="confirmDelete" class="hover:text-gray03">삭제</button>
       </div>

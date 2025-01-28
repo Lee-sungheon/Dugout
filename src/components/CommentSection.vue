@@ -1,78 +1,175 @@
 <script setup>
-import Commentbox from "./Commentbox.vue";
-import likeIcon from "@/assets/icons/like.svg";
+import { createComment, getComments } from "@/api/supabase-api/commonComment";
+import {
+  addLike,
+  getLikes,
+  removeLike,
+} from "@/api/supabase-api/commonLikeWithoutDuplication";
+import { getCurrentUser } from "@/api/supabase-api/userInfo";
 import commentIcon from "@/assets/icons/comment.svg";
 import commentBtnIcon from "@/assets/icons/comment_btn.svg";
-import { onMounted, ref } from "vue";
+import likeIcon from "@/assets/icons/like.svg";
+import likeIconFilled from "@/assets/icons/like_fill.svg";
+import { boardToTableMapping } from "@/constants";
+import { computed, onMounted, ref } from "vue";
 import { useRoute } from "vue-router";
-import { createComment, getComments } from "@/api/supabase-api/common";
-import { boardToCommentTableMapping } from "@/constants";
-
-defineProps({
-  likeLength: {
-    type: Number,
-    default() {
-      return 0;
-    },
-  },
-});
+import Commentbox from "./Commentbox.vue";
 
 const route = useRoute();
-const post_id = ref(route.params.id);
-const boardName = route.path.split("/")[2]; // 게시판 이름
-
-const text = ref("");
+const postId = ref(route.params.id);
+const boardName = route.path.split("/")[2];
+const commentText = ref(""); // 댓글 텍스트
 const comments = ref([]);
+const likes = ref([]);
+const currentUserId = ref(null);
+const currentUserName = ref(null);
+const currentUserImage = ref(null);
+const liked = computed(() =>
+  likes.value.some((like) => like.member_id === currentUserId.value)
+);
 
-// // 댓글 생성하는 함수
-const fectCreateComment = async (comment) => {
+const fetchLikes = async () => {
   try {
-    const data = await createComment(
-      boardToCommentTableMapping[boardName],
-      "101c1d9d-62be-4505-82d9-6b2ee1861275", // member ID,
-      post_id.value,
-      comment
-    );
-    // 낙관적 업데이트
-    if (data) {
-      comments.value = [...comments.value, ...data]; // 게시물 목록 추가
-    }
-    console.log("생성데이터", data);
+    const data = await getLikes(boardToTableMapping[boardName], postId.value);
+    likes.value = data;
   } catch (error) {
-    console.error("댓글 작성중 오류가 생겼습니다.");
+    console.error("좋아요 정보를 가져오는 중 오류 발생:", error.message);
   }
 };
 
-// 댓글 정보 가져오는 함수
-const fetchGetComments = async () => {
+const toggleLike = async () => {
+  try {
+    if (liked.value) {
+      likes.value = likes.value.filter(
+        (like) => like.member_id !== currentUserId.value
+      );
+      await removeLike(
+        boardToTableMapping[boardName],
+        postId.value,
+        currentUserId.value
+      );
+    } else {
+      const optimisticLike = { member_id: currentUserId.value };
+      likes.value.push(optimisticLike);
+      const newLike = await addLike(
+        boardToTableMapping[boardName],
+        postId.value,
+        currentUserId.value
+      );
+      if (!newLike) {
+        likes.value = likes.value.filter(
+          (like) => like.member_id !== currentUserId.value
+        );
+      }
+    }
+  } catch (error) {
+    console.error("좋아요 상태 변경 중 오류 발생:", error.message);
+    if (liked.value) {
+      const rollbackLike = { member_id: currentUserId.value };
+      likes.value.push(rollbackLike);
+    } else {
+      likes.value = likes.value.filter(
+        (like) => like.member_id !== currentUserId.value
+      );
+    }
+  }
+};
+
+const fetchComments = async () => {
   try {
     const data = await getComments(
-      boardToCommentTableMapping[boardName],
-      post_id.value
+      boardToTableMapping[boardName],
+      postId.value
     );
-    console.log(data);
     comments.value = data;
   } catch (error) {
-    console.error("댓글 정보를 가져오는 중에 오류가 발생했습니다.");
+    console.error("댓글 정보를 가져오는 중 오류 발생:", error.message);
   }
 };
 
-// 코멘트 목록 업데이트하는 함수
-const updateComments = (newComments) => {
-  comments.value = newComments;
+const refreshComments = async (updatedComments) => {
+  comments.value = updatedComments;
 };
 
-onMounted(() => {
-  fetchGetComments();
+const submitComment = async () => {
+  const commentContent = commentText.value; // 댓글 내용
+  // 낙관적 업데이트
+  const optimisticComment = {
+    id: null, // 임시 ID
+    post_id: postId.value,
+    content: commentContent,
+    created_at: new Date().toISOString(), // 임시
+    user_info: {
+      name: currentUserName.value,
+      image: currentUserImage.value,
+    },
+  };
+
+  comments.value.push(optimisticComment);
+
+  try {
+    const newComment = await createComment(
+      boardToTableMapping[boardName],
+      currentUserId.value,
+      postId.value,
+      commentContent
+    );
+
+    commentText.value = "";
+    optimisticComment.id = newComment.id;
+
+    comments.value = comments.value.map((comment) =>
+      comment.id === null ? optimisticComment : comment
+    );
+  } catch (error) {
+    console.error("댓글을 생성하는 중 오류 발생:", error.message);
+    // 오류 발생 시 롤백
+    comments.value = comments.value.filter((comment) => comment.id !== null);
+  }
+};
+
+const fetchCurrentUser = async () => {
+  try {
+    const user = await getCurrentUser();
+    currentUserId.value = user?.id || null;
+    currentUserName.value = user?.name || null;
+    currentUserImage.value = user?.image || null;
+  } catch (error) {
+    console.error("사용자 정보를 가져오는 중 오류 발생:", error.message);
+  }
+};
+
+onMounted(async () => {
+  try {
+    await fetchCurrentUser();
+    await fetchComments();
+    await fetchLikes();
+  } catch (error) {
+    console.error("초기 데이터 로드 중 오류 발생:", error.message);
+  }
 });
+
+const handleKeydown = (event) => {
+  if (event.key === "Enter") {
+    event.preventDefault();
+    submitComment();
+  }
+};
 </script>
+
 <template>
   <div class="px-[30px] flex flex-col gap-[30px]">
     <!-- 좋아요 / 댓글수 -->
     <div class="flex gap-[20px]">
       <div class="flex gap-[10px]">
-        <img :src="likeIcon" alt="좋아요 아이콘" class="w-[21px] h-18px" />
-        <span class="text-gray02">{{ likeLength }}</span>
+        <button @click="toggleLike">
+          <img
+            :src="liked ? likeIconFilled : likeIcon"
+            alt="좋아요 아이콘"
+            class="w-[21px] h-18px"
+          />
+        </button>
+        <span class="text-gray02">{{ likes.length }}</span>
       </div>
       <div class="flex gap-[10px]">
         <img :src="commentIcon" alt="댓글 아이콘" class="w-[21px] h-18px" />
@@ -88,10 +185,10 @@ onMounted(() => {
         type="text"
         placeholder="댓글을 입력해주세요"
         class="w-full outline-none bg-white01"
-        v-model="text"
+        v-model="commentText"
+        @keydown="handleKeydown"
       />
-
-      <button @click="fectCreateComment(text)">
+      <button @click="submitComment">
         <img
           :src="commentBtnIcon"
           alt="댓글 전송 버튼"
@@ -99,17 +196,19 @@ onMounted(() => {
         />
       </button>
     </div>
+
     <!-- 댓글리스트 -->
     <div class="flex flex-col gap-5">
       <Commentbox
-        v-for="comment of comments"
-        :comment
+        v-for="comment in comments.sort(
+          (a, b) => new Date(b.created_at) - new Date(a.created_at)
+        )"
         :key="comment.id"
-        :comments
-        @update-comments="updateComments"
+        :comments="comments"
+        :comment="comment"
+        :currentUserId="currentUserId"
+        @refresh-comments="refreshComments"
       />
     </div>
   </div>
 </template>
-
-<style scoped></style>

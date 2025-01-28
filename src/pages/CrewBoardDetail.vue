@@ -5,6 +5,7 @@ import PostHeader from "@/components/PostHeader.vue";
 import { getCrewRecruitmentPostDetails } from "@/api/supabase-api/crewRecruitmentPost";
 import { onMounted, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
+import { deleteCrewRecruitmentPost } from "@/api/supabase-api/crewRecruitmentPost";
 // day.js
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
@@ -32,11 +33,18 @@ const fetchPostDetails = async () => {
 const handleBack = () => {
   router.push(`/${currentTeam}/crewboard/`);
 };
-onMounted(() => {
-  fetchPostDetails();
-  console.log(post.value);
+
+// 게시글 삭제 함수
+const confirmDelete = () => {
+  deleteCrewRecruitmentPost(post.value.post_id);
+  router.push(`/${currentTeam}/crewboard/`);
+};
+
+onMounted(async () => {
+  await fetchPostDetails();
 });
 </script>
+
 <template>
   <div v-if="post" class="px-[50px] py-[30px]">
     <!-- 뒤로가기 -->
@@ -54,6 +62,8 @@ onMounted(() => {
         :nickname="post.author_name"
         :time="dayjs(post.created_at).fromNow()"
         :status="post.status"
+        :confirmDelete="confirmDelete"
+        :postId="post.post_id"
       />
       <!-- 게시물 내용 -->
       <div class="pb-[50px] border-b border-gray01 flex flex-col gap-[50px]">

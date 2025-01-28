@@ -144,6 +144,16 @@ const selectDate = (newDate) => {
   isDatePickerOpen.value = false;
 };
 
+const handleSave = async () => {
+  return {
+    content: content.value,
+    imageUrl: uploadedImageUrl.value,
+    gameDate: formatDateForDB(gameDate.value),
+    clubId: clubId.value,
+    title: title.value,
+  };
+};
+
 // 작성글 등록 함수
 const handleRegister = async () => {
   console.log("등록 버튼 클릭됨");
@@ -159,13 +169,13 @@ const handleRegister = async () => {
   }
 
   try {
+    const postData = await handleSave();
     const updatedPost = await updateCertificationPost(
-      postId,
-      content.value,
-      uploadedImageUrl.value,
-      formatDateForDB(gameDate.value),
-      clubId.value,
-      title.value
+      postData.content,
+      postData.imageUrl,
+      postData.gameDate,
+      postData.clubId,
+      postData.title
     );
 
     if (updatedPost) {
