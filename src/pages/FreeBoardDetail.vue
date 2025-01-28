@@ -46,10 +46,8 @@ onMounted(() => {
       <!-- 상세 페이지 정보 -->
       <PostHeader
         :title="post.title"
-        :nickname="post.author_name"
         :time="dayjs(post.created_at).fromNow()"
-        :profileImage="post.author_image"
-        :memberId="post.member_id"
+        :post="post"
       />
       <!-- 게시물 내용 -->
       <div class="border-b border-gray01 pb-[50px]">

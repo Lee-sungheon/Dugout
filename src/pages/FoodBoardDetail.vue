@@ -22,6 +22,7 @@ const post_id = ref(route.params.id);
 const fetchFoodPostDetail = async () => {
   try {
     const data = await getRestaurantPostDetailsById(post_id.value);
+    console.log(data);
     postDetails.value = {
       ...data,
       images: data.images?.map((img) => img.url),
@@ -56,9 +57,8 @@ onMounted(() => {
       <PostHeader
         v-if="postDetails"
         :title="postDetails.title"
-        :nickname="postDetails.name"
+        :post="postDetails"
         :time="calculatedCreatedAt"
-        :profileImage="postDetails.author_image"
       />
 
       <!-- 게시물 내용 -->
