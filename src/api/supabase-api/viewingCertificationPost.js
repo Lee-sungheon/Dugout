@@ -24,26 +24,42 @@ export const getViewingCertificationPostsByClub = async (clubId) => {
 };
 
 // 직관 인증 게시물의 상세 정보를 불러오기
+// export const getCertificationPostDetailsById = async (postId) => {
+//   try {
+//     const { data, error } = await supabase
+//       .from("viewing_certification_post")
+//       .select(
+//         "id, created_at, member_id, title, content, club_id, image, game_date, name, author_image"
+//       )
+//       .eq("id", postId)
+//       .single();
+
+//     if (error) {
+//       console.error("🚨 데이터 가져오기 실패:", error);
+//       return null;
+//     }
+
+//     return data;
+//   } catch (error) {
+//     console.error("게시물 상세 정보 불러오기 실패: ", error);
+//     return null;
+//   }
+// };
+
+// 직관 인증 게시물의 상세 정보를 불러오기
 export const getCertificationPostDetailsById = async (postId) => {
-  try {
-    const { data, error } = await supabase
-      .from("viewing_certification_post")
-      .select(
-        "id, created_at, member_id, title, content, club_id, image, game_date, name, author_image"
-      )
-      .eq("id", postId)
-      .single();
-
-    if (error) {
-      console.error("🚨 데이터 가져오기 실패:", error);
-      return null;
+  const { data, error } = await supabase.rpc(
+    "get_viewing_certification_post_details",
+    {
+      input_post_id: postId,
     }
+  );
 
-    return data;
-  } catch (error) {
-    console.error("게시물 상세 정보 불러오기 실패: ", error);
+  if (error) {
+    console.error("Error fetching free post details:", error);
     return null;
   }
+  return data;
 };
 
 // 직관 인증 게시물 작성하기(생성하기)
