@@ -61,6 +61,13 @@ const fetchFreeboardDetail = async () => {
   }
 };
 
+// 취소 버튼 눌렀을 때 실행되는 함수
+const handleCancel = () => {
+  console.log("취소");
+  alert("등록이 취소되었습니다");
+  router.push(`/${props.team}/freeboard/${props.id}`);
+};
+
 onMounted(() => {
   fetchFreeboardDetail();
 });
