@@ -40,6 +40,7 @@ const calculatedCreatedAt = computed(() => {
 
 onMounted(() => {
   fetchFoodPostDetail();
+
 });
 </script>
 <template>
