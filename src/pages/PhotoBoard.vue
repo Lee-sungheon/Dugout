@@ -16,7 +16,6 @@ const photoboardList = ref([]);
 const fetchPhotoboardList = async () => {
   try {
     const data = await getViewingCertificationPostsByClub(clubId.value);
-    console.log(" photoboardList 데이터 확인:", data);
 
     photoboardList.value = data || [];
   } catch (error) {

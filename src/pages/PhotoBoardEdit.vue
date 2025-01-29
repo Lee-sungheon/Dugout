@@ -38,7 +38,6 @@ const fetchPostData = async (id) => {
   try {
     const data = await getCertificationPostDetailsById(id);
     if (data) {
-      console.log("기존 게시물 데이터", data);
       title.value = data.title;
       content.value = data.content;
       uploadedImageUrl.value = data.image;
@@ -64,11 +63,9 @@ const handleFileChange = async (event) => {
   reader.readAsDataURL(file);
 
   try {
-    console.log("이미지 업로드 시작");
     const imageUrl = await uploadImageToSupabase(file);
     if (imageUrl) {
       uploadedImageUrl.value = imageUrl;
-      console.log("이미지 업로드 성공:", uploadedImageUrl.value);
     } else {
       console.error("이미지 URL을 가져오지 못함");
     }
@@ -109,7 +106,6 @@ watch(gameDate, (newDate) => {
 });
 
 const confirmBlank = () => {
-  console.log("📌 모달 열기 시도");
   modalStore.openModal({
     message: "작성하지 않은 항목이 있습니다 \n 확인 후 입력해주세요",
     type: "oneBtn",
@@ -118,7 +114,6 @@ const confirmBlank = () => {
 };
 
 const confirmGameDate = () => {
-  console.log("📌 모달 열기 시도");
   modalStore.openModal({
     message: "이미 지나간 경기일입니다",
     type: "oneBtn",
@@ -146,8 +141,6 @@ const selectDate = (newDate) => {
 
 // 작성글 등록 함수
 const handleRegister = async () => {
-  console.log("등록 버튼 클릭됨");
-  console.log("업로드된 이미지 URL:", uploadedImageUrl.value);
   if (
     !title.value ||
     !content.value ||
@@ -179,14 +172,8 @@ const handleRegister = async () => {
 };
 
 const handleCancel = () => {
-  console.log("등록 취소");
-  alert("등록이 취소되었습니다");
   router.push(`/${route.params.team}/photoboard/${postId}`);
 };
-
-watch(uploadedImageUrl, (newUrl) => {
-  console.log("업로드된 이미지 변경됨:", newUrl);
-});
 
 const confirmMaxLength = () => {
   modalStore.openModal({
@@ -206,27 +193,19 @@ const handleInput = (event) => {
 };
 
 watchEffect(() => {
-  console.log("✅ route.params.id:", route.params.id); // 디버깅 로그 추가
   if (route.params.id && !isNaN(route.params.id)) {
     fetchPostData(route.params.id); // 직접 값 전달
   } else {
-    console.error(
-      "🚨 잘못된 접근입니다. postId가 존재하지 않음:",
-      route.params.id
-    );
+    console.error("postId가 존재하지 않음:", route.params.id);
     router.replace("/error"); // 예외 처리 페이지로 이동
   }
 });
 
 onMounted(() => {
-  console.log("📌 route.params.id:", route.params.id);
   if (route.params.id && !isNaN(route.params.id)) {
     fetchPostData(route.params.id);
   } else {
-    console.error(
-      "🚨 잘못된 접근입니다. postId가 존재하지 않음:",
-      route.params.id
-    );
+    console.error("postId가 존재하지 않음:", route.params.id);
     router.replace("/error");
   }
 });

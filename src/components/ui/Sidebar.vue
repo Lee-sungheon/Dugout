@@ -9,18 +9,10 @@ import { computed, ref, watch } from "vue";
 import { useRoute } from "vue-router";
 
 const route = useRoute();
-const teamName = ref(route.params.team);
+const teamName = computed(() => route.params.team);
 
-const teamPage = computed(() =>
-  teamList.find(() => teamList.find((team) => team.name === route.params.team))
-);
-
-// route.params.team이 변경될 때마다 반응
-watch(
-  () => route.params.team,
-  (newTeamName, _) => {
-    teamName.value = newTeamName; // teamName을 업데이트
-  }
+const teamPage = computed(
+  () => teamList.find((team) => team.name === route.params.team) || null
 );
 </script>
 <template>
@@ -32,7 +24,7 @@ watch(
       'flex',
       'h-full',
       'w-[190px]',
-      `bg-${teamPage.nickname}_opa30`,
+      teamPage ? `bg-${teamPage.nickname}_opa30` : 'bg-white02',
       'flex-col',
       'items-center',
       'pt-[30px]',
@@ -44,8 +36,8 @@ watch(
     <!-- 구단 이름 -->
     <span
       v-if="teamPage"
-      :class="`text-${teamPage.nickname} text-3xl font-sigmar`"
-      >{{ teamPage.nickname }}</span
+      :class="`text-${teamPage?.nickname} text-3xl font-sigmar`"
+      >{{ teamPage?.nickname }}</span
     >
     <span v-else class="text-gray-500">팀 정보 없음</span>
     <!-- 네비게이트 -->
@@ -56,9 +48,9 @@ watch(
           twMerge(
             'flex px-[10px] py-2 items-center text-lg font-semibold gap-[10px] w-full rounded-[10px]',
             route.path.includes('/freeboard')
-              ? `bg-${teamPage.nickname}_opa10`
+              ? `bg-${teamPage?.nickname}_opa10`
               : '',
-            `hover:bg-${teamPage.nickname}_opa10`
+            `hover:bg-${teamPage?.nickname}_opa10`
           )
         "
       >
