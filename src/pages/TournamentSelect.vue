@@ -31,14 +31,17 @@ const startTournament = () => {
   <div class="relative w-max mx-auto">
     <img :src="Monitor" class="h-[670px]" />
     <div
-      class="absolute top-[109px] left-1/2 translate-x-[-49%] w-full px-[89px] flex justify-between">
+      class="absolute top-[109px] left-1/2 translate-x-[-49%] w-full px-[89px] flex justify-between"
+    >
       <button
         @click="selectTournament('traitor')"
         :class="selectedTournament === 'traitor' ? 'text-gameGreen' : ''"
-        class="flex flex-col justify-center items-center gap-[16px] cursor-pointer">
+        class="flex flex-col justify-center items-center gap-[16px] cursor-pointer"
+      >
         <img
           :src="selectedTournament === 'traitor' ? BadPlayerGreen : BadPlayer"
-          class="h-[217px] flex-1 object-contain" />
+          class="h-[217px] flex-1 object-contain"
+        />
         <span
           :class="
             selectedTournament === 'traitor' ? 'text-gameGreen' : 'text-white01'
@@ -51,10 +54,12 @@ const startTournament = () => {
       <button
         @click="selectTournament('hero')"
         :class="selectedTournament === 'hero' ? 'text-gameGreen' : ''"
-        class="flex flex-col justify-center items-center gap-[16px] cursor-pointer">
+        class="flex flex-col justify-center items-center gap-[16px] cursor-pointer"
+      >
         <img
           :src="selectedTournament === 'hero' ? GoodPlayerGreen : GoodPlayer"
-          class="h-[217px] flex-1 object-contain" />
+          class="h-[217px] flex-1 object-contain"
+        />
         <span
           :class="
             selectedTournament === 'hero' ? 'text-gameGreen' : 'text-white01'
@@ -67,14 +72,16 @@ const startTournament = () => {
       <button
         @click="selectTournament('handsome')"
         :class="selectedTournament === 'handsome' ? 'text-gameGreen' : ''"
-        class="flex flex-col justify-center items-center gap-[16px] cursor-pointer">
+        class="flex flex-col justify-center items-center gap-[16px] cursor-pointer"
+      >
         <img
           :src="
             selectedTournament === 'handsome'
               ? HandsomePlayerGreen
               : HandsomePlayer
           "
-          class="h-[217px] flex-1 object-contain" />
+          class="h-[217px] flex-1 object-contain"
+        />
         <span
           :class="
             selectedTournament === 'handsome'
@@ -89,7 +96,8 @@ const startTournament = () => {
     </div>
     <button
       @click="startTournament"
-      class="absolute bottom-[140px] left-1/2 translate-x-[-45%] cursor-pointer">
+      class="absolute bottom-[140px] left-1/2 translate-x-[-45%] cursor-pointer"
+    >
       <img :src="PlayBtn" />
     </button>
   </div>
