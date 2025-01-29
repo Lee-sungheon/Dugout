@@ -112,3 +112,18 @@ export const boardToTableMapping = {
   photoboard: "viewing_certification_post",
   foodboard: "restaurant_post",
 };
+
+
+export const teamByClubID = {
+  1: "LG 트윈스",
+  2: "두산 베어스",
+  3: "키움 히어로즈",
+  4: "SSG 랜더스",
+  5: "NC 다이노스",
+  6: "기아 타이거즈",
+  7: "한화 이글스",
+  8: "롯데 자이언츠",
+  9: "삼성 라이온즈",
+  10: "KT 위즈",
+};
+
