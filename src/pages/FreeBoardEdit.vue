@@ -9,7 +9,7 @@ import {
 } from "@/api/supabase-api/freePost";
 
 const props = defineProps({
-  post_id: String, // post_id
+  id: String, // post_id
   team: String, // 팀 이름
 });
 
@@ -53,7 +53,7 @@ const handleRegister = async () => {
 // 게시물 상세 정보를 가져오는 함수
 const fetchFreeboardDetail = async () => {
   try {
-    const data = await getFreePostDetailsById(props.post_id);
+    const data = await getFreePostDetailsById(props.id);
     title.value = data.title;
     content.value = data.content;
   } catch (error) {
