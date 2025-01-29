@@ -34,7 +34,9 @@ const imageClass = "w-full h-full object-cover rounded-[10px] flex justify-cente
 </script>
 
 <template>
-  <div v-for="post in props.displayedData" :key="`${post.post_type}${post.id}`" class="w-full aspect-square flex flex-col justify-center items-center border border-1 rounded-[10px] border-whiteDark text-[14px] text-gray relative overflow-hidden group">
+  <div v-for="post in props.displayedData.sort(
+          (a, b) => new Date(b.created_at) - new Date(a.created_at)
+        )" :key="`${post.post_type}${post.id}`" class="w-full aspect-square flex flex-col justify-center items-center border border-1 rounded-[10px] border-whiteDark text-[14px] text-gray relative overflow-hidden group">
     <RouterLink :to="`/${post.club_eng_name}/${post.post_type}/${post.post_id}`" class="w-full h-full object-cover rounded-[10px]">
       <figure v-if="post.thumbnail_url" :class="imageClass">
         <img :src="post.thumbnail_url" :class="imageClass"/>
