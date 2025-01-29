@@ -10,7 +10,7 @@ import relativeTime from "dayjs/plugin/relativeTime";
 import "dayjs/locale/ko"; // 한국어 로케일 가져오기
 
 const props = defineProps({
-  post_id: String, // post_id
+  id: String, // post_id
 });
 
 const post = ref({}); // 게시물 상세 정보를 담을 변수
@@ -22,7 +22,7 @@ dayjs.locale("ko"); // 한국어 로케일 설정
 // 게시물 상세 정보를 가져오는 함수
 const fetchFreeboardDetail = async () => {
   try {
-    const data = await getFreePostDetailsById(props.post_id);
+    const data = await getFreePostDetailsById(props.id);
     post.value = data;
   } catch (error) {
     console.error("데이터를 불러오는 도중에 오류가 발생했습니다.");
