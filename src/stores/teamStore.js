@@ -2,7 +2,7 @@ import { defineStore } from "pinia";
 
 export const useTeamStore = defineStore("teamStore", {
   state: () => ({
-    selectedTeam: localStorage.getItem("selectedTeam") || "히어로즈",
+    selectedTeam: localStorage.getItem("selectedTeam") || "default",
     selectedCommunity: "",
     isEmblemEffectOn: false,
     isEnterAnimationOn: false,
@@ -14,10 +14,10 @@ export const useTeamStore = defineStore("teamStore", {
       this.triggerEmblemEffect();
     },
     endEmblemAnimation() {
-      this.isEmblemEffectOn = false; 
+      this.isEmblemEffectOn = false;
     },
     endEnterAnimation() {
-      this.isEnterAnimationOn = false; 
+      this.isEnterAnimationOn = false;
     },
     triggerEmblemEffect() {
       console.log("애니메이션 시작");
@@ -32,7 +32,7 @@ export const useTeamStore = defineStore("teamStore", {
       this.isEnterAnimationOn = true;
       setTimeout(() => {
         this.endEnterAnimation();
-      }, 1500); 
+      }, 1500);
     },
   },
 });
