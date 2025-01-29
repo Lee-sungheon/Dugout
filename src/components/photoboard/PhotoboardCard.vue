@@ -23,7 +23,7 @@ const props = defineProps({
           :src="props.post.author_image"
           class="w-[25px] h-[25px] object-cover rounded-full flex-nowrap"
         />
-        <p>{{ props.post.name }}</p>
+        <p>{{ props.post.name || "작성자이름 없음" }}</p>
       </div>
       <div class="flex items-center gap-[20px]">
         <div class="flex items-center gap-[10px]">
