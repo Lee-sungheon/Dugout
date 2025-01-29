@@ -39,12 +39,12 @@ const handleRegister = async () => {
   findThumbnailImage(); // 썸네일 지정하기
   try {
     await updateFreePost(
-      props.post_id,
+      props.id,
       content.value,
       title.value,
       thumbnailUrl.value
     );
-    router.push(`/${props.team}/freeboard/${props.post_id}`);
+    router.push(`/${props.team}/freeboard`);
   } catch (error) {
     console.error("게시물을 수정하는 도중 오류가 생겼습니다.");
   }
