@@ -126,4 +126,3 @@ export const teamByClubID = {
   9: "삼성 라이온즈",
   10: "KT 위즈",
 };
-
