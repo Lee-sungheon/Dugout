@@ -1,6 +1,14 @@
 <script setup>
 import mascotImg from "@/assets/images/mascot_lg.svg";
 import { useRouter } from "vue-router";
+// day.js
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
+import "dayjs/locale/ko"; // 한국어 로케일 가져오기
+
+// day.js
+dayjs.extend(relativeTime); // relativeTime 플러그인 활성화
+dayjs.locale("ko"); // 한국어 로케일 설정
 
 const router = useRouter();
 // props로 post 데이터를 받아옵니다.
@@ -52,12 +60,12 @@ const goToDetail = () => {
           alt="유저 프로필"
           class="w-[25px] h-[25px] rounded-full"
         />
-        <span class="text-xs text-gray03"
-          >{{ props.post.author_name || "정보 없음" }}</span
-        >
-        <span class="text-xs text-gray02">{{
-          props.post.created_at.split("T")[0] || "날짜 없음"
+        <span class="text-xs text-gray03">{{
+          props.post.author_name || "정보 없음"
         }}</span>
+        <span class="text-xs text-gray02">
+          {{ dayjs(props.post.created_at).fromNow() }}
+        </span>
       </div>
 
       <div class="flex items-center gap-[5px]">
