@@ -159,7 +159,7 @@ const handleRouting = async () => {
 onMounted(async () => {
   await fetchCurrenthUser();
   await fetchGameRanking();
-  await getNewsData(queryKeyword.value);
+  getNewsData(queryKeyword.value);
 
   // 첫 번째 마퀴 (왼쪽으로 이동)
   gsap.to(marquee.value, {
@@ -284,26 +284,33 @@ onMounted(async () => {
   </section>
   <section class="h-[calc(100vh-100px)]">
     <div class="flex flex-col gap-[30px] w-screen px-[150px]">
-      <div class="flex justify-between border border-red gap-[30px]">
-        <div class="flex-1">
-          <p class="font-bold text-[24px]">야구팬들을 위한 완벽한 허브</p>
-          <p class="font-medium text-black02 text-[20px]">
+      <div
+        class="flex justify-between border border-red gap-[30px] bg-[#3C5C51] px-[10px] py-[10px]">
+        <div class="flex flex-col justify-between flex-1">
+          <p class="font-Galmuri11 text-[14px] text-white01">SCORE BOARD</p>
+          <p class="font-Galmuri11 font-medium text-white02 text-[20px]">
             최신 야구 뉴스와 이슈를 한곳에서 확인하세요
           </p>
-          <p class="text-[14px] mt-[30px]">
+          <p class="font-Galmuri11 text-[14px] text-white02 mt-[20px]">
             경기 결과, 선수 소식, 트레이드 루머까지!<br />
             당신이 놓치고 싶지 않은 모든 야구 이야기를 제공합니다
           </p>
-          <RouterLink to="/news" class="bg-"> 더 많은 뉴스 보기 </RouterLink>
+          <RouterLink
+            to="/news"
+            class="text-white01 bg-black01 px-3 py-2 flex justify-between items-center">
+            <p class="font-Galmuri11">더 많은 뉴스 보기</p>
+            <p class="font-Galmuri11">></p>
+          </RouterLink>
         </div>
-        <div class="flex flex-col">
+        <div class="flex flex-col gap-[5px]">
           <div
             v-for="news of newsData"
             :key="news.link"
             title="뉴스 바로가기"
             class="cursor-pointer"
             @click="goToOriginNew(news.originallink)">
-            <h2 class="text-[16px] text-black01 font-bold py-2">
+            <h2
+              class="bg-black01 text-[16px] text-white01 font-Galmuri11 px-2 py-2">
               {{ stripHtml(news.title) }}
             </h2>
           </div>
