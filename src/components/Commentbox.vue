@@ -6,6 +6,7 @@ import "dayjs/locale/ko";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { nextTick, ref } from "vue";
 import { useRoute } from "vue-router";
+import BaseballLogo from "@/assets/icons/baseball.svg";
 dayjs.extend(relativeTime);
 dayjs.locale("ko");
 
@@ -93,7 +94,7 @@ const fetchUpdateComment = async () => {
     <div class="flex items-center justify-between">
       <div class="flex gap-[10px] items-center">
         <img
-          :src="props.comment.user_info.image"
+          :src="props.comment.user_info.image || BaseballLogo"
           alt="유저 프로필"
           class="w-[35px] h-[35px] rounded-full"
         />

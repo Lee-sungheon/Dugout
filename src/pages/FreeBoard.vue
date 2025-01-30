@@ -3,8 +3,8 @@ import { getFreePostsByClub } from "@/api/supabase-api/freePost";
 import GoToCreate from "@/components/common/GoToCreate.vue";
 import FreeBoardPost from "@/components/freeboard/FreeBoardPost.vue";
 import { teamID } from "@/constants";
-import { onMounted, ref, watch } from "vue";
-import { useRoute } from "vue-router";
+import { nextTick, onMounted, onUnmounted, ref, watch } from "vue";
+import { onBeforeRouteLeave, useRoute } from "vue-router";
 
 const props = defineProps({
   team: String, // url 팀이름 불러오기
@@ -15,19 +15,48 @@ const clubId = ref(teamID[props.team]); // 팀 id 가져오기
 
 const freeboardList = ref(null);
 
+const saveScrollPosition = () => {
+  sessionStorage.setItem("freeboard-scroll", window.scrollY.toString());
+};
+
+const restoreScrollPosition = () => {
+  const savedScroll = sessionStorage.getItem("freeboard-scroll");
+  if (savedScroll) {
+    window.scrollTo(0, parseInt(savedScroll, 10) || 0);
+  }
+};
+
 // 자유 게시판 목록 가져오는 함수
 const fetchFreeboard = async () => {
   try {
     const data = await getFreePostsByClub(clubId.value);
 
     freeboardList.value = data || [];
+
+    await nextTick();
+    restoreScrollPosition();
   } catch (error) {
     console.error("데이터를 불러오는 동안 에러가 발생하였습니다.");
   }
 };
 
-onMounted(() => {
-  fetchFreeboard();
+onMounted(async () => {
+  await fetchFreeboard();
+  window.addEventListener("scroll", saveScrollPosition);
+});
+
+onBeforeRouteLeave((to, _, next) => {
+  if (to.path.includes("/freeboard/")) {
+    saveScrollPosition();
+  }
+  next();
+});
+
+onUnmounted(() => {
+  if (!route.path.includes("/freeboard/")) {
+    saveScrollPosition();
+  }
+  window.removeEventListener("scroll", saveScrollPosition);
 });
 
 // route.params.team이 변경될 때마다 반응

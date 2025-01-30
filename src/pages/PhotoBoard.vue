@@ -1,9 +1,8 @@
 <script setup>
-import { supabase } from "@/supabase";
 import { getViewingCertificationPostsByClub } from "@/api/supabase-api/viewingCertificationPost";
 import PhotoboardCard from "@/components/photoboard/PhotoboardCard.vue";
 import { teamID } from "@/constants";
-import { onMounted, ref, watch } from "vue";
+import { onMounted, onUnmounted, ref, watch } from "vue";
 import { useRoute } from "vue-router";
 import GoToCreate from "@/components/common/GoToCreate.vue";
 
@@ -13,11 +12,25 @@ const clubId = ref(teamID[teamName.value]);
 
 const photoboardList = ref([]);
 
+const saveScrollPosition = () => {
+  sessionStorage.setItem("photoboard-scroll", window.scrollY.toString());
+};
+
+const restoreScrollPosition = () => {
+  const savedScroll = sessionStorage.getItem("photoboard-scroll");
+  if (savedScroll) {
+    window.scrollTo(0, parseInt(savedScroll, 10) || 0);
+  }
+};
+
 const fetchPhotoboardList = async () => {
   try {
     const data = await getViewingCertificationPostsByClub(clubId.value);
-
     photoboardList.value = data || [];
+
+    setTimeout(() => {
+      restoreScrollPosition();
+    }, 0);
   } catch (error) {
     console.error("직관인증포토 포스트를 불러오지 못했습니다");
   }
@@ -25,6 +38,12 @@ const fetchPhotoboardList = async () => {
 
 onMounted(() => {
   fetchPhotoboardList();
+  window.addEventListener("scroll", saveScrollPosition);
+});
+
+onUnmounted(() => {
+  saveScrollPosition();
+  window.removeEventListener("scroll", saveScrollPosition);
 });
 
 watch(
