@@ -4,6 +4,8 @@ import RecruitmentStatus from "./RecruitmentStatus.vue";
 import { computed, onMounted, ref, watchEffect } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useAuthStore } from "@/stores/auth";
+import Modal from "./common/Modal.vue";
+import BaseballLogo from "@/assets/icons/baseball.svg";
 
 //profileImage, memberId, postId는 post로 한번에 전달
 //title은 게시판마다 포맷이 달라 상위 컴포넌트에서 변형해 전달
@@ -73,6 +75,8 @@ const goToEditPage = () => {
 };
 </script>
 <template>
+  <!-- 모달 -->
+  <Modal />
   <!-- 상세 페이지 정보 -->
   <div class="flex flex-col gap-[10px] pb-5 border-b border-white02">
     <!-- 제목 -->
@@ -86,7 +90,7 @@ const goToEditPage = () => {
       <!-- 유저정보 -->
       <div class="flex items-center gap-[10px]">
         <img
-          :src="post.author_image"
+          :src="post.author_image || BaseballLogo"
           alt="유저 프로필"
           class="w-[25px] h-[25px] rounded-full"
         />

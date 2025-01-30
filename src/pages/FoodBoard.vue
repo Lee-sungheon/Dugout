@@ -2,8 +2,8 @@
 import { getRestaurantPostsByTagAndClub } from "@/api/supabase-api/restaurantPost";
 import FoodBoardCard from "@/components/foodboard/FoodBoardCard.vue";
 import { foodBoardTag, teamID } from "@/constants";
-import { onMounted, ref, watch } from "vue";
-import { useRoute } from "vue-router";
+import { nextTick, onMounted, onUnmounted, ref, watch } from "vue";
+import { onBeforeRouteLeave, useRoute } from "vue-router";
 import deleteBtn from "../assets/icons/delete-btn.svg";
 import GoToCreate from "@/components/common/GoToCreate.vue";
 import { useSearchStore } from "@/stores/searchStore";
@@ -14,6 +14,17 @@ const teamName = ref(route.params.team);
 const clubId = ref(teamID[teamName.value]);
 const restaurantPosts = ref([]);
 const selectedTag = ref(null); // 하나의 태그만 선택되도록 변경
+
+const saveScrollPosition = () => {
+  sessionStorage.setItem("foodboard-scroll", window.scrollY.toString());
+};
+
+const restoreScrollPosition = () => {
+  const savedScroll = sessionStorage.getItem("foodboard-scroll");
+  if (savedScroll) {
+    window.scrollTo(0, parseInt(savedScroll, 10) || 0);
+  }
+};
 
 const selectTag = (tag) => {
   if (selectedTag.value === tag) {
@@ -49,6 +60,10 @@ watch(selectedTag, async () => {
     console.error("데이터를 불러오는 도중에 오류가 발생했습니다.");
   } else {
     restaurantPosts.value = data;
+
+    setTimeout(() => {
+      restoreScrollPosition();
+    }, 0);
   }
 });
 
@@ -56,11 +71,31 @@ watch(selectedTag, async () => {
 onMounted(async () => {
   const { data, error } = await fetchFoodBoardList();
   console.log("데이터를 마운팅 했습니다.", data);
+
   if (error) {
     console.error("데이터를 불러오는 도중에 오류가 발생했습니다.");
   } else {
     restaurantPosts.value = data;
+    window.addEventListener("scroll", saveScrollPosition);
+
+    setTimeout(() => {
+      restoreScrollPosition();
+    }, 0);
   }
+});
+
+onBeforeRouteLeave((to, _, next) => {
+  if (to.path.includes("/foodboard/")) {
+    saveScrollPosition();
+  }
+  next();
+});
+
+onUnmounted(() => {
+  if (!route.path.includes("/foodboard/")) {
+    saveScrollPosition();
+  }
+  window.removeEventListener("scroll", saveScrollPosition);
 });
 
 // 중복된 postId를 가진 게시물 제거 함수 + 검색

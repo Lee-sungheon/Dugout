@@ -1,9 +1,9 @@
 <script setup>
 import CrewCard from "@/components/crewboard/CrewCard.vue";
 import { getCrewRecruitmentPostsByClub } from "@/api/supabase-api/crewRecruitmentPost";
-import { ref, onMounted, watchEffect, computed, watch } from "vue";
+import { ref, onMounted, watchEffect, computed, watch, onUnmounted } from "vue";
 import GoToCreate from "@/components/common/GoToCreate.vue";
-import { useRoute, useRouter } from "vue-router";
+import { onBeforeRouteLeave, useRoute, useRouter } from "vue-router";
 import { getCurrentUser } from "@/api/supabase-api/userInfo";
 import { teamID } from "@/constants";
 import { useSearchStore } from "@/stores/searchStore";
@@ -16,11 +16,26 @@ const clubId = ref(teamID[teamName.value]);
 const posts = ref([]);
 const currentUser = ref(null);
 
+const saveScrollPosition = () => {
+  sessionStorage.setItem("crewboard-scroll", window.scrollY.toString());
+};
+
+const restoreScrollPosition = () => {
+  const savedScroll = sessionStorage.getItem("crewboard-scroll");
+  if (savedScroll) {
+    window.scrollTo(0, parseInt(savedScroll, 10) || 0);
+  }
+};
+
 // 특정 게시물 데이터 가져오기
 const fetchPosts = async () => {
   const data = await getCrewRecruitmentPostsByClub(clubId.value);
   if (data) {
-    posts.value = data;
+    posts.value = data || [];
+
+    setTimeout(() => {
+      restoreScrollPosition();
+    }, 0);
   } else {
     console.log("특정 게시물 데이터 가져오기 실패!");
   }
@@ -49,11 +64,26 @@ const handleButtonClick = () => {
 onMounted(async () => {
   await fetchPosts();
   await getUserInfo();
+  window.addEventListener("scroll", saveScrollPosition);
+});
+
+onBeforeRouteLeave((to, _, next) => {
+  if (to.path.includes("/crewboard")) {
+    saveScrollPosition();
+  }
+  next();
+});
+
+onUnmounted(() => {
+  if (!route.path.includes("/crewboard")) {
+    saveScrollPosition();
+  }
+  window.removeEventListener("scroll", saveScrollPosition);
 });
 
 watch(
   () => route.params.team,
-  async (newTeamName) => {
+  async (newTeamName, _) => {
     clubId.value = teamID[newTeamName];
     await fetchPosts();
   }

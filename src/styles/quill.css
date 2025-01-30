@@ -15,8 +15,24 @@
 }
 /* placeholder 수정하기 */
 .ql-editor::before {
-  color: #b1b1b1 !important; /* 텍스트 색상 (파란색) */
+  color: #b1b1b1 !important;
   font-size: 16px; /* 글자 크기 */
   font-style: normal !important;
   padding-left: 70px;
+}
+
+/* 에디터 css */
+.ql-editor {
+  font-size: 16px; /* 글자 크기 */
+}
+
+/* 이미지 정렬추가 */
+.ql-editor .ql-align-center img {
+  display: block;
+  margin: 0 auto;
+}
+.ql-editor .ql-align-right img {
+  display: block;
+  margin-left: auto;
+  margin-right: 0;
 }

@@ -9,7 +9,7 @@ import {
 } from "@/api/supabase-api/freePost";
 
 const props = defineProps({
-  post_id: String, // post_id
+  id: String, // post_id
   team: String, // 팀 이름
 });
 
@@ -39,12 +39,12 @@ const handleRegister = async () => {
   findThumbnailImage(); // 썸네일 지정하기
   try {
     await updateFreePost(
-      props.post_id,
+      props.id,
       content.value,
       title.value,
       thumbnailUrl.value
     );
-    router.push(`/${props.team}/freeboard/${props.post_id}`);
+    router.push(`/${props.team}/freeboard`);
   } catch (error) {
     console.error("게시물을 수정하는 도중 오류가 생겼습니다.");
   }
@@ -53,12 +53,19 @@ const handleRegister = async () => {
 // 게시물 상세 정보를 가져오는 함수
 const fetchFreeboardDetail = async () => {
   try {
-    const data = await getFreePostDetailsById(props.post_id);
+    const data = await getFreePostDetailsById(props.id);
     title.value = data.title;
     content.value = data.content;
   } catch (error) {
     console.error("데이터를 불러오는 도중에 오류가 발생했습니다.");
   }
+};
+
+// 취소 버튼 눌렀을 때 실행되는 함수
+const handleCancel = () => {
+  console.log("취소");
+  alert("등록이 취소되었습니다");
+  router.push(`/${props.team}/freeboard/${props.id}`);
 };
 
 onMounted(() => {

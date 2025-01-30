@@ -48,14 +48,6 @@ const confirmBlank = () => {
   });
 };
 
-const confirmGameDate = () => {
-  modalStore.openModal({
-    message: "이미 지나간 경기일입니다",
-    type: "oneBtn",
-    onConfirm: modalStore.closeModal(),
-  });
-};
-
 //함수
 const handleFileChange = async (event) => {
   const file = event.target.files[0];
@@ -113,10 +105,6 @@ const selectDate = (newDate) => {
   const thisDate = new Date();
   thisDate.setHours(0, 0, 0, 0);
 
-  if (selectedDate < thisDate) {
-    confirmGameDate();
-    return;
-  }
   gameDate.value = newDate;
   isDatePickerOpen.value = false;
 };

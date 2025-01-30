@@ -36,7 +36,7 @@ const fetchPhotoboardDetail = async (postId) => {
 
   try {
     const data = await getCertificationPostDetailsById(postId);
-    console.log("API 응답 데이터:", data);
+    console.log("상세데이터", data);
     if (data) {
       post.value = data;
     } else {
@@ -64,15 +64,12 @@ const titleGameDate = (gameDate) => {
 
 watchEffect(() => {
   if (post.value && post.value.game_date) {
-    console.log("📌 post 업데이트됨:", post.value);
     const postGameDate = titleGameDate(post.value.game_date);
     title.value = `${postGameDate} ${post.value.title || ""}`;
-    console.log("📌 업데이트된 title:", title.value);
   }
 });
 
 onMounted(() => {
-  console.log("🚀 onMounted 실행, postId 확인:", postId.value);
   if (!postId.value) {
     console.warn("route.params.id가 존재하지 않음.");
     return;
@@ -91,7 +88,6 @@ watch(
 );
 
 const confirmDelete = () => {
-  console.log("📌 모달 열기 시도");
   modalStore.openModal({
     message: "삭제 후에는 복구할 수 없습니다 \n삭제하시겠습니까?",
     type: "twoBtn",
