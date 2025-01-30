@@ -9,6 +9,7 @@ import { getBaseballGame } from "@/api/supabase-api/baseballGame";
 import { useAuthStore } from "@/stores/auth";
 import { teamID } from "@/constants";
 import axios from "axios";
+import Ticket from "@/assets/images/ticket.svg";
 
 const marquee = ref(null);
 const marquee2 = ref(null);
@@ -210,57 +211,114 @@ onMounted(async () => {
         </span>
       </div>
     </div>
-    <div class="text-black02 text-center my-[50px]">
-      <div class="text-[24px] font-bold">
-        <template v-if="auth.user && auth.user.baseball_club_id">
-          <p>{{ auth.user.name }}님, 반갑습니다!</p>
-          <p>응원하는 구단의 게시판의 새로운 소식을 확인해보세요!</p>
-        </template>
-        <template v-else-if="auth.user">
-          <p>{{ auth.user.name }}님, 반갑습니다!</p>
-          <p>아직 응원하는 구단을 설정하지 않으셨군요</p>
-        </template>
-        <template v-else>
-          <p>DUGOUT에 오신 것을 환영합니다!</p>
-          <p>로그인하고 응원하는 구단의 게시판을 구경해보세요</p>
-        </template>
+    <div
+      class="flex justify-around items-center align-center px-[50px] h-[calc(100vh-143px)]">
+      <div class="w-[450px] text-black02 text-center my-[50px] relative">
+        <img :src="Ticket" />
+        <div class="absolute top-0 w-full">
+          <div class="font-Galmuri11 font-bold text-[24px] my-5">
+            >> TICKET <<
+          </div>
+          <div class="text-[24px] font-bold">
+            <template v-if="auth.user && auth.user.baseball_club_id">
+              <p>{{ auth.user.name }}님, 반갑습니다</p>
+              <p class="text-[16px]">
+                응원하는 구단의 게시판의 새로운 소식을 확인해보세요!
+              </p>
+            </template>
+            <template v-else-if="auth.user">
+              <p>{{ auth.user.name }}님, 반갑습니다!</p>
+              <p class="text-[16px] mt-5">
+                아직 응원하는 구단을 설정하지 않으셨군요
+              </p>
+              <p class="text-[16px]">
+                마이페이지에서 응원하는 구단을 선택해보세요!
+              </p>
+            </template>
+            <template v-else>
+              <p>DUGOUT에 오신 것을 환영합니다!</p>
+              <p class="text-[16px]">
+                로그인하고 응원하는 구단의 게시판을 구경해보세요
+              </p>
+            </template>
+          </div>
+          <div class="flex flex-col items-center px-5 gap-[10px] mt-[10px]">
+            <template v-if="auth.user && auth.user.baseball_club_id">
+              <div
+                @click="handleBoardRouting('freeboard')"
+                class="w-full py-2 bg-white02 rounded-[10px] cursor-pointer hover:bg-gray01">
+                자유게시판
+              </div>
+              <div
+                @click="handleBoardRouting('crewboard')"
+                class="w-full py-2 bg-white02 rounded-[10px] cursor-pointer hover:bg-gray01">
+                직관 크루 모집
+              </div>
+              <div
+                @click="handleBoardRouting('photoboard')"
+                class="w-full py-2 bg-white02 rounded-[10px] cursor-pointer hover:bg-gray01">
+                직관 인증 포토
+              </div>
+              <div
+                @click="handleBoardRouting('foodboard')"
+                class="w-full py-2 bg-white02 rounded-[10px] cursor-pointer hover:bg-gray01">
+                직관 맛집 찾기
+              </div>
+            </template>
+            <template v-else-if="auth.user">
+              <div
+                @click="handleAuthRouting"
+                class="w-full py-2 bg-white02 rounded-[10px] cursor-pointer hover:bg-gray01 mt-[30px]">
+                마이페이지에서 구단 선택하기
+              </div>
+            </template>
+            <template v-else>
+              <div
+                @click="handleAuthRouting"
+                class="w-full py-2 bg-white02 rounded-[10px] cursor-pointer hover:bg-gray01 mt-[50px]">
+                로그인하러 가기
+              </div>
+            </template>
+          </div>
+        </div>
       </div>
-      <div class="flex flex-col items-center gap-[20px] mt-[30px]">
-        <template v-if="auth.user && auth.user.baseball_club_id">
+      <div
+        class="w-[550px] px-[20px] py-[30px] bg-[#3C5C52] rounded-[10px] flex flex-col items-center gap-[30px]">
+        <div class="font-Galmuri11 font-bold text-[24px] text-white01">
+          실시간 뉴스
+        </div>
+        <div class="flex flex-col gap-[15px] w-full">
           <div
-            @click="handleBoardRouting('freeboard')"
-            class="w-[500px] py-2 bg-white02 rounded-[10px] cursor-pointer hover:bg-gray01">
-            자유게시판
+            v-for="(news, index) of newsData"
+            :key="news.link"
+            title="뉴스 바로가기"
+            class="cursor-pointer flex items-center"
+            @click="goToOriginNew(news.originallink)">
+            <p
+              class="font-Galmuri11 font-bold text-[18px] text-white01 w-[25px]">
+              {{ index + 1 }}
+            </p>
+            <h2
+              class="w-full bg-black01 text-[16px] text-white01 font-Galmuri11 px-2 py-2 truncate">
+              {{ stripHtml(news.title) }}
+            </h2>
           </div>
-          <div
-            @click="handleBoardRouting('crewboard')"
-            class="w-[500px] py-2 bg-white02 rounded-[10px] cursor-pointer hover:bg-gray01">
-            직관 크루 모집
+        </div>
+        <div class="w-full border border-white01"></div>
+        <div class="flex justify-between items-center w-full">
+          <div class="font-Galmuri11 font-bold text-white01">
+            BALL | STRIKE | OUT
           </div>
-          <div
-            @click="handleBoardRouting('photoboard')"
-            class="w-[500px] py-2 bg-white02 rounded-[10px] cursor-pointer hover:bg-gray01">
-            직관 인증 포토
-          </div>
-          <div
-            @click="handleBoardRouting('foodboard')"
-            class="w-[500px] py-2 bg-white02 rounded-[10px] cursor-pointer hover:bg-gray01">
-            직관 맛집 찾기
-          </div>
-        </template>
-        <template v-else-if="auth.user">
-          <div @click="handleAuthRouting" class="cursor-pointer">
-            마이페이지에서 구단 선택하기
-          </div>
-        </template>
-        <template v-else>
-          <div @click="handleAuthRouting" class="cursor-pointer">
-            로그인하러 가기
-          </div>
-        </template>
+          <RouterLink
+            to="/news"
+            class="w-[250px] border border-white01 rounded-[10px] text-white01 px-3 py-2 flex justify-between items-center">
+            <p class="font-Galmuri11">더 많은 뉴스 보기</p>
+            <p class="font-Galmuri11">></p>
+          </RouterLink>
+        </div>
       </div>
     </div>
-    <div class="marquee">
+    <div class="marquee absolute bottom-0">
       <div class="marquee-inner" ref="marquee2">
         <span
           >DUGOUT | TIGERS | LIONS | TWINS | WIZ | BEARS | LANDERS | EAGLES |
@@ -279,46 +337,6 @@ onMounted(async () => {
           | LANDERS | EAGLES | GIANTS | DINOS | HEROS | DUGOUT | TIGERS | LIONS
           | TWINS | WIZ | BEARS | LANDERS | EAGLES | GIANTS | DINOS | HEROS
         </span>
-      </div>
-    </div>
-  </section>
-  <section class="h-[calc(100vh-100px)]">
-    <div class="flex flex-col gap-[30px] w-screen px-[150px]">
-      <div
-        class="flex justify-between border border-red gap-[30px] bg-[#3C5C51] px-[10px] py-[10px]">
-        <div class="flex flex-col justify-between flex-1">
-          <p class="font-Galmuri11 text-[14px] text-white01">SCORE BOARD</p>
-          <p class="font-Galmuri11 font-medium text-white02 text-[20px]">
-            최신 야구 뉴스와 이슈를 한곳에서 확인하세요
-          </p>
-          <p class="font-Galmuri11 text-[14px] text-white02 mt-[20px]">
-            경기 결과, 선수 소식, 트레이드 루머까지!<br />
-            당신이 놓치고 싶지 않은 모든 야구 이야기를 제공합니다
-          </p>
-          <RouterLink
-            to="/news"
-            class="text-white01 bg-black01 px-3 py-2 flex justify-between items-center">
-            <p class="font-Galmuri11">더 많은 뉴스 보기</p>
-            <p class="font-Galmuri11">></p>
-          </RouterLink>
-        </div>
-        <div class="flex flex-col gap-[5px]">
-          <div
-            v-for="news of newsData"
-            :key="news.link"
-            title="뉴스 바로가기"
-            class="cursor-pointer"
-            @click="goToOriginNew(news.originallink)">
-            <h2
-              class="bg-black01 text-[16px] text-white01 font-Galmuri11 px-2 py-2">
-              {{ stripHtml(news.title) }}
-            </h2>
-          </div>
-        </div>
-      </div>
-      <div class="flex justify-between border border-red">
-        <div>응원하는 구단의 하이라이트를 감상해보세요!</div>
-        <div>그림</div>
       </div>
     </div>
   </section>
@@ -392,7 +410,7 @@ onMounted(async () => {
 .marquee-inner span {
   display: inline-block;
   padding: 0 2px;
-  font-size: 16px;
+  font-size: 14px;
   font-weight: bold;
   white-space: nowrap;
 }
