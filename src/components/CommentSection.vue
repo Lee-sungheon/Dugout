@@ -149,7 +149,7 @@ onMounted(async () => {
   }
 });
 
-const handleKeydown = (event) => {
+const handleKeyup = (event) => {
   if (event.key === "Enter") {
     event.preventDefault();
     submitComment();
@@ -186,7 +186,7 @@ const handleKeydown = (event) => {
         placeholder="댓글을 입력해주세요"
         class="w-full outline-none bg-white01"
         v-model="commentText"
-        @keydown="handleKeydown"
+        @keyup="handleKeyup"
       />
       <button @click="submitComment">
         <img

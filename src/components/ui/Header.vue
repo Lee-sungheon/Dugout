@@ -4,14 +4,16 @@ import searchIcon from "@/assets/icons/search.svg";
 import themeToggleIcon from "@/assets/icons/theme_toggle.svg";
 import logoImg from "@/assets/images/logo.svg";
 import { useTeamStore } from "@/stores/teamStore";
-import { ref } from "vue";
-import { RouterLink } from "vue-router";
+import { onMounted, ref } from "vue";
+import { RouterLink, useRoute } from "vue-router";
 import EmblemAnimation from "./EmblemAnimation.vue";
 import { useAuthStore } from "@/stores/auth";
 import defaultImg from "@/assets/images/defaultImg_sm.svg";
 
+const route = useRoute();
 const teamStore = useTeamStore();
 const authStore = useAuthStore(); // 유저 정보가 가져오기
+const isPageInCommunity = ref(route.fullPath.includes("board"))
 
 const teams = [
   "히어로즈",
@@ -32,6 +34,7 @@ const toggleDropdown = () => {
   isDropdownOpen.value = !isDropdownOpen.value;
   localStorage.setItem("dropdownState", isDropdownOpen.value.toString());
 };
+
 </script>
 
 <template>
@@ -84,7 +87,19 @@ const toggleDropdown = () => {
       <!-- 오른쪽 영역(검색 / 유저정보 / 테마) -->
       <div class="flex items-center gap-[30px]">
         <!-- 검색 -->
-        <div><img :src="searchIcon" alt="검색 아이콘" /></div>
+        <form 
+        :class="[
+          'group h-[40px] px-[10px] flex items-center rounded-[10px] transition-all duration-300',
+          isPageInCommunity ? 'bg-white02 w-[40px] hover:w-[320px]' : 'w-[40px] bg-transparent'
+        ]">
+          <input 
+            type="text"
+            placeholder="현재 게시판에서만 검색할 수 있습니다"
+            class="w-0 opacity-0 transition-all duration-300 bg-white02 focus:outline-none group-hover:w-[290px] group-hover:opacity-100"
+            v-if="isPageInCommunity"
+          />
+          <img :src="searchIcon" alt="검색 아이콘" class="w-[20px]"/>
+        </form>
         <!-- 유저정보 -->
         <RouterLink
           to="/myPage"
