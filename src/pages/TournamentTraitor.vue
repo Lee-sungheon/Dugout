@@ -134,7 +134,7 @@ onMounted(() => {
           <div
             class="w-[260px] h-[61px] text-center text-neutral-50 text-l font-bold font-['Galmuri11']"
           >
-            {{userName.name}} 님이 선택하신 <br />올해 최고의 역적은...
+            {{ userName.name }} 님이 선택하신 <br />올해 최고의 역적은...
           </div>
           <div
             class="w-[200px] text-sm text-neutral-50 font-bold font-['Galmuri11'] text-center border-t border-b border-[#b4b1b1]"
@@ -142,7 +142,7 @@ onMounted(() => {
             {{ winner.name }}
           </div>
           <div
-            class="w-[200px] h-[250px] mt-5 bg-gray-200 flex items-center justify-center rounded-lg overflow-hidden mb-3"
+            class="w-[200px] h-[250px] mt-4 bg-gray-200 flex items-center justify-center rounded-lg overflow-hidden mb-3"
           >
             <img
               :src="winner.photo"
@@ -150,11 +150,11 @@ onMounted(() => {
               class="object-cover w-full h-full"
             />
           </div>
-          <p class="text-white text-l font-bold font-['Galmuri11']">
+          <p class="mt-1 text-white text-l font-bold font-['Galmuri11']">
             축하드립니다 (⓿_⓿)
           </p>
           <button
-            class="w-[214px] h-6 mt-8 bg-[#0bf89f] rounded-[5px] text-center text-l font-bold font-['Galmuri11'] cursor-pointer"
+            class="w-[214px] h-8 mt-8 bg-[#0bf89f] rounded-[5px] text-center text-l font-bold font-['Galmuri11'] cursor-pointer"
             @click="goToTournament"
           >
             다른토너먼트 구경하기
@@ -198,7 +198,7 @@ onMounted(() => {
               </div>
               <button
                 @click="selectWinner(currentMatchup[0])"
-                class="w-[90px] h-[30px] bg-white rounded-[5px] text-xl font-bold font-['Galmuri11']"
+                class="w-[90px] h-[30px] hover:bg-gameGreen bg-white rounded-[5px] text-xl font-bold font-['Galmuri11']"
               >
                 선택
               </button>
@@ -220,7 +220,7 @@ onMounted(() => {
               </div>
               <button
                 @click="selectWinner(currentMatchup[1])"
-                class="w-[90px] h-[30px] bg-white rounded-[5px] text-xl font-bold font-['Galmuri11']"
+                class="w-[90px] h-[30px] hover:bg-gameGreen bg-white rounded-[5px] text-xl font-bold font-['Galmuri11']"
               >
                 선택
               </button>
