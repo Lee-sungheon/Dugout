@@ -1,6 +1,6 @@
 <script setup>
 import { getFreePostsByClub } from "@/api/supabase-api/freePost";
-import PostArrow from "@/assets/icons/post_arrow.svg";
+import GoToCreate from "@/components/common/GoToCreate.vue";
 import FreeBoardPost from "@/components/freeboard/FreeBoardPost.vue";
 import { teamID } from "@/constants";
 import { onMounted, ref, watch } from "vue";
@@ -13,7 +13,7 @@ const props = defineProps({
 const route = useRoute();
 const clubId = ref(teamID[props.team]); // 팀 id 가져오기
 
-const freeboardList = ref([]);
+const freeboardList = ref(null);
 
 // 자유 게시판 목록 가져오는 함수
 const fetchFreeboard = async () => {
@@ -44,16 +44,12 @@ watch(
   <div class="flex flex-col px-[50px] py-[30px] items-center">
     <div class="w-[990px] gap-[50px] flex flex-col">
       <!-- 글쓰기 버튼 -->
-      <RouterLink
-        class="flex items-center justify-center w-full font-medium bg-white02 py-[10px] rounded-[10px] gap-[10px]"
-        :to="`/${props.team}/freeboard/create`"
-      >
-        자유 게시판에 글 쓰러 가기
-        <img :src="PostArrow" class="w-[14px] h-[8px]" />
-      </RouterLink>
-
+      <GoToCreate :text="'자유 게시판에 글 쓰러 가기'" />
       <!-- 목록 -->
-      <div class="flex flex-col w-full h-full gap-[20px] items-center">
+      <div
+        class="flex flex-col w-full h-full gap-[20px] items-center"
+        v-if="freeboardList"
+      >
         <template v-if="freeboardList.length > 0">
           <FreeBoardPost
             v-for="(post, index) in freeboardList"
@@ -62,7 +58,7 @@ watch(
           />
         </template>
         <template v-else>
-          <h1>데이터가 없습니다.</h1>
+          <span>게시물이 없습니다. 게시물을 작성해보세요!</span>
         </template>
       </div>
     </div>

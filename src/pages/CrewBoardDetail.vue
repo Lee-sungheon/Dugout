@@ -23,6 +23,7 @@ const currentTeam = router.currentRoute.value.params.team;
 const fetchPostDetails = async () => {
   const postId = route.params.id;
   const data = await getCrewRecruitmentPostDetails(postId);
+  console.log("확인", data);
   if (data) {
     post.value = data;
   } else {
@@ -40,8 +41,8 @@ const confirmDelete = () => {
   router.push(`/${currentTeam}/crewboard/`);
 };
 
-onMounted(async () => {
-  await fetchPostDetails();
+onMounted(() => {
+  fetchPostDetails();
 });
 </script>
 
@@ -59,11 +60,10 @@ onMounted(async () => {
       <PostHeader
         crewBoard
         :title="post.title"
-        :nickname="post.author_name"
         :time="dayjs(post.created_at).fromNow()"
         :status="post.status"
+        :post="post"
         :confirmDelete="confirmDelete"
-        :postId="post.post_id"
       />
       <!-- 게시물 내용 -->
       <div class="pb-[50px] border-b border-gray01 flex flex-col gap-[50px]">

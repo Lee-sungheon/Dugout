@@ -5,7 +5,6 @@ import { onMounted, ref, watch } from "vue";
 import Baseball from "@/assets/icons/baseball.svg";
 import Calendar from "@/assets/icons/calendar.svg";
 import { useRoute, useRouter } from "vue-router";
-import { getCurrentUser } from "@/api/supabase-api/userInfo";
 import {
   getCrewRecruitmentPostDetails,
   updateCrewRecruitmentPost,
@@ -13,8 +12,8 @@ import {
 
 const post = ref();
 const route = useRoute();
-const teamName = ref(route.params.team);
 const router = useRouter();
+const currentTeam = router.currentRoute.value.params.team;
 const content = ref(post.content);
 const recruitStatus = ref("");
 const recruitOptions = ["모집 중", "모집 완료"];
@@ -158,11 +157,7 @@ const fetchPostDetails = async () => {
 // 게시글 수정 함수
 const handleUpdate = async () => {
   const postId = route.params.id;
-  // 입력 데이터 검증
-  // if (!content.value || !recruitStatus.value || !formattedGameDate.value) {
-  //   alert("필수 입력값을 모두 채워주세요.");
-  //   return;
-  // }
+  if (!validateInputs()) return;
   const updatedData = {
     status: recruitStatus.value,
     game_date: formattedGameDate.value,
@@ -180,7 +175,7 @@ const handleUpdate = async () => {
     const result = updateCrewRecruitmentPost(postId, updatedData);
     if (result) {
       alert("게시글이 성공적으로 수정되었습니다.");
-      router.push(`/kia/crewboard`); // 수정 완료 후 목록으로 이동
+      router.push(`/${currentTeam}/crewboard/`);
     }
   } catch (err) {
     console.error(err.message);

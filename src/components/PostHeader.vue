@@ -3,18 +3,23 @@ import { getCurrentUser } from "@/api/supabase-api/userInfo";
 import RecruitmentStatus from "./RecruitmentStatus.vue";
 import { computed, onMounted, ref, watchEffect } from "vue";
 import { useRoute, useRouter } from "vue-router";
+import { useAuthStore } from "@/stores/auth";
+import Modal from "./common/Modal.vue";
 
+//profileImage, memberId, postId는 post로 한번에 전달
+//title은 게시판마다 포맷이 달라 상위 컴포넌트에서 변형해 전달
+//time도 상위 컴포넌트에서 포맷 변화해 사용하고 있어 상위 컴포넌트에서 변화한 포맷으로 전달
 const props = defineProps({
   crewBoard: {
     type: Boolean,
     required: false,
     default: false,
   },
-  title: {
+  status: {
     type: String,
-    required: true,
+    // required: true,
   },
-  nickname: {
+  title: {
     type: String,
     required: true,
   },
@@ -22,49 +27,36 @@ const props = defineProps({
     type: String,
     required: true,
   },
-  profileImage: {
-    type: String,
+  post: {
+    type: Object,
     required: true,
-  },
-  status: {
-    type: String,
-  },
-  memberId: {
-    type: String,
-    required: true, // 게시물 작성자의 ID
-  },
-  postId: {
-    type: String,
-    required: true, // 게시물 ID (수정할 때 필요)
   },
   confirmDelete: {
     type: Function,
     required: true,
   },
 });
-
-const currentUserId = ref(null);
+// const currentUserId = ref(null); // 피니아로 데이터 가져오기
+const authStore = useAuthStore(); // 유저 정보가 가져오기
 
 const route = useRoute();
 const router = useRouter();
 const reactiveTitle = ref(props.title);
 
+// 현재 로그인한 유저의 ID 가져오기 -> 피니아로 대체
+// onMounted(async () => {
+//   const user = await getCurrentUser();
+//   if (user) {
+//     currentUserId.value = user.id;
+//   }
+// });
+
+// 본인 게시물인지 여부 확인 (본인 게시물 아니면 수정, 삭제 버튼 보이지 않게 처리)
+const isOwner = computed(() => authStore.user.id === props.post.member_id);
+
 watchEffect(() => {
-  console.log("📌 PostHeader에서 받은 title:", props.title);
   reactiveTitle.value = props.title;
 });
-
-// 현재 로그인한 유저의 ID 가져오기
-onMounted(async () => {
-  const user = await getCurrentUser();
-  if (user) {
-    currentUserId.value = user.id;
-    console.log("현재 로그인한 유저 ID:", currentUserId.value);
-  }
-});
-
-// 본인 게시물인지 여부 확인
-const isOwner = computed(() => currentUserId.value === props.memberId);
 
 //현재 게시판 종류 가져오기
 const boardType = computed(() => {
@@ -74,7 +66,7 @@ const boardType = computed(() => {
 
 // 수정 페이지 경로 동적으로 생성
 const editPageUrl = computed(() => {
-  return `/${route.params.team}/${boardType.value}/${props.postId}/edit`;
+  return `/${route.params.team}/${boardType.value}/${props.post.post_id}/edit`;
 });
 
 const goToEditPage = () => {
@@ -82,6 +74,8 @@ const goToEditPage = () => {
 };
 </script>
 <template>
+  <!-- 모달 -->
+  <Modal />
   <!-- 상세 페이지 정보 -->
   <div class="flex flex-col gap-[10px] pb-5 border-b border-white02">
     <!-- 제목 -->
@@ -95,15 +89,15 @@ const goToEditPage = () => {
       <!-- 유저정보 -->
       <div class="flex items-center gap-[10px]">
         <img
-          :src="profileImage"
+          :src="post.author_image"
           alt="유저 프로필"
           class="w-[25px] h-[25px] rounded-full"
         />
-        <span class="text-xs text-gray03">{{ props.nickname }}</span>
+        <span class="text-xs text-gray03">{{ props.post.author_name }}</span>
         <span class="text-xs text-gray02">{{ props.time }}</span>
       </div>
       <!-- 수정 삭제 버튼 -->
-      <div class="flex text-xs text-gray02 gap-[4px]">
+      <div v-if="isOwner" class="flex text-xs text-gray02 gap-[4px]">
         <button @click="goToEditPage" class="hover:text-gray03">수정</button>
         <span>|</span>
         <button @click="confirmDelete" class="hover:text-gray03">삭제</button>
