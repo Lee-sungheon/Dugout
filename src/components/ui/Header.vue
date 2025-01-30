@@ -141,9 +141,13 @@ const teamNickname = computed(() => {
             class="absolute top-[40px] left-0 w-full bg-white rounded-[10px] border border-gray01 shadow-lg z-50"
           >
             <li
-              v-for="team in teams"
+              v-for="(team, index) in teams"
               :key="team"
               class="px-4 py-2 text-sm cursor-pointer text-gray03 hover:bg-gray01 hover:text-white"
+              :class="{
+                'rounded-t-lg': index === 0, // 첫 번째 아이템
+                'rounded-b-lg': index === teams.length - 1, // 마지막 아이템
+              }"
               @click.stop="
                 teamStore.selectTeam(team);
                 toggleDropdown();
