@@ -3,8 +3,11 @@ import { getFreePostsByClub } from "@/api/supabase-api/freePost";
 import GoToCreate from "@/components/common/GoToCreate.vue";
 import FreeBoardPost from "@/components/freeboard/FreeBoardPost.vue";
 import { teamID } from "@/constants";
-import { onMounted, ref, watch } from "vue";
+import { useSearchStore } from "@/stores/searchStore";
+import { computed, onMounted, ref, watch, watchEffect } from "vue";
 import { useRoute } from "vue-router";
+
+const searchStore = useSearchStore()
 
 const props = defineProps({
   team: String, // url 팀이름 불러오기
@@ -25,6 +28,11 @@ const fetchFreeboard = async () => {
     console.error("데이터를 불러오는 동안 에러가 발생하였습니다.");
   }
 };
+
+watchEffect(() => {
+  searchStore.setPosts(freeboardList.value);
+});
+const searchResults = computed(() => searchStore.filteredPosts);
 
 onMounted(() => {
   fetchFreeboard();
@@ -47,9 +55,9 @@ watch(
       <GoToCreate :text="'자유 게시판에 글 쓰러 가기'" />
       <!-- 목록 -->
       <div class="flex flex-col w-full h-full gap-[20px] items-center">
-        <template v-if="freeboardList.length > 0">
+        <template v-if="searchResults.length > 0">
           <FreeBoardPost
-            v-for="(post, index) in freeboardList"
+            v-for="(post, index) in searchResults"
             :key="index"
             :post="post"
           />

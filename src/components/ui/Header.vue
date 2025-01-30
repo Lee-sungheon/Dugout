@@ -9,12 +9,18 @@ import { RouterLink, useRoute } from "vue-router";
 import EmblemAnimation from "./EmblemAnimation.vue";
 import { useAuthStore } from "@/stores/auth";
 import defaultImg from "@/assets/images/defaultImg_sm.svg";
+import { useSearchStore } from "@/stores/searchStore";
 
 const route = useRoute();
 const teamStore = useTeamStore();
 const authStore = useAuthStore(); // 유저 정보가 가져오기
 const isPageInCommunity = ref(route.fullPath.includes("board"))
+const searchStore = useSearchStore();
+const searchInput = ref("")
 
+const updateSearchKeyword = () => {
+  searchStore.setKeyword(searchInput.value)
+}
 const teams = [
   "히어로즈",
   "타이거즈",
@@ -94,6 +100,8 @@ const toggleDropdown = () => {
         ]">
           <input 
             type="text"
+            v-model="searchInput"
+            @input="updateSearchKeyword"
             placeholder="현재 게시판에서만 검색할 수 있습니다"
             class="w-0 opacity-0 transition-all duration-300 bg-white02 focus:outline-none group-hover:w-[290px] group-hover:opacity-100"
             v-if="isPageInCommunity"

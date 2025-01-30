@@ -6,8 +6,10 @@ import { onMounted, ref, watch } from "vue";
 import { useRoute } from "vue-router";
 import deleteBtn from "../assets/icons/delete-btn.svg";
 import GoToCreate from "@/components/common/GoToCreate.vue";
+import { useSearchStore } from "@/stores/searchStore";
 
 const route = useRoute();
+const searchStore = useSearchStore();
 const teamName = ref(route.params.team);
 const clubId = ref(teamID[teamName.value]);
 const restaurantPosts = ref([]);
@@ -26,7 +28,7 @@ const fetchFoodBoardList = async () => {
     const restaurantPostsData = await getRestaurantPostsByTagAndClub(
       clubId.value,
       selectedTag.value ? [selectedTag.value] : null // 선택된 태그가 있으면 그 태그만 필터링
-    );
+      );
 
     // 최신순
     const sortedPosts = restaurantPostsData.sort((a, b) => {
@@ -61,7 +63,7 @@ onMounted(async () => {
   }
 });
 
-// 중복된 postId를 가진 게시물 제거 함수
+// 중복된 postId를 가진 게시물 제거 함수 + 검색
 const removeDuplicatePosts = (posts) => {
   const uniquePosts = [];
   const postIds = new Set();
@@ -72,9 +74,18 @@ const removeDuplicatePosts = (posts) => {
       postIds.add(post.id);
     }
   });
-
-  return uniquePosts;
+  searchStore.setPosts(uniquePosts);
+  return searchStore.filteredPosts;
 };
+
+watch(
+  () => route.params.team,
+  (newTeamName, _) => {
+    // 업데이트
+    clubId.value = teamID[newTeamName];
+    fetchFoodBoardList();
+  }
+);
 </script>
 
 <template>
@@ -112,7 +123,7 @@ const removeDuplicatePosts = (posts) => {
             restaurantPosts.filter(
               (post) =>
                 selectedTag === null ||
-                post.tags.some((tag) => tag === selectedTag) // 태그명으로 필터링
+                post.tags.some((tag) => tag === selectedTag) 
             ).length === 0
           "
         >
@@ -127,7 +138,7 @@ const removeDuplicatePosts = (posts) => {
             restaurantPosts.filter(
               (post) =>
                 selectedTag === null ||
-                post.tags.some((tag) => tag === selectedTag) // 태그명으로 필터링
+                post.tags.some((tag) => tag === selectedTag) 
             )
           )"
           :key="index"
