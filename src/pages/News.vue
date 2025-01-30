@@ -9,6 +9,7 @@ import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
 import { teamList, teamsTags } from "@/constants";
 import { useTeamStore } from "@/stores/teamStore";
+import { twMerge } from "tailwind-merge";
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
@@ -64,14 +65,15 @@ onMounted(() => {
   getNewsData(queryKeyword.value);
 });
 
-const selectedTeam = ref([]);
+const selectedTeam = ref([]); // 태그 담을 배열
+
+// 태그 선택 함수
 const selectTeam = (team) => {
   if (!selectedTeam.value.includes(team)) {
-    console.log(team.replace("#", "").split(" ").join(""));
     selectedTeam.value.push(team);
-    console.log("선택팀", selectedTeam.value);
   }
 };
+// 태그 삭제 함수
 const removeTeam = (team) => {
   selectedTeam.value = selectedTeam.value.filter((t) => t !== team);
 };
@@ -108,14 +110,17 @@ watch(
             :key="index"
             @click="selectTeam(team)"
             class="inline-flex items-center h-[39px] px-[15px] rounded-[10px] whitespace-nowrap"
-            :class="{
-              [`bg-${
-                teamNickname ? teamNickname + '_opa30' : 'gray02'
-              } text-white01 gap-[10px]`]: selectedTeam.includes(team),
-              [`bg-${
-                teamNickname ? teamNickname + '_opa10' : 'bg-white02'
-              } text-black01`]: !selectedTeam.includes(team),
-            }"
+            :class="
+              twMerge(
+                selectedTeam.includes(team)
+                  ? `bg-${
+                      teamNickname ? `${teamNickname}_opa30` : 'gray02'
+                    } text-white01 gap-[10px]`
+                  : `bg-${
+                      teamNickname ? `${teamNickname}_opa10` : 'white02'
+                    } text-black01`
+              )
+            "
           >
             <p>{{ team }}</p>
             <img
