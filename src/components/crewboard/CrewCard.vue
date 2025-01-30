@@ -53,7 +53,7 @@ const goToDetail = () => {
           class="w-[25px] h-[25px] rounded-full"
         />
         <span class="text-xs text-gray03"
-          >작성자: {{ props.post.author_name || "정보 없음" }}</span
+          >{{ props.post.author_name || "정보 없음" }}</span
         >
         <span class="text-xs text-gray02">{{
           props.post.created_at.split("T")[0] || "날짜 없음"
