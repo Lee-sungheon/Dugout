@@ -1,16 +1,37 @@
 <script setup>
-import mascotImg from "@/assets/images/mascot_lg.svg";
 import { useRouter } from "vue-router";
 // day.js
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import "dayjs/locale/ko"; // 한국어 로케일 가져오기
+import { computed } from "vue";
 
 // day.js
 dayjs.extend(relativeTime); // relativeTime 플러그인 활성화
 dayjs.locale("ko"); // 한국어 로케일 설정
 
+// 현재 팀 이름을 라우터에서 가져옴
 const router = useRouter();
+const currentTeam = router.currentRoute.value.params.team;
+
+// 팀별 마스콧 이미지 맵핑
+const mascotImages = {
+  doosan: new URL("@/assets/images/mascot_doosan.svg", import.meta.url).href,
+  hanhwa: new URL("@/assets/images/mascot_hanhwa.svg", import.meta.url).href,
+  kia: new URL("@/assets/images/mascot_kia1.svg", import.meta.url).href,
+  kiwoom: new URL("@/assets/images/mascot_kiwoom.svg", import.meta.url).href,
+  kt: new URL("@/assets/images/mascot_kt.svg", import.meta.url).href,
+  lg: new URL("@/assets/images/mascot_lg.svg", import.meta.url).href,
+  lotte: new URL("@/assets/images/mascot_lotte1.svg", import.meta.url).href,
+  nc: new URL("@/assets/images/mascot_nc1.svg", import.meta.url).href,
+  samsung: new URL("@/assets/images/mascot_samsung.svg", import.meta.url).href,
+  ssg: new URL("@/assets/images/mascot_ssg.svg", import.meta.url).href,
+};
+
+const mascotImg = computed(() => {
+  return mascotImages[currentTeam];
+});
+
 // props로 post 데이터를 받아옵니다.
 const props = defineProps({
   post: {
@@ -24,8 +45,6 @@ const goToDetail = () => {
     console.error("Invalid post data:", props.post);
     return;
   }
-  // 현재 팀 이름을 라우터에서 가져옴
-  const currentTeam = router.currentRoute.value.params.team;
 
   // 라우팅: 팀 이름과 포스트 ID를 포함한 경로로 이동
   router.push(`/${currentTeam}/crewboard/${props.post.post_id}`);
@@ -56,7 +75,7 @@ const goToDetail = () => {
       <div class="flex items-center gap-[10px]">
         <img
           :src="props.post.author_image || mascotImg"
-          alt="유저 프로필"
+          :alt="`${currentTeam} 로고 이미지`"
           class="w-[25px] h-[25px] rounded-full"
         />
         <span class="text-xs text-gray03">{{

@@ -23,8 +23,6 @@ const fetchPosts = async () => {
     console.log("특정 게시물 데이터 가져오기 실패!");
   }
 };
-console.log(teamName.value);
-console.log(clubId.value);
 // 현재 로그인 사용자 정보 불러오기
 const getUserInfo = async () => {
   const userData = await getCurrentUser();
