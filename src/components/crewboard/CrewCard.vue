@@ -46,10 +46,9 @@ const goToDetail = () => {
 
     <!-- 카드 중앙 데이터 -->
     <div
-      class="absolute flex flex-col items-center w-full text-xl font-bold transform -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2"
+      class="px-[10px] absolute flex flex-col items-center w-full text-xl font-bold transform -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2"
     >
       <span>{{ props.post.title || "제목 없음" }}</span>
-      <span>{{ props.post.status || "상태 없음" }}</span>
     </div>
 
     <!-- 하단 유저 정보 및 모집 상태 -->
