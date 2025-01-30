@@ -1,6 +1,7 @@
 <script setup>
 import mascotImg from "@/assets/images/mascot_lg.svg";
 import { useRouter } from "vue-router";
+import BaseballLogo from "@/assets/icons/baseball.svg";
 
 const router = useRouter();
 // props로 post 데이터를 받아옵니다.
@@ -48,7 +49,7 @@ const goToDetail = () => {
     <div class="flex items-center justify-between w-full">
       <div class="flex items-center gap-[10px]">
         <img
-          :src="props.post.author_image || mascotImg"
+          :src="props.post.author_image || BaseballLogo"
           alt="유저 프로필"
           class="w-[25px] h-[25px] rounded-full"
         />

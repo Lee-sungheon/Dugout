@@ -2,6 +2,7 @@
 import likeIcon from "@/assets/icons/like.svg";
 import commentIcon from "@/assets/icons/comment.svg";
 import defaultImg from "@/assets/images/defaultImg_sm.svg";
+import BaseballLogo from "@/assets/icons/baseball.svg";
 
 const route = useRoute();
 

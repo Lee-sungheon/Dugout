@@ -7,6 +7,7 @@ import "dayjs/locale/ko";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { computed } from "vue";
 import { KakaoMap, KakaoMapMarker } from "vue3-kakao-maps";
+import BaseballLogo from "@/assets/icons/baseball.svg";
 dayjs.extend(relativeTime);
 dayjs.locale("ko");
 
@@ -96,7 +97,7 @@ const calculatedCreatedAt = computed(() => {
           <div class="flex text-[12px] gap-[10px] items-center">
             <div class="w-[25px] h-[25px] rounded-full overflow-hidden">
               <img
-                :src="props.restaurantPostData.author_image"
+                :src="props.restaurantPostData.author_image || BaseballLogo"
                 class="w-full h-full object-cover"
               />
             </div>

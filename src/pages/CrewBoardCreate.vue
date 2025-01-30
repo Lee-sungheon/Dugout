@@ -161,14 +161,14 @@ const handleRegister = () => {
     game_stadium: stadium.value,
   });
   alert("게시글이 성공적으로 등록되었습니다.");
-  router.push(`/${currentTeam}/crewboard/`);
+  router.push(`/${currentTeam}/crewboard`);
 };
 
 // 게시글 작성 취소 함수
 const handleCancel = () => {
   const isConfirmed = confirm("정말로 취소 하시겠습니까?");
   if (isConfirmed) {
-    router.push(`/${currentTeam}/crewboard/`);
+    router.push(`/${currentTeam}/crewboard`);
   } else {
     return;
   }
