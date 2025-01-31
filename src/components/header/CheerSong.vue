@@ -8,12 +8,12 @@ import AudioForwardIcon from "@/assets/icons/audio_forward.svg";
 import AudioPauseIcon from "@/assets/icons/audio_pause.svg";
 import { onMounted, ref } from "vue";
 const player = ref(null);
-const isPlaying = ref(true);
+const isPlaying = ref(false);
 const isAutoPlaying = ref(true);
 const currentIndex = ref(0);
 
 const teamChants = [
-  { team: "LG 트윈스 응원가", videoId: "k6N2w6P7JXE" },
+  { team: "LG 트윈스 응원가", videoId: "Qtu23VpTeOA" },
   { team: "두산 베어스 응원가", videoId: "lMhDirLYvVo" },
   { team: "키움 히어로즈 응원가", videoId: "OjoYnwcZMOI" },
   { team: "SSG 랜더스 응원가", videoId: "VBCa5NIHDWU" },
@@ -25,73 +25,69 @@ const teamChants = [
   { team: "KT 위즈 응원가", videoId: "WDZzXQlfTK8" },
 ];
 
-// 📌 YouTube API를 동적으로 로드하는 함수
+//YouTube API를 동적으로 로드하는 함수
 const loadYouTubeAPI = () => {
-  console.log("🔹 loadYouTubeAPI() 실행됨");
-
   if (!window.YT) {
-    console.log("⏳ YouTube API를 동적으로 추가 중...");
     const script = document.createElement("script");
     script.src = "https://www.youtube.com/iframe_api";
     script.async = true;
-    script.onload = () => {
-      console.log("✅ YouTube API 스크립트 로드 완료");
-    };
+    // script.onload = () => {
+    //   window.onYouTubeIframeAPIReady();
+    // };
     document.head.appendChild(script);
   } else {
-    console.log("✅ YouTube API가 이미 로드됨");
+    createYouTubePlayer();
   }
 
-  // API가 로드된 후 실행될 함수 등록
-  window.onYouTubeIframeAPIReady = () => {
-    console.log("🎉 YouTube API 준비 완료!");
-    createYouTubePlayer();
-  };
+  //   // YouTube API가 완전히 로드된 후 실행
+  //   window.onYouTubeIframeAPIReady = () => {
+  //     createYouTubePlayer();
+  //   };
 };
 
+// Youtube 플레이어 생성 함수
 const createYouTubePlayer = () => {
-  console.log("🔹 createYouTubePlayer() 실행됨");
   if (!window.YT || !window.YT.Player) {
-    console.error("❌ YouTube API가 아직 로드되지 않음.");
+    console.error("YouTube API가 아직 로드되지 않음.");
     return;
   }
 
-  if (player.value && typeof player.value.playVideo === "function") {
-    console.log("✅ 기존 YouTube Player가 존재함", player.value);
-    return;
-  }
-
-  console.log("🛠 YouTube Player 새로 생성 중...");
   player.value = new YT.Player("youtube-player", {
-    videoId: teamChants[currentIndex.value].videoId, // 초기 응원가
+    videoId: teamChants[currentIndex.value]?.videoId, // 초기 응원가
     playerVars: {
       autoplay: 0, // 자동 재생 x
       loop: 0, // 반복 X
       controls: 0, // 컨트롤 바 숨김
-      modestbranding: 1,
+      modestbranding: 1, //유투브 로고 숨김
       mute: 0, // 음소거 x
     },
     events: {
       onReady: (event) => {
         player.value = event.target;
-        console.log("YouTube Player is ready.");
-        console.log("🎬 YouTube Player가 준비됨", player.value);
-
-        if (typeof player.value.playVideo === "function") {
-          console.log(
-            "✅ `player.value`가 정상적으로 YT.Player 인스턴스로 설정됨"
-          );
-        } else {
-          console.error("❌ `player.value` 내부에 playVideo() 메서드가 없음.");
-        }
       },
       onStateChange: (event) => {
-        if (event.data === YT.PlayerState.ENDED) {
-          playForward(); // 노래가 끝나면 자동으로 다음 곡 재생
+        if (event.data === YT.PlayerState.ENDED && isAutoPlaying.value) {
+          playForward(); // 자동재생이 활성화된 경우에만 자동으로 다음 곡으로 이동
         }
       },
     },
   });
+};
+
+//새 비디오 로드
+const loadNewVideo = () => {
+  if (player.value) {
+    player.value.stopVideo(); //기존 곡 재생 중지
+    player.value.loadVideoById(teamChants[currentIndex.value]?.videoId);
+
+    if (isPlaying.value) {
+      setTimeout(() => {
+        player.value.playVideo(); // isPlaying이 true면 자동 재생
+      }, 500);
+    }
+  } else {
+    console.error("YouTube 플레이어가 생성되지 않음");
+  }
 };
 
 // 다음 곡 재생
@@ -102,6 +98,7 @@ const playForward = () => {
     currentIndex.value = 0; // 마지막 곡이면 첫 번째 곡으로 돌아가기
   }
   loadNewVideo();
+  isPlaying.value = true;
 };
 
 // 이전 곡 재생
@@ -112,36 +109,33 @@ const playBack = () => {
     currentIndex.value = teamChants.length - 1; // 첫 번째 곡이면 마지막 곡으로 가기
   }
   loadNewVideo();
+  isPlaying.value = true;
 };
 
-const loadNewVideo = () => {
-  if (player.value && typeof player.value.loadVideoById === "function") {
-    player.value.loadVideoById(teamChants[currentIndex.value].videoId);
-  } else {
-    console.error("YouTube Player is not initialized yet.");
-  }
-};
-
+//플레이 이벤트 함수
 const togglePlay = () => {
-  console.log("🔹 togglePlay() 실행됨, player.value:", player.value);
-
-  if (player.value && typeof player.value.pauseVideo === "function") {
+  if (player.value) {
     if (isPlaying.value) {
-      console.log("⏸ 일시정지 실행");
       player.value.pauseVideo();
     } else {
-      console.log("▶ 재생 실행");
       player.value.playVideo();
     }
     isPlaying.value = !isPlaying.value;
-  } else {
-    console.error("❌ YouTube Player가 아직 초기화되지 않음");
   }
 };
 
+//자동재생 이벤트 함수
+const toggleAutoPlay = () => {
+  isAutoPlaying.value = !isAutoPlaying.value;
+};
+
 onMounted(() => {
-  console.log("🔹 onMounted 실행됨");
-  loadYouTubeAPI();
+  if (window.YT && window.YT.Player) {
+    createYouTubePlayer();
+  } else {
+    loadYouTubeAPI();
+    window.onYouTubeIframeAPIReady = createYouTubePlayer;
+  }
 });
 </script>
 <template>
@@ -157,7 +151,7 @@ onMounted(() => {
             class="w-[20px] h-[20px]"
           />
         </button>
-        <button v-if="isPlaying" @click="togglePlay">
+        <button v-if="!isPlaying" @click="togglePlay">
           <img
             :src="AudioPlayIcon"
             alt="플레이 아이콘"
@@ -179,22 +173,19 @@ onMounted(() => {
           />
         </button>
       </div>
-      <span class="text-[14px] text-gray03 text-semibold">LG TWINS 응원가</span>
+      <span class="text-[14px] text-gray03 text-semibold">{{
+        teamChants[currentIndex].team
+      }}</span>
     </div>
-    <button v-if="isAutoPlaying" class="mr-[14.26px]">
+    <button @click="toggleAutoPlay" class="mr-[14.26px]">
       <img
-        :src="OffAutoPlayIcon"
+        :src="isAutoPlaying ? OffAutoPlayIcon : OnAutoPlayIcon"
         alt="자동재생 아이콘"
         class="w-[20px] h-[20px]"
       />
     </button>
-    <button v-else class="mr-[14.26px]">
-      <img
-        :src="OnAutoPlayIcon"
-        alt="자동재생 아이콘"
-        class="w-[20px] h-[20px]"
-      />
-    </button>
+    <!--  YouTube iframe (숨김 처리) -->
+    <div id="youtube-player" class="hidden"></div>
   </div>
 </template>
 <style scoped></style>
