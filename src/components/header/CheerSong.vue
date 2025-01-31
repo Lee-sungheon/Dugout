@@ -6,7 +6,7 @@ import AudioPlayIcon from "@/assets/icons/audio_play.svg";
 import AudioBackIcon from "@/assets/icons/audio_back.svg";
 import AudioForwardIcon from "@/assets/icons/audio_forward.svg";
 import AudioPauseIcon from "@/assets/icons/audio_pause.svg";
-import { computed, onMounted, ref, watch } from "vue";
+import { onMounted, ref, watch } from "vue";
 
 const props = defineProps({
   selectedTeam: String,
@@ -28,11 +28,19 @@ const teamChants = [
   { team: "KT 위즈 응원가", videoId: "WDZzXQlfTK8" },
 ];
 
-const currentIndex = computed(() =>
-  Math.max(
-    0,
-    teamChants.findIndex((value) => value.team.includes(props.selectedTeam))
-  )
+const currentIndex = ref(0);
+
+watch(
+  () => props.selectedTeam,
+  (newTeam) => {
+    const index = teamChants.findIndex((value) => value.team.includes(newTeam));
+    currentIndex.value = Math.max(0, index);
+
+    if (isPlaying.value) {
+      loadNewVideo();
+    }
+  },
+  { immediate: true }
 );
 
 watch(currentIndex, () => {
