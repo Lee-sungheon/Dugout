@@ -6,6 +6,7 @@ export const createFreePost = async (
   content,
   title,
   thumbnailUrl,
+  thumbnailCount,
   clubId
 ) => {
   const { data, error } = await supabase
@@ -16,6 +17,7 @@ export const createFreePost = async (
         content,
         title,
         thumbnail_url: thumbnailUrl,
+        thumbnail_count: thumbnailCount,
         club_id: clubId,
       },
     ])
@@ -70,8 +72,9 @@ export const getFreePostsByClub = async (clubId) => {
 
 // 특정 자유 게시물의 상세 정보 조회
 export const getFreePostDetailsById = async (postId) => {
-  const { data, error } = await supabase
-    .rpc('get_free_post_details_by_id', { input_post_id: postId });
+  const { data, error } = await supabase.rpc("get_free_post_details_by_id", {
+    input_post_id: postId,
+  });
 
   if (error) {
     console.error("Error fetching free post details:", error);
