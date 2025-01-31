@@ -30,55 +30,26 @@ const teamChants = [
 
 const currentIndex = ref(0);
 
-watch(
-  () => props.selectedTeam,
-  (newTeam) => {
-    const index = teamChants.findIndex((value) => value.team.includes(newTeam));
-    currentIndex.value = Math.max(0, index);
-
-    if (isPlaying.value) {
-      loadNewVideo();
-    }
-  },
-  { immediate: true }
-);
-
-watch(currentIndex, () => {
-  if (isPlaying.value) loadNewVideo();
-});
-
 //YouTube API를 동적으로 로드하는 함수
 const loadYouTubeAPI = () => {
   if (!window.YT) {
     const script = document.createElement("script");
     script.src = "https://www.youtube.com/iframe_api";
     script.async = true;
-    // script.onload = () => {
-    //   window.onYouTubeIframeAPIReady();
-    // };
     document.head.appendChild(script);
   } else {
     createYouTubePlayer();
   }
-
-  //   // YouTube API가 완전히 로드된 후 실행
-  //   window.onYouTubeIframeAPIReady = () => {
-  //     createYouTubePlayer();
-  //   };
 };
 
 // Youtube 플레이어 생성 함수
 const createYouTubePlayer = () => {
-  if (!window.YT || !window.YT.Player) {
-    console.error("YouTube API가 아직 로드되지 않음.");
-    return;
-  }
+  if (!window.YT || !window.YT.Player) return;
 
   player.value = new YT.Player("youtube-player", {
     videoId: teamChants[currentIndex.value]?.videoId, // 초기 응원가
     playerVars: {
       autoplay: 0, // 자동 재생 x
-      loop: 0, // 반복 X
       controls: 0, // 컨트롤 바 숨김
       modestbranding: 1, //유투브 로고 숨김
       mute: 0, // 음소거 x
@@ -88,6 +59,14 @@ const createYouTubePlayer = () => {
         player.value = event.target;
       },
       onStateChange: (event) => {
+        if (event.data === YT.PlayerState.PLAYING) {
+          isPlaying.value = true; // 유튜브가 실제로 재생될 때 isPlaying을 true로 설정
+        }
+
+        if (event.data === YT.PlayerState.PAUSED) {
+          isPlaying.value = false; // 사용자가 명확하게 Pause 했을 때만 false로 변경
+        }
+
         if (event.data === YT.PlayerState.ENDED && isAutoPlaying.value) {
           playForward(); // 자동재생이 활성화된 경우에만 자동으로 다음 곡으로 이동
         }
@@ -99,16 +78,19 @@ const createYouTubePlayer = () => {
 //새 비디오 로드
 const loadNewVideo = () => {
   if (player.value) {
+    const wasPlaying = isPlaying.value; // 현재 재생 상태 저장
     player.value.stopVideo(); //기존 곡 재생 중지
     player.value.loadVideoById(teamChants[currentIndex.value]?.videoId);
 
-    if (isPlaying.value) {
+    if (wasPlaying) {
       setTimeout(() => {
-        player.value.playVideo(); // isPlaying이 true면 자동 재생
-      }, 500);
+        player.value.playVideo();
+      }, 100);
+    } else {
+      setTimeout(() => {
+        player.value.pauseVideo(); // 자동 재생 방지
+      }, 100);
     }
-  } else {
-    console.error("YouTube 플레이어가 생성되지 않음");
   }
 };
 
@@ -120,7 +102,6 @@ const playForward = () => {
     currentIndex.value = 0; // 마지막 곡이면 첫 번째 곡으로 돌아가기
   }
   loadNewVideo();
-  isPlaying.value = true;
 };
 
 // 이전 곡 재생
@@ -131,7 +112,6 @@ const playBack = () => {
     currentIndex.value = teamChants.length - 1; // 첫 번째 곡이면 마지막 곡으로 가기
   }
   loadNewVideo();
-  isPlaying.value = true;
 };
 
 //플레이 이벤트 함수
@@ -140,9 +120,10 @@ const togglePlay = () => {
     if (isPlaying.value) {
       player.value.pauseVideo();
     } else {
-      player.value.playVideo();
+      setTimeout(() => {
+        player.value.playVideo();
+      }, 500);
     }
-    isPlaying.value = !isPlaying.value;
   }
 };
 
@@ -159,6 +140,17 @@ onMounted(() => {
     window.onYouTubeIframeAPIReady = createYouTubePlayer;
   }
 });
+
+watch(
+  () => props.selectedTeam,
+  (newTeam) => {
+    const index = teamChants.findIndex((value) => value.team.includes(newTeam));
+    currentIndex.value = Math.max(0, index);
+
+    loadNewVideo();
+  },
+  { immediate: true }
+);
 </script>
 <template>
   <div
