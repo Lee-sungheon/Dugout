@@ -8,7 +8,9 @@ import { createCrewRecruitmentPost } from "@/api/supabase-api/crewRecruitmentPos
 import { useRouter } from "vue-router";
 import { getCurrentUser } from "@/api/supabase-api/userInfo";
 import { teamID } from "@/constants";
+import { useModalStore } from "@/stores/useModalStore";
 
+const modalStore = useModalStore();
 const currentUser = ref(null);
 const router = useRouter();
 const currentTeam = router.currentRoute.value.params.team;
@@ -62,48 +64,92 @@ const isCrewGenderDisabled = ref(false);
 
 // 필수 입력값 검증 함수
 const validateInputs = () => {
+  if (!content.value) {
+    modalStore.openModal({
+      message: "모집글을 작성해주세요.",
+      type: "oneBtn",
+      onConfirm: modalStore.closeModal(),
+    });
+    return false;
+  }
   if (!recruitStatus.value) {
-    alert("모집 상태를 선택해주세요.");
+    modalStore.openModal({
+      message: "모집 상태를 선택해주세요.",
+      type: "oneBtn",
+      onConfirm: modalStore.closeModal(),
+    });
     return false;
   }
   if (!formattedGameDate.value) {
-    alert("경기일을 선택해주세요.");
-    return false;
-  }
-  if (!content.value) {
-    alert("모집글을 작성해주세요.");
+    modalStore.openModal({
+      message: "경기일을 선택해주세요.",
+      type: "oneBtn",
+      onConfirm: modalStore.closeModal(),
+    });
     return false;
   }
   if (!peopleNum.value) {
-    alert("인원을 선택해주세요.");
+    modalStore.openModal({
+      message: "인원을 선택해주세요.",
+      type: "oneBtn",
+      onConfirm: modalStore.closeModal(),
+    });
     return false;
   }
   if (!peopleStatus.value) {
-    alert("인원 상태를 작성해주세요.");
+    modalStore.openModal({
+      message: "인원 상태를 선택해주세요.",
+      type: "oneBtn",
+      onConfirm: modalStore.closeModal(),
+    });
     return false;
   }
   if (!myTeam.value) {
-    alert("응원팀을 선택해주세요.");
+    modalStore.openModal({
+      message: "응원팀을 선택해주세요.",
+      type: "oneBtn",
+      onConfirm: modalStore.closeModal(),
+    });
     return false;
   }
   if (!stadium.value) {
-    alert("경기장소를 선택해주세요.");
+    modalStore.openModal({
+      message: "경기장소를 선택해주세요.",
+      type: "oneBtn",
+      onConfirm: modalStore.closeModal(),
+    });
     return false;
   }
   if (!myAge.value) {
-    alert("작성자 성별을 선택해주세요.");
+    modalStore.openModal({
+      message: "작성자 성별을 선택해주세요.",
+      type: "oneBtn",
+      onConfirm: modalStore.closeModal(),
+    });
     return false;
   }
   if (!myAge.value) {
-    alert("작성자 연령을 선택해주세요.");
+    modalStore.openModal({
+      message: "작성자 연령을 선택해주세요.",
+      type: "oneBtn",
+      onConfirm: modalStore.closeModal(),
+    });
     return false;
   }
   if (!crewGender.value) {
-    alert("크루 성별을 선택해주세요.");
+    modalStore.openModal({
+      message: "크루 성별을 선택해주세요.",
+      type: "oneBtn",
+      onConfirm: modalStore.closeModal(),
+    });
     return false;
   }
   if (!crewAge.value) {
-    alert("크루 연령을 선택해주세요.");
+    modalStore.openModal({
+      message: "크루 연령을 선택해주세요.",
+      type: "oneBtn",
+      onConfirm: modalStore.closeModal(),
+    });
     return false;
   }
   return true;
@@ -144,34 +190,45 @@ const getUserInfo = async () => {
 };
 
 // 크루 모집 게시글 등록 함수
-const handleRegister = () => {
+const handleRegister = async () => {
   if (!validateInputs()) return;
-  createCrewRecruitmentPost({
-    member_id: currentUser.value.id,
-    status: recruitStatus.value,
-    game_date: formattedGameDate.value,
-    author_sex: myGender.value,
-    author_age: myAge.value,
-    crew_sex: crewGender.value,
-    crew_age: crewAge.value,
-    content: content.value,
-    club_id: clubId.value,
-    member_number: peopleNum.value,
-    member_range: peopleStatus.value,
-    game_stadium: stadium.value,
-  });
-  alert("게시글이 성공적으로 등록되었습니다.");
-  router.push(`/${currentTeam}/crewboard/`);
+  try {
+    await createCrewRecruitmentPost({
+      member_id: currentUser.value.id,
+      status: recruitStatus.value,
+      game_date: formattedGameDate.value,
+      author_sex: myGender.value,
+      author_age: myAge.value,
+      crew_sex: crewGender.value,
+      crew_age: crewAge.value,
+      content: content.value,
+      club_id: clubId.value,
+      member_number: peopleNum.value,
+      member_range: peopleStatus.value,
+      game_stadium: stadium.value,
+    });
+
+    modalStore.openModal({
+      message: "게시글이 성공적으로 등록되었습니다.",
+      type: "oneBtn",
+      onConfirm: () => {
+        modalStore.closeModal();
+        router.push(`/${currentTeam}/crewboard/`);
+      },
+    });
+  } catch (error) {
+    console.error("게시글 등록 실패:", error);
+    modalStore.openModal({
+      message: "게시글 등록 중 오류가 발생했습니다.",
+      type: "oneBtn",
+      onConfirm: () => modalStore.closeModal(),
+    });
+  }
 };
 
 // 게시글 작성 취소 함수
 const handleCancel = () => {
-  const isConfirmed = confirm("정말로 취소 하시겠습니까?");
-  if (isConfirmed) {
-    router.push(`/${currentTeam}/crewboard/`);
-  } else {
-    return;
-  }
+  router.push(`/${currentTeam}/crewboard/`);
 };
 
 onMounted(async () => {

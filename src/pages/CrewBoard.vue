@@ -24,28 +24,28 @@ const fetchPosts = async () => {
   }
 };
 // 현재 로그인 사용자 정보 불러오기
-const getUserInfo = async () => {
-  const userData = await getCurrentUser();
-  if (userData) {
-    currentUser.value = userData; // 로그인된 사용자 정보 저장
-  } else {
-    currentUser.value = null; // 비로그인 상태
-  }
-};
+// const getUserInfo = async () => {
+//   const userData = await getCurrentUser();
+//   if (userData) {
+//     currentUser.value = userData; // 로그인된 사용자 정보 저장
+//   } else {
+//     currentUser.value = null; // 비로그인 상태
+//   }
+// };
 
-const handleButtonClick = () => {
-  if (currentUser.value) {
-    router.push(`/${teamName.value}/crewboard/create`);
-  } else {
-    // 비로그인 상태: 알림 및 로그인 페이지로 이동
-    alert("로그인 후 이용 가능합니다.");
-    router.push("/signin"); // 로그인 페이지 경로
-  }
-};
+// const handleButtonClick = () => {
+//   if (currentUser.value) {
+//     router.push(`/${teamName.value}/crewboard/create`);
+//   } else {
+//     // 비로그인 상태: 알림 및 로그인 페이지로 이동
+//     alert("로그인 후 이용 가능합니다.");
+//     router.push("/signin"); // 로그인 페이지 경로
+//   }
+// };
 
 onMounted(async () => {
   await fetchPosts();
-  await getUserInfo();
+  // await getUserInfo();
 });
 
 // route.params.team이 변경될 때마다 반응

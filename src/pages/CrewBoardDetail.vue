@@ -6,6 +6,8 @@ import { getCrewRecruitmentPostDetails } from "@/api/supabase-api/crewRecruitmen
 import { onMounted, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { deleteCrewRecruitmentPost } from "@/api/supabase-api/crewRecruitmentPost";
+import { useModalStore } from "@/stores/useModalStore";
+import Modal from "@/components/common/Modal.vue";
 // day.js
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
@@ -15,6 +17,7 @@ import "dayjs/locale/ko"; // 한국어 로케일 가져오기
 dayjs.extend(relativeTime); // relativeTime 플러그인 활성화
 dayjs.locale("ko"); // 한국어 로케일 설정
 
+const modalStore = useModalStore();
 const route = useRoute();
 const router = useRouter();
 const post = ref(null);
@@ -23,7 +26,6 @@ const currentTeam = router.currentRoute.value.params.team;
 const fetchPostDetails = async () => {
   const postId = route.params.id;
   const data = await getCrewRecruitmentPostDetails(postId);
-  console.log("확인", data);
   if (data) {
     post.value = data;
   } else {
@@ -35,10 +37,17 @@ const handleBack = () => {
   router.push(`/${currentTeam}/crewboard/`);
 };
 
-// 게시글 삭제 함수
 const confirmDelete = () => {
-  deleteCrewRecruitmentPost(post.value.post_id);
-  router.push(`/${currentTeam}/crewboard/`);
+  modalStore.openModal({
+    message: "삭제 후에는 복구할 수 없습니다 \n삭제하시겠습니까?",
+    type: "twoBtn",
+    onConfirm: async () => {
+      await deleteCrewRecruitmentPost(post.value.post_id);
+      modalStore.closeModal();
+      router.push(`/${currentTeam}/crewboard/`);
+    },
+    onCancel: modalStore.closeModal(),
+  });
 };
 
 onMounted(() => {
