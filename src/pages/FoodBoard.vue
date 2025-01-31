@@ -2,7 +2,7 @@
 import { getRestaurantPostsByTagAndClub } from "@/api/supabase-api/restaurantPost";
 import FoodBoardCard from "@/components/foodboard/FoodBoardCard.vue";
 import { foodBoardTag, teamID } from "@/constants";
-import { onMounted, onUnmounted, ref, watch } from "vue";
+import { computed, onMounted, onUnmounted, ref, watch } from "vue";
 import { onBeforeRouteLeave, useRoute } from "vue-router";
 import deleteBtn from "../assets/icons/delete-btn.svg";
 import GoToCreate from "@/components/common/GoToCreate.vue";
@@ -26,6 +26,7 @@ const restoreScrollPosition = () => {
   }
 };
 
+
 const selectTag = (tag) => {
   if (selectedTag.value === tag) {
     selectedTag.value = null; // 이미 선택된 태그가 클릭되면 선택 해제
@@ -34,6 +35,12 @@ const selectTag = (tag) => {
   }
 };
 
+const postsFilteredWithTag = computed(() => {
+  return restaurantPosts.value.filter(
+    (post) => selectedTag.value === null || post.tags.includes(selectedTag.value)
+  );
+});
+
 const fetchFoodBoardList = async () => {
   try {
     const restaurantPostsData = await getRestaurantPostsByTagAndClub(
@@ -41,31 +48,20 @@ const fetchFoodBoardList = async () => {
       selectedTag.value ? [selectedTag.value] : null // 선택된 태그가 있으면 그 태그만 필터링
       );
 
-    // 최신순
-    const sortedPosts = restaurantPostsData.sort((a, b) => {
-      return new Date(b.created_at) - new Date(a.created_at);
-    });
-
-    return { data: sortedPosts, error: null };
+    return { data: restaurantPostsData, error: null };
   } catch (error) {
     console.error("데이터를 불러오는 도중에 오류가 발생했습니다.");
     return { data: null, error };
   }
 };
 
-watch(selectedTag, async () => {
+watch(selectedTag, () => {
   console.log("selectedTag 변경:", selectedTag.value);
-  const { data, error } = await fetchFoodBoardList();
-  if (error) {
-    console.error("데이터를 불러오는 도중에 오류가 발생했습니다.");
-  } else {
-    restaurantPosts.value = data;
-
-    setTimeout(() => {
-      restoreScrollPosition();
-    }, 0);
-  }
+  setTimeout(() => {
+    restoreScrollPosition();
+  }, 0);
 });
+
 
 // 페이지가 로드될 때 데이터를 한 번 불러옴
 onMounted(async () => {
@@ -155,11 +151,7 @@ watch(
         <div
           v-if="
             restaurantPosts.length === 0 ||
-            restaurantPosts.filter(
-              (post) =>
-                selectedTag === null ||
-                post.tags.some((tag) => tag === selectedTag) 
-            ).length === 0
+            postsFilteredWithTag.length === 0
           "
         >
           <section
@@ -169,13 +161,7 @@ watch(
           </section>
         </div>
         <FoodBoardCard
-          v-for="(restaurantPost, index) in removeDuplicatePosts(
-            restaurantPosts.filter(
-              (post) =>
-                selectedTag === null ||
-                post.tags.some((tag) => tag === selectedTag) 
-            )
-          )"
+          v-for="(restaurantPost, index) in removeDuplicatePosts(postsFilteredWithTag)"
           :key="index"
           :restaurantPostData="restaurantPost"
           :teamName
