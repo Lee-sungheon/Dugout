@@ -2,12 +2,20 @@
 import { getViewingCertificationPostsByClub } from "@/api/supabase-api/viewingCertificationPost";
 import PhotoboardCard from "@/components/photoboard/PhotoboardCard.vue";
 import { teamID } from "@/constants";
-import { computed, nextTick, onMounted, onUnmounted, ref, watch, watchEffect } from "vue";
+import {
+  computed,
+  nextTick,
+  onMounted,
+  onUnmounted,
+  ref,
+  watch,
+  watchEffect,
+} from "vue";
 import { useRoute } from "vue-router";
 import GoToCreate from "@/components/common/GoToCreate.vue";
 import { useSearchStore } from "@/stores/searchStore";
 
-const searchStore = useSearchStore()
+const searchStore = useSearchStore();
 
 const route = useRoute();
 const teamName = ref(route.params.team);
@@ -50,15 +58,15 @@ onUnmounted(() => {
 });
 
 watch(
-() => route.params.team,
-async (newTeamName) => {
-teamName.value = newTeamName;
-clubId.value = teamID[newTeamName];
+  () => route.params.team,
+  async (newTeamName) => {
+    teamName.value = newTeamName;
+    clubId.value = teamID[newTeamName];
 
-await nextTick();
-fetchPhotoboardList();
-},
-{ immediate: true }
+    await nextTick();
+    fetchPhotoboardList();
+  },
+  { immediate: true }
 );
 
 watchEffect(() => {
@@ -74,7 +82,7 @@ const searchResults = computed(() => searchStore.filteredPosts);
       <GoToCreate :text="'직관 인증 포토 올리러 가기'" />
       <!-- 목록 -->
       <div class="w-full h-auto mb-[100px]">
-        <div class="grid grid-cols-3 gap-[30px] w-full">
+        <div v-if="photoboardList" class="grid grid-cols-3 gap-[30px] w-full">
           <PhotoboardCard
             v-for="post in searchResults"
             :key="post.id"

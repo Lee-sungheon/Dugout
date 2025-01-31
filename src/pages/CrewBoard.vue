@@ -42,28 +42,28 @@ const fetchPosts = async () => {
 };
 
 // 현재 로그인 사용자 정보 불러오기
-const getUserInfo = async () => {
-  const userData = await getCurrentUser();
-  currentUser.value = userData || null;
-};
+// const getUserInfo = async () => {
+//   const userData = await getCurrentUser();
+//   if (userData) {
+//     currentUser.value = userData; // 로그인된 사용자 정보 저장
+//   } else {
+//     currentUser.value = null; // 비로그인 상태
+//   }
+// };
 
-watchEffect(() => {
-  searchStore.setPosts(posts.value);
-});
-const searchResults = computed(() => searchStore.filteredPosts);
-
-const handleButtonClick = () => {
-  if (currentUser.value) {
-    router.push(`/${teamName.value}/crewboard/create`);
-  } else {
-    alert("로그인 후 이용 가능합니다.");
-    router.push("/signin");
-  }
-};
+// const handleButtonClick = () => {
+//   if (currentUser.value) {
+//     router.push(`/${teamName.value}/crewboard/create`);
+//   } else {
+//     // 비로그인 상태: 알림 및 로그인 페이지로 이동
+//     alert("로그인 후 이용 가능합니다.");
+//     router.push("/signin"); // 로그인 페이지 경로
+//   }
+// };
 
 onMounted(async () => {
   await fetchPosts();
-  await getUserInfo();
+  // await getUserInfo();
   window.addEventListener("scroll", saveScrollPosition);
 });
 

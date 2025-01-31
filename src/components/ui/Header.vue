@@ -1,5 +1,4 @@
 <script setup>
-import headsetIcon from "@/assets/icons/audio_headset.svg";
 import searchIcon from "@/assets/icons/search.svg";
 import themeToggleIcon from "@/assets/icons/theme_toggle.svg";
 import logoImg from "@/assets/images/logo.svg";
@@ -9,21 +8,24 @@ import { RouterLink, useRoute } from "vue-router";
 import EmblemAnimation from "./EmblemAnimation.vue";
 import { useAuthStore } from "@/stores/auth";
 import defaultImg from "@/assets/images/defaultImg_sm.svg";
+import CheerSong from "../header/CheerSong.vue";
+import { useSearchStore } from "@/stores/searchStore";
 import { teamList } from "@/constants";
 import { twMerge } from "tailwind-merge";
-import { useSearchStore } from "@/stores/searchStore";
 
 const route = useRoute();
 const teamStore = useTeamStore();
 const authStore = useAuthStore(); // 유저 정보가 가져오기
 
-const isPageInCommunity = ref(route.fullPath.includes("board"))
+const isPageInCommunity = ref(route.fullPath.includes("board"));
 const searchStore = useSearchStore();
-const searchInput = ref("")
+const searchInput = ref("");
+
+const isSearchHovered = ref(false);
 
 const updateSearchKeyword = () => {
-  searchStore.setKeyword(searchInput.value)
-}
+  searchStore.setKeyword(searchInput.value);
+};
 const teams = [
   "기본",
   "히어로즈",
@@ -59,7 +61,6 @@ const teamNickname = computed(() => {
   );
   return team ? team.nickname : null; // 팀이 없으면 null 반환
 });
-
 </script>
 
 <template>
@@ -98,26 +99,25 @@ const teamNickname = computed(() => {
       </div>
       <!-- 가운데 영역(음악) -->
       <div>
-        <div
-          class="w-[44px] h-[35px] bg-white02 rounded-[10px] flex justify-center items-center"
-        >
-          <img
-            :src="headsetIcon"
-            alt="헤드셋 아이콘"
-            class="w-[20px] h-[20px]"
-          />
-        </div>
+        <CheerSong
+          :selectedTeam="teamStore.selectedTeam"
+          :isSearchHovered="isSearchHovered"
+        />
       </div>
-
       <!-- 오른쪽 영역(검색 / 유저정보 / 테마) -->
       <div class="flex items-center gap-[30px]">
         <!-- 검색 -->
-        <form 
-        :class="[
-          'group h-[40px] px-[10px] flex items-center rounded-[10px] transition-all duration-300',
-          isPageInCommunity ? 'bg-white02 w-[40px] hover:w-[320px]' : 'w-[40px] bg-transparent'
-        ]">
-          <input 
+        <form
+          :class="[
+            'group h-[40px] px-[10px] flex items-center rounded-[10px] transition-all duration-300',
+            isPageInCommunity
+              ? 'bg-white02 w-[40px] hover:w-[320px]'
+              : 'w-[40px] bg-transparent',
+          ]"
+          @mouseenter="isSearchHovered = true"
+          @mouseleave="isSearchHovered = false"
+        >
+          <input
             type="text"
             v-model="searchInput"
             @input="updateSearchKeyword"
@@ -125,7 +125,7 @@ const teamNickname = computed(() => {
             class="w-0 opacity-0 transition-all duration-300 bg-white02 focus:outline-none group-hover:w-[290px] group-hover:opacity-100"
             v-if="isPageInCommunity"
           />
-          <img :src="searchIcon" alt="검색 아이콘" class="w-[20px]"/>
+          <img :src="searchIcon" alt="검색 아이콘" class="w-[20px]" />
         </form>
         <!-- 유저정보 -->
         <RouterLink

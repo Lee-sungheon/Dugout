@@ -1,7 +1,7 @@
 <script setup>
 import Monitor from "@/assets/images/gamemonitor_crop.svg";
 import Coin from "@/assets/images/coin.svg";
-import { ref, onMounted, watch } from "vue";
+import { ref, onMounted, watch, computed } from "vue";
 import { gsap } from "gsap";
 import { useRouter } from "vue-router";
 import { getUserInfoEnCapsulation } from "@/api/supabase-api/userInfo";
@@ -10,6 +10,8 @@ import { useAuthStore } from "@/stores/auth";
 import { teamID } from "@/constants";
 import axios from "axios";
 import Ticket from "@/assets/images/ticket.svg";
+import { useTeamStore } from "@/stores/teamStore";
+import { teamList } from "@/constants";
 
 const marquee = ref(null);
 const marquee2 = ref(null);
@@ -157,6 +159,15 @@ const handleRouting = async () => {
   else router.push("./signin");
 };
 
+const teamStore = useTeamStore();
+
+const teamNickname = computed(() => {
+  const team = teamList.find(
+    (team) => team.koreanName === teamStore.selectedTeam
+  );
+  return team ? team.nickname : null;
+});
+
 onMounted(async () => {
   await fetchCurrenthUser();
   await fetchGameRanking();
@@ -246,36 +257,66 @@ onMounted(async () => {
             <template v-if="auth.user && auth.user.baseball_club_id">
               <div
                 @click="handleBoardRouting('freeboard')"
-                class="w-full py-2 bg-white02 rounded-[10px] cursor-pointer hover:bg-gray01">
+                :class="[
+                  'w-full py-2 rounded-[10px] cursor-pointer transition-colors duration-300',
+                  teamStore.selectedTeam === '기본'
+                    ? 'bg-white02 hover:bg-gray01'
+                    : `bg-${teamNickname}_opa10 hover:bg-${teamNickname}_opa30`,
+                ]">
                 자유게시판
               </div>
               <div
                 @click="handleBoardRouting('crewboard')"
-                class="w-full py-2 bg-white02 rounded-[10px] cursor-pointer hover:bg-gray01">
+                :class="[
+                  'w-full py-2 rounded-[10px] cursor-pointer transition-colors duration-300',
+                  teamStore.selectedTeam === '기본'
+                    ? 'bg-white02 hover:bg-gray01'
+                    : `bg-${teamNickname}_opa10 hover:bg-${teamNickname}_opa30`,
+                ]">
                 직관 크루 모집
               </div>
               <div
                 @click="handleBoardRouting('photoboard')"
-                class="w-full py-2 bg-white02 rounded-[10px] cursor-pointer hover:bg-gray01">
+                :class="[
+                  'w-full py-2 rounded-[10px] cursor-pointer transition-colors duration-300',
+                  teamStore.selectedTeam === '기본'
+                    ? 'bg-white02 hover:bg-gray01'
+                    : `bg-${teamNickname}_opa10 hover:bg-${teamNickname}_opa30`,
+                ]">
                 직관 인증 포토
               </div>
               <div
                 @click="handleBoardRouting('foodboard')"
-                class="w-full py-2 bg-white02 rounded-[10px] cursor-pointer hover:bg-gray01">
+                :class="[
+                  'w-full py-2 rounded-[10px] cursor-pointer transition-colors duration-300',
+                  teamStore.selectedTeam === '기본'
+                    ? 'bg-white02 hover:bg-gray01'
+                    : `bg-${teamNickname}_opa10 hover:bg-${teamNickname}_opa30`,
+                ]">
                 직관 맛집 찾기
               </div>
             </template>
             <template v-else-if="auth.user">
               <div
                 @click="handleAuthRouting"
-                class="w-full py-2 bg-white02 rounded-[10px] cursor-pointer hover:bg-gray01 mt-[30px]">
+                :class="[
+                  'w-full py-2 rounded-[10px] cursor-pointer mt-[30px] transition-colors duration-300',
+                  teamStore.selectedTeam === '기본'
+                    ? 'bg-white02 hover:bg-gray01'
+                    : `bg-${teamNickname}_opa10 hover:bg-${teamNickname}_opa30`,
+                ]">
                 마이페이지에서 구단 선택하기
               </div>
             </template>
             <template v-else>
               <div
                 @click="handleAuthRouting"
-                class="w-full py-2 bg-white02 rounded-[10px] cursor-pointer hover:bg-gray01 mt-[50px]">
+                :class="[
+                  'w-full py-2 rounded-[10px] cursor-pointer mt-[50px] transition-colors duration-300',
+                  teamStore.selectedTeam === '기본'
+                    ? 'bg-white02 hover:bg-gray01'
+                    : `bg-${teamNickname}_opa10 hover:bg-${teamNickname}_opa30`,
+                ]">
                 로그인하러 가기
               </div>
             </template>

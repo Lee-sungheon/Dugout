@@ -4,10 +4,18 @@ import GoToCreate from "@/components/common/GoToCreate.vue";
 import FreeBoardPost from "@/components/freeboard/FreeBoardPost.vue";
 import { teamID } from "@/constants";
 import { useSearchStore } from "@/stores/searchStore";
-import { nextTick, computed, onMounted, onUnmounted, ref, watch, watchEffect } from "vue";
+import {
+  nextTick,
+  computed,
+  onMounted,
+  onUnmounted,
+  ref,
+  watch,
+  watchEffect,
+} from "vue";
 import { onBeforeRouteLeave, useRoute } from "vue-router";
 
-const searchStore = useSearchStore()
+const searchStore = useSearchStore();
 
 const props = defineProps({
   team: String, // url 팀이름 불러오기
@@ -33,7 +41,6 @@ const restoreScrollPosition = () => {
 const fetchFreeboard = async () => {
   try {
     const data = await getFreePostsByClub(clubId.value);
-
     freeboardList.value = data || [];
 
     await nextTick();
@@ -78,8 +85,8 @@ watch(
 );
 </script>
 <template>
-  <div class="flex flex-col px-[50px] py-[30px] items-center">
-    <div class="w-[990px] gap-[50px] flex flex-col">
+  <div class="flex flex-col px-[50px] py-[30px]">
+    <div class="w-[990px] gap-[50px] flex flex-col mx-auto">
       <!-- 글쓰기 버튼 -->
       <GoToCreate :text="'자유 게시판에 글 쓰러 가기'" />
       <!-- 목록 -->
