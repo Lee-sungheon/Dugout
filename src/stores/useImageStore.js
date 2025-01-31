@@ -6,18 +6,19 @@ export const useImageStore = defineStore("image", () => {
   const imageUrls = ref([null, null, null]);
   const errorMessage = ref(null);
 
+  const setImageUrls = (images) => {
+    imageUrls.value = [...images, ...Array(3 - images.length).fill(null)].slice(0, 3);
+  };
+
   const uploadImage = async (file, index) => {
     if (file.size > 3 * 1024 * 1024) {
-      errorMessage.value =
-        "파일 크기가 너무 큽니다. 3MB 이하의 파일을 선택해주세요.";
+      errorMessage.value = "파일 크기가 너무 큽니다. 3MB 이하의 파일을 선택해주세요.";
       return;
     } else {
       errorMessage.value = null;
     }
 
-    const uniqueFileName = `${Date.now()}_${Math.floor(Math.random() * 1000)}_${
-      file.name
-    }`;
+    const uniqueFileName = `${Date.now()}_${Math.floor(Math.random() * 1000)}_${file.name}`;
 
     const { data, error } = await supabase.storage
       .from("images")
@@ -61,6 +62,7 @@ export const useImageStore = defineStore("image", () => {
   return {
     imageUrls,
     errorMessage,
+    setImageUrls,
     uploadImage,
     removeImage,
     filterNullImage,

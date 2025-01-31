@@ -3,8 +3,19 @@ import { getFreePostsByClub } from "@/api/supabase-api/freePost";
 import GoToCreate from "@/components/common/GoToCreate.vue";
 import FreeBoardPost from "@/components/freeboard/FreeBoardPost.vue";
 import { teamID } from "@/constants";
-import { nextTick, onMounted, onUnmounted, ref, watch } from "vue";
+import { useSearchStore } from "@/stores/searchStore";
+import {
+  nextTick,
+  computed,
+  onMounted,
+  onUnmounted,
+  ref,
+  watch,
+  watchEffect,
+} from "vue";
 import { onBeforeRouteLeave, useRoute } from "vue-router";
+
+const searchStore = useSearchStore();
 
 const props = defineProps({
   team: String, // url 팀이름 불러오기
@@ -30,7 +41,6 @@ const restoreScrollPosition = () => {
 const fetchFreeboard = async () => {
   try {
     const data = await getFreePostsByClub(clubId.value);
-
     freeboardList.value = data || [];
 
     await nextTick();
@@ -39,6 +49,11 @@ const fetchFreeboard = async () => {
     console.error("데이터를 불러오는 동안 에러가 발생하였습니다.");
   }
 };
+
+watchEffect(() => {
+  searchStore.setPosts(freeboardList.value);
+});
+const searchResults = computed(() => searchStore.filteredPosts);
 
 onMounted(async () => {
   await fetchFreeboard();
@@ -70,8 +85,8 @@ watch(
 );
 </script>
 <template>
-  <div class="flex flex-col px-[50px] py-[30px] items-center">
-    <div class="w-[990px] gap-[50px] flex flex-col">
+  <div class="flex flex-col px-[50px] py-[30px]">
+    <div class="w-[990px] gap-[50px] flex flex-col mx-auto">
       <!-- 글쓰기 버튼 -->
       <GoToCreate :text="'자유 게시판에 글 쓰러 가기'" />
       <!-- 목록 -->
@@ -79,9 +94,9 @@ watch(
         class="flex flex-col w-full h-full gap-[20px] items-center"
         v-if="freeboardList"
       >
-        <template v-if="freeboardList.length > 0">
+        <template v-if="searchResults.length > 0">
           <FreeBoardPost
-            v-for="(post, index) in freeboardList"
+            v-for="(post, index) in searchResults"
             :key="index"
             :post="post"
           />

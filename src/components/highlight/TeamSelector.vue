@@ -1,11 +1,15 @@
 <script setup>
 import { computed } from "vue";
 import deleteBtn from "@/assets/icons/delete-btn.svg";
+import { teamList } from "@/constants";
+import { twMerge } from "tailwind-merge";
+import { useTeamStore } from "@/stores/teamStore";
 
 const props = defineProps({
   teams: Array,
   selectedTeam: { type: Array, default: () => [] },
 });
+const teamStore = useTeamStore();
 
 const emit = defineEmits(["update:selectedTeam"]);
 
@@ -13,6 +17,7 @@ const isSelected = (team) =>
   computed(() => (props.selectedTeam ?? []).some((t) => t.tag === team.tag));
 
 const selectTeam = (team) => {
+  console.log(isSelected(team));
   const selectedArray = Array.isArray(props.selectedTeam)
     ? props.selectedTeam
     : props.selectedTeam.value ?? [];
@@ -30,6 +35,14 @@ const removeTeam = (team) => {
   console.log("팀 제거됨:", team);
   console.log("📌 현재 선택된 팀 목록:", props.selectedTeam.value);
 };
+
+// 팀이름에 따라 팀 닉네임 찾는 함수 -> css 사용
+const teamNickname = computed(() => {
+  const team = teamList.find(
+    (team) => team.koreanName === teamStore.selectedTeam
+  );
+  return team ? team.nickname : null; // 팀이 없으면 null 반환
+});
 </script>
 <template>
   <div class="w-full mx-[29px] pb-[30px] fixed bg-white01">
@@ -42,10 +55,17 @@ const removeTeam = (team) => {
           :key="team.tag"
           @click="selectTeam(team)"
           class="inline-flex items-center h-[39px] px-[15px] rounded-[10px] whitespace-nowrap"
-          :class="{
-            'bg-gray02 text-white01 gap-[10px]': isSelected(team).value,
-            'bg-white02 text-black01': !isSelected(team).value,
-          }"
+          :class="
+            twMerge(
+              isSelected(team).value
+                ? `bg-${
+                    teamNickname ? `${teamNickname}_opa30` : 'gray02'
+                  } text-white01 gap-[10px]`
+                : `bg-${
+                    teamNickname ? `${teamNickname}_opa10` : 'white02'
+                  } text-black01`
+            )
+          "
         >
           <p>{{ team.tag }}</p>
           <img

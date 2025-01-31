@@ -144,8 +144,9 @@ const updateProfileImage = async (file) => {
             class="w-[240px] h-[240px] rounded-full sticky flex flex-shrink-0"
             :class="{ 'outline outline-[5px] outline-Twins ': isEditingProfile }"
             >
-            <figure class="w-[240px] h-[240px] rounded-full object-cover relative">
+            <figure class="w-[240px] h-[240px] rounded-full object-cover relative bg-white02 flex justify-center items-center">
                 <img v-if="currentUserData.image" :src="currentUserData.image" class="w-[240px] h-[240px] rounded-full object-cover" />
+                <p v-else-if="!currentUserData.image && !isEditingProfile" class="text-black01 opacity-50">No Profile</p>
                     <!-- 필터: isEditing일 때만-->
                 <button @click="handleProfileImageUpload" v-if="isEditingProfile" class="absolute inset-0 bg-black opacity-50 rounded-full flex justify-center items-center">
                 <img :src="Camera" alt="프로필 사진 수정 버튼" class="w-[40px] h-auto">
@@ -163,7 +164,7 @@ const updateProfileImage = async (file) => {
                     'rounded-b-[0px] bg-white01 text-gray02 border border-gray02 border-[1px] border-b-transparent',
                   isEditingProfile && 'cursor-pointer'
                 )">
-                {{ isEditingProfile ? selectedRootTeam ? selectedRootTeam :  "팀을 선택해주세요": teamByClubID[currentUserData.baseball_club_id] }}
+                {{ isEditingProfile ? selectedRootTeam ? selectedRootTeam :  "팀을 선택해주세요": teamByClubID[currentUserData.baseball_club_id] || "팀을 선택해주세요"}}
                 <img v-if="isEditingProfile"
                     :src="myTeamToggle"
                     class="absolute right-[110px] w-[18px] h-[10.28px]"/>

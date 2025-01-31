@@ -23,7 +23,7 @@ const updateTab = (tab) => {
 </script>
 
 <template>
-  <div class="flex ml-[148px] gap-[50px] mr-[98px] mt-[50px]">
+  <div class="flex ml-[148px] gap-[50px] mr-[100px] mt-[124px]">
     <button @click="updateTab('posts')" class="flex flex-col items-center gap-[24px]">
       <span class="text-black01 text-[26px] font-bold">{{ props.createdPostsCount }}</span>
       <span class="text-black02 text-[18px] whitespace-nowrap">게시물</span>

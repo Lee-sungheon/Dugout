@@ -15,6 +15,10 @@ const authStore = useAuthStore(); // 유저 정보가 가져오기
 const title = ref("");
 const content = ref("");
 const thumbnailUrl = ref("");
+const thumbnailCount = ref(0);
+
+const titleRef = ref(null);
+const contentRef = ref(null);
 
 const clubId = ref(teamID[props.team]); // 팀 id 가져오기
 
@@ -33,15 +37,43 @@ const findThumbnailImage = () => {
   thumbnailUrl.value = firstImg ? firstImg.src : "";
 };
 
+// 이미지 갯수 확인하기
+const findThumbnailCount = () => {
+  thumbnailCount.value = (content.value.match(/<img\s[^>]*>/g) || []).length;
+};
+
 // 등록함수
 const handleRegister = async () => {
   findThumbnailImage(); // 썸네일 지정하기
+  findThumbnailCount(); // 이미지 갯수 확인하기
+
+  // 만약 제목을 입력하지 않았을 경우
+  if (title.value.replaceAll(" ", "") === "") {
+    title.value = ""; // 공백을 입력했을 경우 초기화
+    alert("제목을 입력해주세요.");
+    // 포커스하기
+    if (titleRef.value) {
+      titleRef.value.focus();
+    }
+
+    return;
+  }
+  // 만약 내용을 입력하지 않았을 경우
+  if (content.value === "") {
+    alert("내용을 입력해주세요.");
+    // 포커스하기
+    if (contentRef.value) {
+      contentRef.value.focus();
+    }
+    return;
+  }
   try {
-    const data = await createFreePost(
+    await createFreePost(
       authStore.user.id, // member ID
       content.value,
       title.value,
       thumbnailUrl.value, //thumbnailUrl
+      thumbnailCount.value,
       clubId.value //clubId
     );
     router.push(`/${props.team}/freeboard`);
@@ -49,8 +81,10 @@ const handleRegister = async () => {
     console.error("게시물을 등록하는 도중 오류가 생겼습니다.");
   }
 };
+
+// 취소 눌렀을 때 실행될 함수
 const handleCancel = () => {
-  console.log("취소");
+  router.push(`/${props.team}/freeboard`);
 };
 </script>
 <template>
@@ -63,6 +97,7 @@ const handleCancel = () => {
           v-model="title"
           type="text"
           placeholder="제목"
+          ref="titleRef"
           class="py-[15px] border-b border-white02 w-full outline-none text-3xl text-center bg-white01"
         />
       </div>
@@ -70,6 +105,7 @@ const handleCancel = () => {
       <div>
         <QuillEditor
           v-model:content="content"
+          ref="contentRef"
           placeholder="자유롭게 게시글을 작성해보세요."
           contentType="html"
           theme="snow"
