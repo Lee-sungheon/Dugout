@@ -101,6 +101,7 @@ const submitRestaurantPost = async () => {
         const imageData = await createRestaurantPostImage(data[0].id, image, i);
         console.log("이미지 업로드 성공", imageData);
         imagesData.push(imageData);
+        imageStore.resetImageData();
       } catch (err) {
         console.error(`이미지 업로드 실패 (index: ${i})`, err);
       }
