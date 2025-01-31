@@ -299,14 +299,24 @@ onMounted(async () => {
             <template v-else-if="auth.user">
               <div
                 @click="handleAuthRouting"
-                class="w-full py-2 bg-white02 rounded-[10px] cursor-pointer hover:bg-gray01 mt-[30px]">
+                :class="[
+                  'w-full py-2 rounded-[10px] cursor-pointer mt-[30px] transition-colors duration-300',
+                  teamStore.selectedTeam === '기본'
+                    ? 'bg-white02 hover:bg-gray01'
+                    : `bg-${teamNickname}_opa10 hover:bg-${teamNickname}_opa30`,
+                ]">
                 마이페이지에서 구단 선택하기
               </div>
             </template>
             <template v-else>
               <div
                 @click="handleAuthRouting"
-                class="w-full py-2 bg-white02 rounded-[10px] cursor-pointer hover:bg-gray01 mt-[50px]">
+                :class="[
+                  'w-full py-2 rounded-[10px] cursor-pointer mt-[50px] transition-colors duration-300',
+                  teamStore.selectedTeam === '기본'
+                    ? 'bg-white02 hover:bg-gray01'
+                    : `bg-${teamNickname}_opa10 hover:bg-${teamNickname}_opa30`,
+                ]">
                 로그인하러 가기
               </div>
             </template>
