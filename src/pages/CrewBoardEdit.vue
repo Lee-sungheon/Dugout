@@ -9,11 +9,15 @@ import {
   getCrewRecruitmentPostDetails,
   updateCrewRecruitmentPost,
 } from "@/api/supabase-api/crewRecruitmentPost";
+import { useModalStore } from "@/stores/useModalStore";
+import { teamID } from "@/constants";
 
-const post = ref();
-const route = useRoute();
 const router = useRouter();
 const currentTeam = router.currentRoute.value.params.team;
+const clubId = ref(teamID[currentTeam]); // 팀 id 가져오기
+const modalStore = useModalStore();
+const post = ref();
+const route = useRoute();
 const content = ref(post.content);
 const recruitStatus = ref("");
 const recruitOptions = ["모집 중", "모집 완료"];
@@ -63,48 +67,92 @@ const isCrewGenderDisabled = ref(false);
 
 // 필수 입력값 검증 함수
 const validateInputs = () => {
+  if (!content.value) {
+    modalStore.openModal({
+      message: "모집글을 작성해주세요.",
+      type: "oneBtn",
+      onConfirm: modalStore.closeModal(),
+    });
+    return false;
+  }
   if (!recruitStatus.value) {
-    alert("모집 상태를 선택해주세요.");
+    modalStore.openModal({
+      message: "모집 상태를 선택해주세요.",
+      type: "oneBtn",
+      onConfirm: modalStore.closeModal(),
+    });
     return false;
   }
   if (!formattedGameDate.value) {
-    alert("경기일을 선택해주세요.");
-    return false;
-  }
-  if (!content.value) {
-    alert("모집글을 작성해주세요.");
+    modalStore.openModal({
+      message: "경기일을 선택해주세요.",
+      type: "oneBtn",
+      onConfirm: modalStore.closeModal(),
+    });
     return false;
   }
   if (!peopleNum.value) {
-    alert("인원을 선택해주세요.");
+    modalStore.openModal({
+      message: "인원을 선택해주세요.",
+      type: "oneBtn",
+      onConfirm: modalStore.closeModal(),
+    });
     return false;
   }
   if (!peopleStatus.value) {
-    alert("인원 상태를 작성해주세요.");
+    modalStore.openModal({
+      message: "인원 상태를 선택해주세요.",
+      type: "oneBtn",
+      onConfirm: modalStore.closeModal(),
+    });
     return false;
   }
   if (!myTeam.value) {
-    alert("응원팀을 선택해주세요.");
+    modalStore.openModal({
+      message: "응원팀을 선택해주세요.",
+      type: "oneBtn",
+      onConfirm: modalStore.closeModal(),
+    });
     return false;
   }
   if (!stadium.value) {
-    alert("경기장소를 선택해주세요.");
+    modalStore.openModal({
+      message: "경기장소를 선택해주세요.",
+      type: "oneBtn",
+      onConfirm: modalStore.closeModal(),
+    });
     return false;
   }
   if (!myAge.value) {
-    alert("작성자 성별을 선택해주세요.");
+    modalStore.openModal({
+      message: "작성자 성별을 선택해주세요.",
+      type: "oneBtn",
+      onConfirm: modalStore.closeModal(),
+    });
     return false;
   }
   if (!myAge.value) {
-    alert("작성자 연령을 선택해주세요.");
+    modalStore.openModal({
+      message: "작성자 연령을 선택해주세요.",
+      type: "oneBtn",
+      onConfirm: modalStore.closeModal(),
+    });
     return false;
   }
   if (!crewGender.value) {
-    alert("크루 성별을 선택해주세요.");
+    modalStore.openModal({
+      message: "크루 성별을 선택해주세요.",
+      type: "oneBtn",
+      onConfirm: modalStore.closeModal(),
+    });
     return false;
   }
   if (!crewAge.value) {
-    alert("크루 연령을 선택해주세요.");
+    modalStore.openModal({
+      message: "크루 연령을 선택해주세요.",
+      type: "oneBtn",
+      onConfirm: modalStore.closeModal(),
+    });
     return false;
   }
   return true;
@@ -144,7 +192,6 @@ const fetchPostDetails = async () => {
     myAge.value = post.value.author_age;
     crewGender.value = post.value.crew_sex;
     crewAge.value = post.value.crew_age;
-    // members 데이터 분해
     const membersData = post.value.members;
     const [numberPart, statusPart] = membersData.split(" ");
     peopleNum.value = numberPart;
@@ -154,10 +201,11 @@ const fetchPostDetails = async () => {
   }
 };
 
-// 게시글 수정 함수
-const handleUpdate = async () => {
+// 작성글 업데이트 함수
+const handleUpdate = () => {
   const postId = route.params.id;
   if (!validateInputs()) return;
+
   const updatedData = {
     status: recruitStatus.value,
     game_date: formattedGameDate.value,
@@ -166,17 +214,22 @@ const handleUpdate = async () => {
     crew_sex: crewGender.value,
     crew_age: crewAge.value,
     content: content.value,
-    club_id: "1",
+    club_id: clubId.value,
     member_number: Number(peopleNum.value),
     member_range: peopleStatus.value,
     game_stadium: stadium.value,
   };
+
   try {
-    const result = updateCrewRecruitmentPost(postId, updatedData);
-    if (result) {
-      alert("게시글이 성공적으로 수정되었습니다.");
-      router.push(`/${currentTeam}/crewboard/`);
-    }
+    updateCrewRecruitmentPost(postId, updatedData);
+    modalStore.openModal({
+      message: "게시글이 성공적으로 수정되었습니다.",
+      type: "oneBtn",
+      onConfirm: () => {
+        modalStore.closeModal();
+        router.push(`/${currentTeam}/crewboard/`);
+      },
+    });
   } catch (err) {
     console.error(err.message);
   }
@@ -184,12 +237,7 @@ const handleUpdate = async () => {
 
 // 게시글 작성 취소 함수
 const handleCancel = () => {
-  const isConfirmed = confirm("정말로 취소 하시겠습니까?");
-  if (isConfirmed) {
-    router.push(`/${teamName.value}/crewboard/`);
-  } else {
-    return;
-  }
+  router.push(`/${currentTeam}/crewboard/`);
 };
 
 watch(gameDateStatus, (newDate) => {
@@ -198,7 +246,6 @@ watch(gameDateStatus, (newDate) => {
 });
 
 onMounted(() => {
-  // await getUserInfo();
   fetchPostDetails();
 });
 </script>

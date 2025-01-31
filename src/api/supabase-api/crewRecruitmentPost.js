@@ -42,7 +42,6 @@ export const createCrewRecruitmentPost = async ({
       });
 
     if (error) throw new Error("게시글 생성 실패");
-    console.log("게시글 생성 완료:");
   } catch (err) {
     console.error("Error creating crew recruitment post:", err.message);
     return null;
@@ -188,9 +187,6 @@ export const updatePostComment = async (commentId) => {
 
 // 특정 크루 모집 게시글 삭제 함수
 export const deleteCrewRecruitmentPost = async (postId) => {
-  const conf = confirm("정말 삭제하시겠습니까?");
-  if (!conf) return;
-
   try {
     const { error } = await supabase
       .from("crew_recruitment_post")
@@ -198,7 +194,6 @@ export const deleteCrewRecruitmentPost = async (postId) => {
       .eq("id", postId);
 
     if (error) throw new Error("게시글 삭제 실패");
-    console.log("게시글 삭제 완료");
   } catch (err) {
     console.error(err.message);
     return null;
