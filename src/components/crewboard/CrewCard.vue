@@ -5,6 +5,8 @@ import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import "dayjs/locale/ko"; // 한국어 로케일 가져오기
 import { computed } from "vue";
+import BaseballLogo from "@/assets/icons/baseball.svg";
+
 
 // day.js
 dayjs.extend(relativeTime); // relativeTime 플러그인 활성화
@@ -74,8 +76,9 @@ const goToDetail = () => {
     <div class="flex items-center justify-between w-full">
       <div class="flex items-center gap-[10px]">
         <img
-          :src="props.post.author_image || mascotImg"
           :alt="`${currentTeam} 로고 이미지`"
+          :src="props.post.author_image || BaseballLogo"
+          alt="유저 프로필"
           class="w-[25px] h-[25px] rounded-full"
         />
         <span class="text-xs text-gray03">{{
