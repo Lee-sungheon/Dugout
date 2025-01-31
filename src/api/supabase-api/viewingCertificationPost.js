@@ -14,8 +14,6 @@ export const getViewingCertificationPostsByClub = async (clubId) => {
 
     if (error) throw new Error("게시물 조회 실패");
 
-    console.log(" 가져온 데이터 확인:", data);
-
     return data;
   } catch (err) {
     console.error("Unexpected error:", err);
