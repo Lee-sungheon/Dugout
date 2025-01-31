@@ -2,7 +2,7 @@
 import { getRestaurantPostsByTagAndClub } from "@/api/supabase-api/restaurantPost";
 import FoodBoardCard from "@/components/foodboard/FoodBoardCard.vue";
 import { foodBoardTag, teamID } from "@/constants";
-import { nextTick, onMounted, onUnmounted, ref, watch } from "vue";
+import { onMounted, onUnmounted, ref, watch } from "vue";
 import { onBeforeRouteLeave, useRoute } from "vue-router";
 import deleteBtn from "../assets/icons/delete-btn.svg";
 import GoToCreate from "@/components/common/GoToCreate.vue";

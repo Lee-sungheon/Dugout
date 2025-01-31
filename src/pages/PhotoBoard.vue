@@ -2,7 +2,7 @@
 import { getViewingCertificationPostsByClub } from "@/api/supabase-api/viewingCertificationPost";
 import PhotoboardCard from "@/components/photoboard/PhotoboardCard.vue";
 import { teamID } from "@/constants";
-import { computed, onMounted, onUnmounted, ref, watch, watchEffect } from "vue";
+import { computed, nextTick, onMounted, onUnmounted, ref, watch, watchEffect } from "vue";
 import { useRoute } from "vue-router";
 import GoToCreate from "@/components/common/GoToCreate.vue";
 import { useSearchStore } from "@/stores/searchStore";
@@ -50,18 +50,21 @@ onUnmounted(() => {
 });
 
 watch(
-  () => route.params.team,
-  (newTeamName, _) => {
-    teamName.value = newTeamName;
+() => route.params.team,
+async (newTeamName) => {
+teamName.value = newTeamName;
+clubId.value = teamID[newTeamName];
 
-    clubId.value = teamID[teamName.value];
-    fetchPhotoboardList();
-  }
+await nextTick();
+fetchPhotoboardList();
+},
+{ immediate: true }
 );
 
 watchEffect(() => {
   searchStore.setPosts(photoboardList.value);
 });
+
 const searchResults = computed(() => searchStore.filteredPosts);
 </script>
 <template>

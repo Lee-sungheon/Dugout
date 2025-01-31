@@ -60,6 +60,7 @@ onMounted(() => {
         :title="postDetails.title"
         :post="postDetails"
         :time="calculatedCreatedAt"
+        :confirmDelete
       />
 
       <!-- 게시물 내용 -->

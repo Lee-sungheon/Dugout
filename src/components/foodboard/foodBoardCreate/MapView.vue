@@ -1,11 +1,11 @@
 <script setup>
 import LocationIcon from "@/assets/icons/location_icon.svg";
 import { useMapStore } from "@/stores/mapStore";
-import { computed } from "vue";
 import { KakaoMap, KakaoMapMarker } from "vue3-kakao-maps";
+import { watchEffect } from "vue";
 
 const mapStore = useMapStore();
-const finalSelectedLocation = computed(() => mapStore.finalSelectedLocation);
+const finalSelectedLocation = mapStore.finalSelectedLocation
 
 // 최종 저장된 장소 변경하기
 const returnToMapSelect = () => {
