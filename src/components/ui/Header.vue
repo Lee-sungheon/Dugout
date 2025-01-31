@@ -4,16 +4,21 @@ import searchIcon from "@/assets/icons/search.svg";
 import themeToggleIcon from "@/assets/icons/theme_toggle.svg";
 import logoImg from "@/assets/images/logo.svg";
 import { useTeamStore } from "@/stores/teamStore";
-import { ref } from "vue";
-import { RouterLink } from "vue-router";
+import { computed, ref } from "vue";
+import { RouterLink, useRoute } from "vue-router";
 import EmblemAnimation from "./EmblemAnimation.vue";
 import { useAuthStore } from "@/stores/auth";
 import defaultImg from "@/assets/images/defaultImg_sm.svg";
+import { teamList } from "@/constants";
+import { twMerge } from "tailwind-merge";
 
 const teamStore = useTeamStore();
 const authStore = useAuthStore(); // 유저 정보가 가져오기
 
+const route = useRoute();
+
 const teams = [
+  "기본",
   "히어로즈",
   "타이거즈",
   "베어스",
@@ -26,12 +31,29 @@ const teams = [
   "랜더스",
 ];
 
-const isDropdownOpen = ref(false);
+const isDropdownOpen = ref(false); // 드롭다운 유무 판단
 
 const toggleDropdown = () => {
   isDropdownOpen.value = !isDropdownOpen.value;
-  localStorage.setItem("dropdownState", isDropdownOpen.value.toString());
+  // 이코드가 필요한지 애매해서 일단 주석처리
+  // localStorage.setItem("dropdownState", isDropdownOpen.value.toString());
 };
+
+// 메뉴 목록
+const menuList = [
+  { name: "NEWS", path: "/news" },
+  { name: "HIGHLIGHT", path: "/highlight" },
+  { name: "GAME", path: "/game" },
+];
+const isActive = (path) => route.path === path; // 메뉴 활성화 목록 확인
+
+// 팀이름에 따라 팀 닉네임 찾는 함수 -> css 사용
+const teamNickname = computed(() => {
+  const team = teamList.find(
+    (team) => team.koreanName === teamStore.selectedTeam
+  );
+  return team ? team.nickname : null; // 팀이 없으면 null 반환
+});
 </script>
 
 <template>
@@ -47,25 +69,25 @@ const toggleDropdown = () => {
           <img :src="logoImg" alt="로고 이미지" />
         </RouterLink>
         <!-- 네비게이션 -->
-        <nav class="text-2xl font-bold text-gray01 gap-[30px] flex">
+        <nav
+          class="text-2xl font-bold gap-[30px] flex"
+          :class="teamNickname ? `text-${teamNickname}_opa30` : 'text-gray01'"
+        >
           <RouterLink
-            to="/news"
-            class="cursor-pointer hover:underline hover:text-black01"
-            :class="{ 'underline text-black01': $route.path === '/news' }"
-            >NEWS</RouterLink
+            v-for="menu in menuList"
+            :key="menu.path"
+            :to="menu.path"
+            class="cursor-pointer hover:underline"
+            :class="
+              twMerge(
+                isActive(menu.path) && 'underline',
+                `hover:text-${teamNickname || 'black01'}`,
+                isActive(menu.path) ? `text-${teamNickname || 'black01'}` : ''
+              )
+            "
           >
-          <RouterLink
-            to="/highlight"
-            class="cursor-pointer hover:underline hover:text-black01"
-            :class="{ 'underline text-black01': $route.path === '/highlight' }"
-            >HIGHLIGHT</RouterLink
-          >
-          <RouterLink
-            to="/game"
-            class="cursor-pointer hover:underline hover:text-black01"
-            :class="{ 'underline text-black01': $route.path === '/game' }"
-            >GAME</RouterLink
-          >
+            {{ menu.name }}
+          </RouterLink>
         </nav>
       </div>
       <!-- 가운데 영역(음악) -->
@@ -119,9 +141,13 @@ const toggleDropdown = () => {
             class="absolute top-[40px] left-0 w-full bg-white rounded-[10px] border border-gray01 shadow-lg z-50"
           >
             <li
-              v-for="team in teams"
+              v-for="(team, index) in teams"
               :key="team"
               class="px-4 py-2 text-sm cursor-pointer text-gray03 hover:bg-gray01 hover:text-white"
+              :class="{
+                'rounded-t-lg': index === 0, // 첫 번째 아이템
+                'rounded-b-lg': index === teams.length - 1, // 마지막 아이템
+              }"
               @click.stop="
                 teamStore.selectTeam(team);
                 toggleDropdown();
