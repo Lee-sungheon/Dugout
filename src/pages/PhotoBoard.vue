@@ -48,12 +48,14 @@ onUnmounted(() => {
 
 watch(
   () => route.params.team,
-  (newTeamName, _) => {
+  async (newTeamName) => {
     teamName.value = newTeamName;
+    clubId.value = teamID[newTeamName];
 
-    clubId.value = teamID[teamName.value];
+    await nextTick();
     fetchPhotoboardList();
-  }
+  },
+  { immediate: true }
 );
 </script>
 <template>
@@ -63,7 +65,7 @@ watch(
       <GoToCreate :text="'직관 인증 포토 올리러 가기'" />
       <!-- 목록 -->
       <div class="w-full h-auto mb-[100px]">
-        <div class="grid grid-cols-3 gap-[30px] w-full">
+        <div v-if="photoboardList" class="grid grid-cols-3 gap-[30px] w-full">
           <PhotoboardCard
             v-for="post in photoboardList"
             :key="post.id"

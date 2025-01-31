@@ -1,5 +1,4 @@
 <script setup>
-import headsetIcon from "@/assets/icons/audio_headset.svg";
 import searchIcon from "@/assets/icons/search.svg";
 import themeToggleIcon from "@/assets/icons/theme_toggle.svg";
 import logoImg from "@/assets/images/logo.svg";
@@ -9,6 +8,7 @@ import { RouterLink } from "vue-router";
 import EmblemAnimation from "./EmblemAnimation.vue";
 import { useAuthStore } from "@/stores/auth";
 import defaultImg from "@/assets/images/defaultImg_sm.svg";
+import CheerSong from "../header/CheerSong.vue";
 
 const teamStore = useTeamStore();
 const authStore = useAuthStore(); // 유저 정보가 가져오기
@@ -70,17 +70,8 @@ const toggleDropdown = () => {
       </div>
       <!-- 가운데 영역(음악) -->
       <div>
-        <div
-          class="w-[44px] h-[35px] bg-white02 rounded-[10px] flex justify-center items-center"
-        >
-          <img
-            :src="headsetIcon"
-            alt="헤드셋 아이콘"
-            class="w-[20px] h-[20px]"
-          />
-        </div>
+        <CheerSong />
       </div>
-
       <!-- 오른쪽 영역(검색 / 유저정보 / 테마) -->
       <div class="flex items-center gap-[30px]">
         <!-- 검색 -->
