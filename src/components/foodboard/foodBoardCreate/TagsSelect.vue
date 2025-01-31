@@ -1,9 +1,21 @@
 <script setup>
 import DeleteBtn from "@/assets/icons/delete-btn.svg";
 import { foodBoardTag } from "@/constants/index";
-import { ref } from "vue";
+import { ref, defineProps, watchEffect } from "vue";
+
+const props = defineProps({
+  initialTags: Array, // 기존 게시물의 태그
+});
+
 const selectedTag = ref([]);
 const emit = defineEmits(["update:selectedTag"]);
+
+// 기존 태그 데이터 반영
+watchEffect(() => {
+  if (props.initialTags) {
+    selectedTag.value = [...props.initialTags];
+  }
+});
 
 const selectTag = (tag) => {
   if (!selectedTag.value.includes(tag)) {

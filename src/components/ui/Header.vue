@@ -4,19 +4,26 @@ import searchIcon from "@/assets/icons/search.svg";
 import themeToggleIcon from "@/assets/icons/theme_toggle.svg";
 import logoImg from "@/assets/images/logo.svg";
 import { useTeamStore } from "@/stores/teamStore";
-import { computed, ref } from "vue";
+import { computed, onMounted, ref } from "vue";
 import { RouterLink, useRoute } from "vue-router";
 import EmblemAnimation from "./EmblemAnimation.vue";
 import { useAuthStore } from "@/stores/auth";
 import defaultImg from "@/assets/images/defaultImg_sm.svg";
 import { teamList } from "@/constants";
 import { twMerge } from "tailwind-merge";
+import { useSearchStore } from "@/stores/searchStore";
 
+const route = useRoute();
 const teamStore = useTeamStore();
 const authStore = useAuthStore(); // 유저 정보가 가져오기
 
-const route = useRoute();
+const isPageInCommunity = ref(route.fullPath.includes("board"))
+const searchStore = useSearchStore();
+const searchInput = ref("")
 
+const updateSearchKeyword = () => {
+  searchStore.setKeyword(searchInput.value)
+}
 const teams = [
   "기본",
   "히어로즈",
@@ -54,6 +61,7 @@ const teamNickname = computed(() => {
   );
   return team ? team.nickname : null; // 팀이 없으면 null 반환
 });
+
 </script>
 
 <template>
@@ -106,7 +114,21 @@ const teamNickname = computed(() => {
       <!-- 오른쪽 영역(검색 / 유저정보 / 테마) -->
       <div class="flex items-center gap-[30px]">
         <!-- 검색 -->
-        <div><img :src="searchIcon" alt="검색 아이콘" /></div>
+        <form 
+        :class="[
+          'group h-[40px] px-[10px] flex items-center rounded-[10px] transition-all duration-300',
+          isPageInCommunity ? 'bg-white02 w-[40px] hover:w-[320px]' : 'w-[40px] bg-transparent'
+        ]">
+          <input 
+            type="text"
+            v-model="searchInput"
+            @input="updateSearchKeyword"
+            placeholder="현재 게시판에서만 검색할 수 있습니다"
+            class="w-0 opacity-0 transition-all duration-300 bg-white02 focus:outline-none group-hover:w-[290px] group-hover:opacity-100"
+            v-if="isPageInCommunity"
+          />
+          <img :src="searchIcon" alt="검색 아이콘" class="w-[20px]"/>
+        </form>
         <!-- 유저정보 -->
         <RouterLink
           to="/myPage"
