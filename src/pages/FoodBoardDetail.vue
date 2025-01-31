@@ -60,6 +60,7 @@ onMounted(() => {
         :title="postDetails.title"
         :post="postDetails"
         :time="calculatedCreatedAt"
+        :confirmDelete
       />
 
       <!-- 게시물 내용 -->
@@ -68,7 +69,7 @@ onMounted(() => {
         class="mt-[50px] gap-[50px] pb-[50px] flex flex-col border-b border-b-gray01"
       >
         <div class="flex flex-col gap-[30px]">
-          <LocationViewer :postLocation="postDetails.location" />
+          <LocationViewer v-if="postDetails.location" :postLocation="postDetails.location" />
           <div>
             <div
               v-html="postDetails.content"
