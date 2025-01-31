@@ -32,11 +32,21 @@ const plainContent = computed(() =>
       class="flex gap-[30px] w-full cursor-pointer"
     >
       <!-- 왼쪽 이미지 -->
-      <img
-        :src="props.post.thumbnail_url || defaultImg"
-        alt="게시물 이미지"
-        class="w-[150px] h-[150px] min-w-[150px] min-h-[150px] rounded-[10px] border border-white01"
-      />
+      <div class="relative">
+        <img
+          :src="props.post.thumbnail_url || defaultImg"
+          alt="게시물 이미지"
+          class="w-[150px] h-[150px] min-w-[150px] min-h-[150px] rounded-[10px] border border-white01"
+        />
+        <div
+          class="absolute w-[20px] h-[20px] bg-[rgba(10,10,10,0.75)] right-[5px] top-[5px] rounded-[5px] flex justify-center items-center"
+          v-if="props.post.thumbnail_count > 1"
+        >
+          <span class="text-xs text-white">{{
+            props.post.thumbnail_count
+          }}</span>
+        </div>
+      </div>
 
       <!-- 오른쪽 게시물 정보 -->
       <div class="flex py-[10px] flex-col justify-between w-[810px]">

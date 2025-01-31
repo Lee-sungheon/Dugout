@@ -41,7 +41,6 @@ const restoreScrollPosition = () => {
 const fetchFreeboard = async () => {
   try {
     const data = await getFreePostsByClub(clubId.value);
-
     freeboardList.value = data || [];
 
     await nextTick();
