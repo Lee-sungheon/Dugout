@@ -91,6 +91,7 @@ export default {
     "hover:text-Lions",
     "hover:text-Eagles",
     "hover:text-Wiz",
+    "hover:text-black01",
   ],
   theme: {
     extend: {
