@@ -60,7 +60,7 @@ const fetchPosts = async () => {
 
 onMounted(async () => {
   await fetchPosts();
-  await getUserInfo();
+  // await getUserInfo();
   window.addEventListener("scroll", saveScrollPosition);
 });
 

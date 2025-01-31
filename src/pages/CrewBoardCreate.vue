@@ -61,7 +61,9 @@ const crewGenderOptions = ["여자", "남자", "무관", "비공개"];
 const crewAge = ref("");
 const crewAgeOptions = ["20대", "30대", "50대", "60대"];
 const isCrewGenderDisabled = ref(false);
+const thisDate = new Date();
 
+console.log(thisDate);
 // 필수 입력값 검증 함수
 const validateInputs = () => {
   if (!content.value) {
@@ -175,8 +177,25 @@ const formatDate = (date) => {
 };
 
 watch(gameDateStatus, (newDate) => {
+  if (!newDate) return;
+
   formattedGameDate.value = formatDate(newDate);
   isDatePickerOpen.value = false;
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const selectedDate = new Date(newDate);
+  selectedDate.setHours(0, 0, 0, 0);
+
+  if (selectedDate < today) {
+    modalStore.openModal({
+      message: "이미 지나간 경기입니다.",
+      type: "oneBtn",
+      onConfirm: modalStore.closeModal(),
+    });
+    formattedGameDate.value = null;
+  }
 });
 
 // 현재 로그인 사용자 정보 불러오기

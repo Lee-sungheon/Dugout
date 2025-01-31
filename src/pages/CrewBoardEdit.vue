@@ -193,10 +193,9 @@ const fetchPostDetails = async () => {
     crewGender.value = post.value.crew_sex;
     crewAge.value = post.value.crew_age;
     const membersData = post.value.members;
-    // const [numberPart, statusPart] = membersData.split(" ");
-    // peopleNum.value = numberPart;
-    // peopleStatus.value = statusPart;
-    console.log(post.value);
+    const [numberPart, statusPart] = membersData.split(" ");
+    peopleNum.value = numberPart;
+    peopleStatus.value = statusPart;
   } else {
     alert("게시물 정보를 가져오는 데 실패했습니다.");
   }
