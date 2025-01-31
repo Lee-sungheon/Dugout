@@ -1,5 +1,5 @@
 <script setup>
-import headsetIcon from "@/assets/icons/audio_headset.svg";
+import HeadsetIcon from "@/assets/icons/audio_headset.svg";
 import OffAutoPlayIcon from "@/assets/icons/audio_autoplay_off.svg";
 import OnAutoPlayIcon from "@/assets/icons/audio_autoplay_on.svg";
 import AudioPlayIcon from "@/assets/icons/audio_play.svg";
@@ -10,6 +10,7 @@ import { onMounted, ref, watch } from "vue";
 
 const props = defineProps({
   selectedTeam: String,
+  isSearchHovered: Boolean,
 });
 
 const player = ref(null);
@@ -154,6 +155,13 @@ watch(
 </script>
 <template>
   <div
+    v-if="isSearchHovered"
+    class="w-auto h-[35px] bg-white02 rounded-[10px] flex justify-center items-center py-[7.5px] px-[12px]"
+  >
+    <img :src="HeadsetIcon" alt="헤드셋" class="w-[20px] h-[20px]" />
+  </div>
+  <div
+    v-else
     class="w-[314.5px] h-[35px] bg-white02 rounded-[10px] flex justify-between items-center"
   >
     <div class="flex gap-[19.52px] ml-[13.77px]">
