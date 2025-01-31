@@ -37,7 +37,7 @@ const findThumbnailImage = () => {
 const handleRegister = async () => {
   findThumbnailImage(); // 썸네일 지정하기
   try {
-    const data = await createFreePost(
+    await createFreePost(
       authStore.user.id, // member ID
       content.value,
       title.value,
@@ -49,8 +49,10 @@ const handleRegister = async () => {
     console.error("게시물을 등록하는 도중 오류가 생겼습니다.");
   }
 };
+
+// 취소 눌렀을 때 실행될 함수
 const handleCancel = () => {
-  console.log("취소");
+  router.push(`/${props.team}/freeboard`);
 };
 </script>
 <template>
