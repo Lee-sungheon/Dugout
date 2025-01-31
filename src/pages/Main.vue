@@ -1,17 +1,18 @@
 <script setup>
 import Monitor from "@/assets/images/gamemonitor_crop.svg";
 import Coin from "@/assets/images/coin.svg";
-import { ref, onMounted } from "vue";
+import { ref, onMounted, watch } from "vue";
 import { gsap } from "gsap";
 import { useRouter } from "vue-router";
-import { getCurrentUser } from "../api/supabase-api/userInfo";
 import { getUserInfoEnCapsulation } from "@/api/supabase-api/userInfo";
 import { getBaseballGame } from "@/api/supabase-api/baseballGame";
 import { useAuthStore } from "@/stores/auth";
+import { teamID } from "@/constants";
+import axios from "axios";
+import Ticket from "@/assets/images/ticket.svg";
 
 const marquee = ref(null);
 const marquee2 = ref(null);
-const user = ref(null);
 const errorMessage = ref("");
 const combinedRecords = ref([]);
 const router = useRouter();
@@ -29,6 +30,94 @@ const fetchCurrenthUser = async () => {
     errorMessage.value = "사용자 정보를 가져오지 못했습니다.";
   }
 };
+
+// 팀 ID를 팀명으로 변환하는 함수
+const getTeamName = (baseballClubId) => {
+  const teamEntry = Object.entries(teamID).find(
+    ([_, id]) => id === baseballClubId
+  );
+  if (teamEntry) return teamEntry[0];
+  return null;
+};
+
+// 게시판 라우팅 처리 함수
+const handleBoardRouting = (boardType) => {
+  const teamName = getTeamName(auth.user.baseball_club_id);
+  if (teamName) {
+    router.push(`/${teamName}/${boardType}`);
+  } else {
+    console.error("일치하는 팀을 찾을 수 없습니다.");
+  }
+};
+
+// 로그인/마이페이지 라우팅
+const handleAuthRouting = () => {
+  if (auth.user) {
+    router.push("/myPage");
+  } else {
+    router.push("/signin");
+  }
+};
+
+const newsData = ref([]);
+let queryKeyword = ref("야구");
+
+// HTML 태그 삭제 함수
+const stripHtml = (html) => {
+  const noTags = html.replace(/<[^>]*>?/gm, "");
+  const noEntities = noTags.replace(/&[^;]+;/gm, "");
+  return noEntities;
+};
+
+// 뉴스 페이지로 이동하는 함수
+const goToOriginNew = (link) => {
+  window.open(link, "_blank"); // 새탭으로 이동
+};
+// 네이버 뉴스 api 가져오기
+const getNewsData = async (keyword) => {
+  try {
+    // 데이터 불러오기
+    const { data, status } = await axios.get("/v1/search/news.json", {
+      params: {
+        query: keyword, // 검색어
+        display: 5, // 출력 개수
+        // start: 1, // 시작 위치
+        // sort: "sim", // 정렬 기준 (sim: 유사도, date: 날짜)
+      },
+      headers: {
+        "Content-Type": "application.json",
+        "X-Naver-Client-Id": import.meta.env.VITE_NAVER_CLIENT_ID,
+        "X-Naver-Client-Secret": import.meta.env.VITE_NAVER_CLIENT_SECRET,
+      },
+    });
+    console.log(data, status);
+    if (status === 200) {
+      newsData.value = data.items;
+    }
+  } catch (error) {}
+};
+
+const selectedTeam = ref([]);
+
+// watch 사용 시 깊은 감시자로 설정
+watch(
+  selectedTeam,
+  () => {
+    // 만약 필터가 없으면 default 야구 키워드로 검색
+    if (selectedTeam.value.length === 0) {
+      getNewsData(queryKeyword.value);
+    } else {
+      getNewsData(
+        selectedTeam.value
+          .map((item) => item.replace("#", "").split(" ").join(""))
+          .join(" ")
+      );
+    }
+  },
+  {
+    deep: true, // 깊은 감시자 설정
+  }
+);
 
 const fetchGameRanking = async () => {
   try {
@@ -71,6 +160,7 @@ const handleRouting = async () => {
 onMounted(async () => {
   await fetchCurrenthUser();
   await fetchGameRanking();
+  getNewsData(queryKeyword.value);
 
   // 첫 번째 마퀴 (왼쪽으로 이동)
   gsap.to(marquee.value, {
@@ -121,22 +211,114 @@ onMounted(async () => {
         </span>
       </div>
     </div>
-    <div class="text-black02 text-center my-[50px]">
-      <div class="text-[24px] font-bold">
-        <template v-if="auth.user">
-          <p>{{ auth.user.name }}님, 반갑습니다!</p>
-          <p>응원하는 구단의 게시판의 새로운 소식을 확인해보세요!</p>
-        </template>
-        <template v-else
-          >로그인하고 응원하는 구단의 게시판을 구경해보세요!</template
-        >
+    <div
+      class="flex justify-around items-center align-center px-[50px] h-[calc(100vh-143px)]">
+      <div class="w-[450px] text-black02 text-center my-[50px] relative">
+        <img :src="Ticket" />
+        <div class="absolute top-0 w-full">
+          <div class="font-Galmuri11 font-bold text-[24px] my-5">
+            >> TICKET <<
+          </div>
+          <div class="text-[24px] font-bold">
+            <template v-if="auth.user && auth.user.baseball_club_id">
+              <p>{{ auth.user.name }}님, 반갑습니다</p>
+              <p class="text-[16px]">
+                응원하는 구단의 게시판의 새로운 소식을 확인해보세요!
+              </p>
+            </template>
+            <template v-else-if="auth.user">
+              <p>{{ auth.user.name }}님, 반갑습니다!</p>
+              <p class="text-[16px] mt-5">
+                아직 응원하는 구단을 설정하지 않으셨군요
+              </p>
+              <p class="text-[16px]">
+                마이페이지에서 응원하는 구단을 선택해보세요!
+              </p>
+            </template>
+            <template v-else>
+              <p>DUGOUT에 오신 것을 환영합니다!</p>
+              <p class="text-[16px]">
+                로그인하고 응원하는 구단의 게시판을 구경해보세요
+              </p>
+            </template>
+          </div>
+          <div class="flex flex-col items-center px-5 gap-[10px] mt-[10px]">
+            <template v-if="auth.user && auth.user.baseball_club_id">
+              <div
+                @click="handleBoardRouting('freeboard')"
+                class="w-full py-2 bg-white02 rounded-[10px] cursor-pointer hover:bg-gray01">
+                자유게시판
+              </div>
+              <div
+                @click="handleBoardRouting('crewboard')"
+                class="w-full py-2 bg-white02 rounded-[10px] cursor-pointer hover:bg-gray01">
+                직관 크루 모집
+              </div>
+              <div
+                @click="handleBoardRouting('photoboard')"
+                class="w-full py-2 bg-white02 rounded-[10px] cursor-pointer hover:bg-gray01">
+                직관 인증 포토
+              </div>
+              <div
+                @click="handleBoardRouting('foodboard')"
+                class="w-full py-2 bg-white02 rounded-[10px] cursor-pointer hover:bg-gray01">
+                직관 맛집 찾기
+              </div>
+            </template>
+            <template v-else-if="auth.user">
+              <div
+                @click="handleAuthRouting"
+                class="w-full py-2 bg-white02 rounded-[10px] cursor-pointer hover:bg-gray01 mt-[30px]">
+                마이페이지에서 구단 선택하기
+              </div>
+            </template>
+            <template v-else>
+              <div
+                @click="handleAuthRouting"
+                class="w-full py-2 bg-white02 rounded-[10px] cursor-pointer hover:bg-gray01 mt-[50px]">
+                로그인하러 가기
+              </div>
+            </template>
+          </div>
+        </div>
       </div>
-      <div>자유게시판</div>
-      <div>직관 크루 모집</div>
-      <div>직관 인증 포토</div>
-      <div>직관 맛집 찾기</div>
+      <div
+        class="w-[550px] px-[20px] py-[30px] bg-[#3C5C52] rounded-[10px] flex flex-col items-center gap-[30px]">
+        <div class="font-Galmuri11 font-bold text-[24px] text-white01">
+          실시간 뉴스
+        </div>
+        <div class="flex flex-col gap-[15px] w-full">
+          <div
+            v-for="(news, index) of newsData"
+            :key="news.link"
+            title="뉴스 바로가기"
+            class="cursor-pointer flex items-center"
+            @click="goToOriginNew(news.originallink)">
+            <p
+              class="font-Galmuri11 font-bold text-[18px] text-white01 w-[25px]">
+              {{ index + 1 }}
+            </p>
+            <h2
+              class="w-full bg-black01 text-[16px] text-white01 font-Galmuri11 px-2 py-2 truncate">
+              {{ stripHtml(news.title) }}
+            </h2>
+          </div>
+        </div>
+        <div class="w-full border border-white01"></div>
+        <div class="flex justify-between items-center w-full">
+          <div class="font-Galmuri11 font-bold text-white01">
+            BALL | STRIKE | OUT
+          </div>
+          <RouterLink
+            to="/news"
+            class="w-[250px] border border-white01 rounded-[10px] text-white01 px-3 py-2 flex justify-between items-center">
+            <p class="font-Galmuri11">더 많은 뉴스 보기</p>
+            <p class="font-Galmuri11">></p>
+          </RouterLink>
+        </div>
+      </div>
     </div>
-    <div class="marquee">
+    <div class="marquee absolute bottom-0">
       <div class="marquee-inner" ref="marquee2">
         <span
           >DUGOUT | TIGERS | LIONS | TWINS | WIZ | BEARS | LANDERS | EAGLES |
@@ -158,7 +340,6 @@ onMounted(async () => {
       </div>
     </div>
   </section>
-  <section class="h-[calc(100vh-100px)]">2번째 Section</section>
   <section class="h-[calc(100vh-100px)] w-screen bg-black01 relative">
     <div
       class="absolute left-1/2 bottom-0 -translate-x-1/2 w-[80%] max-w-[1200px]">
@@ -229,7 +410,7 @@ onMounted(async () => {
 .marquee-inner span {
   display: inline-block;
   padding: 0 2px;
-  font-size: 16px;
+  font-size: 14px;
   font-weight: bold;
   white-space: nowrap;
 }
