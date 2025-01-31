@@ -12,7 +12,7 @@ const route = useRoute();
 const router = useRouter();
 const searchStore = useSearchStore();
 const teamName = ref(route.params.team);
-const clubId = ref(teamID[teamName.value]); 
+const clubId = ref(teamID[teamName.value]);
 const posts = ref([]);
 const currentUser = ref(null);
 
@@ -40,6 +40,18 @@ const fetchPosts = async () => {
     console.log("특정 게시물 데이터 가져오기 실패!");
   }
 };
+
+// 🔥 searchResults를 computed로 정의 (검색 필터 적용)
+const searchResults = computed(() => {
+  if (searchStore.query) {
+    return posts.value.filter(
+      (post) =>
+        post.title.includes(searchStore.query) ||
+        post.content.includes(searchStore.query)
+    );
+  }
+  return posts.value;
+});
 
 // 현재 로그인 사용자 정보 불러오기
 // const getUserInfo = async () => {
