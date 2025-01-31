@@ -79,6 +79,19 @@ export default {
     "hover:bg-Lions_opa10",
     "hover:bg-Eagles_opa10",
     "hover:bg-Wiz_opa10",
+
+    // 호버 텍스트
+    "hover:text-Landers",
+    "hover:text-Twins",
+    "hover:text-Heros",
+    "hover:text-Dinos",
+    "hover:text-Tigers",
+    "hover:text-Bears",
+    "hover:text-Giants",
+    "hover:text-Lions",
+    "hover:text-Eagles",
+    "hover:text-Wiz",
+    "hover:text-black01",
   ],
   theme: {
     extend: {

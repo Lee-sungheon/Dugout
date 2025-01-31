@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, ref, watch } from "vue";
+import { computed, onMounted, ref, watch } from "vue";
 import deleteBtn from "../assets/icons/delete-btn.svg";
 import axios from "axios";
 
@@ -7,9 +7,21 @@ import axios from "axios";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
-import { teamsTags } from "@/constants";
+import { teamList, teamsTags } from "@/constants";
+import { useTeamStore } from "@/stores/teamStore";
+import { twMerge } from "tailwind-merge";
 dayjs.extend(utc);
 dayjs.extend(timezone);
+
+const teamStore = useTeamStore();
+
+// 팀이름에 따라 팀 닉네임 찾는 함수 -> css 사용
+const teamNickname = computed(() => {
+  const team = teamList.find(
+    (team) => team.koreanName === teamStore.selectedTeam
+  );
+  return team ? team.nickname : null; // 팀이 없으면 null 반환
+});
 
 const newsData = ref([]);
 let queryKeyword = ref("야구");
@@ -53,14 +65,15 @@ onMounted(() => {
   getNewsData(queryKeyword.value);
 });
 
-const selectedTeam = ref([]);
+const selectedTeam = ref([]); // 태그 담을 배열
+
+// 태그 선택 함수
 const selectTeam = (team) => {
   if (!selectedTeam.value.includes(team)) {
-    console.log(team.replace("#", "").split(" ").join(""));
     selectedTeam.value.push(team);
-    console.log("선택팀", selectedTeam.value);
   }
 };
+// 태그 삭제 함수
 const removeTeam = (team) => {
   selectedTeam.value = selectedTeam.value.filter((t) => t !== team);
 };
@@ -97,10 +110,17 @@ watch(
             :key="index"
             @click="selectTeam(team)"
             class="inline-flex items-center h-[39px] px-[15px] rounded-[10px] whitespace-nowrap"
-            :class="{
-              'bg-gray02 text-white01 gap-[10px]': selectedTeam.includes(team),
-              'bg-white02 text-black01': !selectedTeam.includes(team),
-            }"
+            :class="
+              twMerge(
+                selectedTeam.includes(team)
+                  ? `bg-${
+                      teamNickname ? `${teamNickname}_opa30` : 'gray02'
+                    } text-white01 gap-[10px]`
+                  : `bg-${
+                      teamNickname ? `${teamNickname}_opa10` : 'white02'
+                    } text-black01`
+              )
+            "
           >
             <p>{{ team }}</p>
             <img

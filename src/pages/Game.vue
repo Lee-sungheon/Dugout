@@ -35,7 +35,7 @@ const goToBaseBallTMT = () => {
 
     <!-- 모니터 레이어 -->
     <div
-      class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[688px] h-[670px] z-10">
+      class="absolute top-[480px] left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[688px] h-[670px] z-10">
       <img
         :src="GameMonitorIcon"
         alt="Monitor Background"
@@ -47,7 +47,7 @@ const goToBaseBallTMT = () => {
 
     <!-- 버튼 레이어 -->
     <div
-      class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-[110%] flex justify-center gap-[200px] z-30">
+      class="absolute top-[500px] left-1/2 transform -translate-x-1/2 -translate-y-[110%] flex justify-center gap-[200px] z-30">
       <!-- 야구 게임 버튼 -->
       <div
         class="flex flex-col items-center button"
