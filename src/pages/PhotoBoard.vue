@@ -2,9 +2,20 @@
 import { getViewingCertificationPostsByClub } from "@/api/supabase-api/viewingCertificationPost";
 import PhotoboardCard from "@/components/photoboard/PhotoboardCard.vue";
 import { teamID } from "@/constants";
-import { onMounted, onUnmounted, ref, watch } from "vue";
+import {
+  computed,
+  nextTick,
+  onMounted,
+  onUnmounted,
+  ref,
+  watch,
+  watchEffect,
+} from "vue";
 import { useRoute } from "vue-router";
 import GoToCreate from "@/components/common/GoToCreate.vue";
+import { useSearchStore } from "@/stores/searchStore";
+
+const searchStore = useSearchStore();
 
 const route = useRoute();
 const teamName = ref(route.params.team);
