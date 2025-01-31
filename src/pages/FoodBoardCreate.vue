@@ -6,7 +6,6 @@ import {
 } from "@/api/supabase-api/restaurantPost";
 import { getCurrentUser } from "@/api/supabase-api/userInfo";
 import Baseball from "@/assets/icons/baseball.svg";
-import Modal from "@/components/common/Modal.vue";
 import CreateHeader from "@/components/CreateHeader.vue";
 import MapSelectAndView from "@/components/foodboard/foodBoardCreate/MapSelectAndView.vue";
 import PhotoUpload from "@/components/foodboard/foodBoardCreate/PhotoUpload.vue";
@@ -25,16 +24,9 @@ const route = useRoute();
 const teamName = ref(route.params.team);
 const clubId = ref(teamID[teamName.value]);
 
-const modalmessage = ref("");
-const isModalVisible = ref(false);
 const title = ref("");
 const content = ref("");
 const selectedTags = ref([]);
-const messageList = [
-  "작성했던 모든 내용은 저장되지 않습니다\n취소하시겠습니까?",
-  "수정을 완료하시겠습니까?",
-];
-
 const finalSelectedLocation = computed(() => mapStore.finalSelectedLocation);
 
 const tagErrorClass = ref("");
@@ -125,18 +117,8 @@ const submitRestaurantPost = async () => {
 };
 
 const cancelRestaurantPost = () => {
-  modalmessage.value = messageList[0];
-  isModalVisible.value = true;
-
-  mapStore.resetLocationData();
-};
-
-const cancelModalWindow = () => {
-  isModalVisible.value = false;
-};
-
-const backToFoodboard = () => {
   router.go(-1);
+  mapStore.resetLocationData();
 };
 
 const toolbarOptions = [
@@ -148,13 +130,6 @@ const toolbarOptions = [
 ];
 </script>
 <template>
-  <!-- 모달 -->
-  <Modal
-    v-if="isModalVisible"
-    :message="modalmessage"
-    :onCancel="cancelModalWindow"
-    :onConfirm="backToFoodboard"
-  />
   <section class="flex flex-col items-center">
     <div class="w-[1090px] flex flex-col">
       <CreateHeader

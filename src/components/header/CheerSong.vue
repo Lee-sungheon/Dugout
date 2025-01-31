@@ -6,12 +6,15 @@ import AudioPlayIcon from "@/assets/icons/audio_play.svg";
 import AudioBackIcon from "@/assets/icons/audio_back.svg";
 import AudioForwardIcon from "@/assets/icons/audio_forward.svg";
 import AudioPauseIcon from "@/assets/icons/audio_pause.svg";
-import { onMounted, ref } from "vue";
+import { computed, onMounted, ref, watch } from "vue";
+
+const props = defineProps({
+  selectedTeam: String,
+});
+
 const player = ref(null);
 const isPlaying = ref(false);
 const isAutoPlaying = ref(true);
-const currentIndex = ref(0);
-
 const teamChants = [
   { team: "LG 트윈스 응원가", videoId: "Qtu23VpTeOA" },
   { team: "두산 베어스 응원가", videoId: "lMhDirLYvVo" },
@@ -24,6 +27,17 @@ const teamChants = [
   { team: "삼성 라이온즈 응원가", videoId: "sG3JxXb5EV0" },
   { team: "KT 위즈 응원가", videoId: "WDZzXQlfTK8" },
 ];
+
+const currentIndex = computed(() =>
+  Math.max(
+    0,
+    teamChants.findIndex((value) => value.team.includes(props.selectedTeam))
+  )
+);
+
+watch(currentIndex, () => {
+  if (isPlaying.value) loadNewVideo();
+});
 
 //YouTube API를 동적으로 로드하는 함수
 const loadYouTubeAPI = () => {

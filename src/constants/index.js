@@ -16,40 +16,75 @@ import tournamentIcon from "@/assets/images/tournament-logo.svg";
 import tournamentIconBlack from "@/assets/images/tournament_logo_black.svg";
 
 export const teamList = [
-  { name: "kia", path: "/kia/freeboard", logo: kiaLogo, nickname: "Tigers" },
+  {
+    name: "kia",
+    path: "/kia/freeboard",
+    logo: kiaLogo,
+    nickname: "Tigers",
+    koreanName: "타이거즈",
+  },
   {
     name: "samsung",
     path: "/samsung/freeboard",
     logo: samsungLogo,
     nickname: "Lions",
+    koreanName: "라이온즈",
   },
-  { name: "lg", path: "/lg/freeboard", logo: lgLogo, nickname: "Twins" },
+  {
+    name: "lg",
+    path: "/lg/freeboard",
+    logo: lgLogo,
+    nickname: "Twins",
+    koreanName: "트윈스",
+  },
   {
     name: "doosan",
     path: "/doosan/freeboard",
     logo: doosanLogo,
     nickname: "Bears",
+    koreanName: "베어스",
   },
-  { name: "kt", path: "/kt/freeboard", logo: ktLogo, nickname: "Wiz" },
-  { name: "ssg", path: "/ssg/freeboard", logo: ssgLogo, nickname: "Landers" },
+  {
+    name: "kt",
+    path: "/kt/freeboard",
+    logo: ktLogo,
+    nickname: "Wiz",
+    koreanName: "위즈",
+  },
+  {
+    name: "ssg",
+    path: "/ssg/freeboard",
+    logo: ssgLogo,
+    nickname: "Landers",
+    koreanName: "랜더스",
+  },
   {
     name: "lotte",
     path: "/lotte/freeboard",
     logo: lotteLogo,
     nickname: "Giants",
+    koreanName: "자이언츠",
   },
   {
     name: "hanhwa",
     path: "/hanhwa/freeboard",
     logo: hanhwaLogo,
     nickname: "Eagles",
+    koreanName: "이글스",
   },
-  { name: "nc", path: "/nc/freeboard", logo: ncLogo, nickname: "Dinos" },
+  {
+    name: "nc",
+    path: "/nc/freeboard",
+    logo: ncLogo,
+    nickname: "Dinos",
+    koreanName: "다이노스",
+  },
   {
     name: "kiwoom",
     path: "/kiwoom/freeboard",
     logo: kiwoomLogo,
     nickname: "Heros",
+    koreanName: "히어로즈",
   },
 ];
 
@@ -112,7 +147,6 @@ export const boardToTableMapping = {
   photoboard: "viewing_certification_post",
   foodboard: "restaurant_post",
 };
-
 
 export const teamByClubID = {
   1: "LG 트윈스",

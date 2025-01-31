@@ -57,6 +57,12 @@ watch(
   },
   { immediate: true }
 );
+
+watchEffect(() => {
+  searchStore.setPosts(photoboardList.value);
+});
+
+const searchResults = computed(() => searchStore.filteredPosts);
 </script>
 <template>
   <div class="flex gap-[30px] flex-col px-[50px] py-[30px] items-center">
@@ -67,7 +73,7 @@ watch(
       <div class="w-full h-auto mb-[100px]">
         <div v-if="photoboardList" class="grid grid-cols-3 gap-[30px] w-full">
           <PhotoboardCard
-            v-for="post in photoboardList"
+            v-for="post in searchResults"
             :key="post.id"
             :post="post"
           />

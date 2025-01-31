@@ -65,6 +65,40 @@ export const createRestaurantLocation = async (
   return data;
 };
 
+// update 맛집 게시물 장소 정보
+export const updateRestaurantLocation = async (
+  postId,
+  name,
+  address,
+  category,
+  latitude,
+  longitude,
+  contact,
+  url
+) => {
+  const { data, error } = await supabase
+    .from("restaurant_post_location")
+    .update({
+      name,
+      address,
+      category,
+      latitude,
+      longitude,
+      contact,
+      url,
+    })
+    .eq("post_id", postId)
+    .select();
+
+  if (error) {
+    console.error("Error updating restaurant location:", error);
+    return null;
+  }
+
+  return data;
+};
+
+
 // 특정 클럽id/ 클럽id + 태그로  맛집 게시물 조회 (SQL로 처리)
 // tagName 매개변수가 없으면 알아서 null로 처리되며 클럽으로만 필터링
 export const getRestaurantPostsByTagAndClub = async (clubId, tagName) => {
@@ -113,8 +147,8 @@ export const getRestaurantPostDetailsById = async (postId) => {
 // 맛집 게시물 수정
 export const updateRestaurantPost = async (
   postId,
-  content,
   title,
+  content,
   thumbnailUrl,
   tags
 ) => {
